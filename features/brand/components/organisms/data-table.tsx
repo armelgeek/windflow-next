@@ -11,7 +11,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import { DataTablePagination } from '@/shared/components/datatable/data-table-pagination';
+import { DataTablePagination } from '@/shared/components/molecules/datatable/data-table-pagination';
 import {
   Table,
   TableBody,

@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 
-import { DataTableColumnHeader } from '@/shared/components/datatable/data-table-column-header';
+import { DataTableColumnHeader } from '@/shared/components/molecules/datatable/data-table-column-header';
 import { Badge } from '@/components/ui/badge';
 import { statuses } from '@/core/domain/constants/brand.constant';
 import type { Brand } from '@/core/domain/types/brand.type';

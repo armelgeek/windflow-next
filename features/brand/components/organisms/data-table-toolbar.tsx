@@ -3,8 +3,8 @@
 import { Table } from '@tanstack/react-table';
 import { Search } from 'lucide-react';
 
-import { DataTableFacetedFilter } from '@/shared/components/datatable/data-table-faceted-filter';
-import { DataTableViewOptions } from '@/shared/components/datatable/data-table-view-options';
+import { DataTableFacetedFilter } from '@/shared/components/molecules/datatable/data-table-faceted-filter';
+import { DataTableViewOptions } from '@/shared/components/molecules/datatable/data-table-view-options';
 import { DebouncedInput } from '@/components/ui/debounced-input';
 import { statuses } from '@/core/domain/constants/brand.constant';
 
