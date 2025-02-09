@@ -1,6 +1,5 @@
 import React from 'react';
 import { FieldValues, useController, UseControllerProps } from 'react-hook-form';
-import Image from 'next/image';
 import { UploadButton } from '@uploadthing/react';
 import { X } from 'lucide-react';
 
@@ -59,7 +58,7 @@ export function ControlledUpload<T extends FieldValues>({
         {field.value ? (
           <div className="relative group">
             <div className="relative w-full flex flex-row justify-center overflow-hidden rounded-lg border-2 border-gray-200">
-              <Image
+              <img
                 src={field.value}
                 alt="Preview"
                 width={200}
