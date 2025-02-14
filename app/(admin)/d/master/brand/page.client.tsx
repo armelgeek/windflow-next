@@ -1,58 +1,37 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { ColumnFiltersState, SortDirection } from '@tanstack/react-table';
-import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryState } from 'nuqs';
-
 import { brandKeys } from '@/core/domain/keys/brand.key';
 
-import { columns } from '../../../../../features/brand/components/organisms/columns';
-import { DataTable } from '../../../../../features/brand/components/organisms/data-table';
-import { BrandServiceImpl } from '../../../../../core/application/services/brand/brand.service';
+import { columns } from '@/features/brand/components/organisms/columns';
+import { DataTable } from '@/features/brand/components/organisms/data-table';
+import { BrandServiceImpl } from '@/core/application/services/brand/brand.service';
+import { useAdvancedTable } from '@/shared/hooks/use-advanced-table';
+import { SortDirection } from '@tanstack/react-table';
+import { useQueryStateParams } from '@/shared/hooks/use-query-state-params';
 
 export function BrandClientPage() {
-  const [search, setSearch] = useQueryState('q', { defaultValue: '' });
-  const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1));
-  const [pageSize, setPageSize] = useQueryState('pageSize', parseAsInteger.withDefault(10));
-  const [sortBy, setSortBy] = useQueryState('sortBy', { defaultValue: '' });
-  const [sortDir, setSortDir] = useQueryState('sortDir', { defaultValue: '' });
-  const [status, setStatus] = useQueryState('status', parseAsArrayOf(parseAsString));
-  const [filter, setFilter] = useState<ColumnFiltersState>([]);
+  const queryParams = useQueryStateParams();
 
-  useEffect(() => {
-    const newFilters: ColumnFiltersState = [];
-
-    if (status) {
-      newFilters.push({ id: 'status', value: status });
-    }
-
-    setFilter(newFilters);
-  }, [status]);
-
-  const queryParams = {
-    ...(search && { search }),
-    ...(page && { page }),
-    ...(pageSize && { pageSize }),
-    ...(sortBy && { sortBy }),
-    ...(sortDir && { sortDir }),
-    ...(status && { status }),
-  };
-
-  const { data, isPending, isError } = useQuery({
+  const {
+    data,
+    search,
+    page,
+    pageSize,
+    sortBy,
+    sortDir,
+    filter,
+    isPending,
+    isError,
+    setSearch,
+    setPage,
+    setPageSize,
+    setSortBy,
+    setSortDir,
+    handleFilterChange,
+  } = useAdvancedTable({
     queryKey: brandKeys.list(queryParams),
-    queryFn: () => new BrandServiceImpl().list(queryParams),
-    placeholderData: keepPreviousData,
+    queryFn: (params) => new BrandServiceImpl().list(params),
   });
-
-  const handleFilterChange = (filters: ColumnFiltersState) => {
-    setFilter(filters);
-
-    const statusFilter = filters.find((f) => f.id === 'status')?.value as string[] | undefined;
-    setStatus(statusFilter || null);
-  };
-
   return (
     <DataTable
       columns={columns}
