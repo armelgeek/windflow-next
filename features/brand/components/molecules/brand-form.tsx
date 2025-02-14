@@ -18,7 +18,12 @@ interface BrandFormProps {
 export const BrandForm = ({ initialData = null, onSubmit, onSuccess }: BrandFormProps) => {
   const { form, handleSubmit, isSubmitting } = useFormHandler<BrandPayload>({
     schema: BrandFormSchema,
-    initialValues: initialData || { name: '', description: '', status: 'active', image: null },
+    initialValues: initialData || { 
+      name: '', 
+      description: '', 
+      status: 'active', 
+      image: null 
+    },
     onSubmit,
     onSuccess,
     resetAfterSubmit: !initialData,

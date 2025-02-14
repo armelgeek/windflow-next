@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { RegisterFormSchema } from '@/core/domain/schema/auth.schema';
+import { RegisterFormSchema } from '@/core/domain/schema/auth/auth.schema';
 import { RegisterPayload } from '@/core/domain/types/auth.type';
 import { cn } from '@/shared/lib/utils';
 

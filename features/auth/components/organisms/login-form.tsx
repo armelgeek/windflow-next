@@ -1,15 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
-import { authClient } from '@/auth-client';
-import { Button } from '@/components/ui/button';
+import { Button, LoadingButton } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -19,16 +16,16 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { LoginFormSchema } from '@/core/domain/schema/auth.schema';
+import { LoginFormSchema } from '@/core/domain/schema/auth/auth.schema';
 import { LoginPayload } from '@/core/domain/types/auth.type';
 import { cn } from '@/shared/lib/utils';
+import useLogin from '../../hooks/useLogin';
+import FormWrapper from '@/shared/components/molecules/form/FormWrapper';
+import { ControlledTextInput } from '@/shared/components/molecules/form/ControlledTextInput';
 
 export const LoginForm = () => {
-  const router = useRouter();
-
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
+  const {isLoading, handleSubmit} = useLogin();
   const form = useForm<LoginPayload>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -37,50 +34,16 @@ export const LoginForm = () => {
     },
   });
 
-  const handleSubmit = async (input: LoginPayload) => {
-    setIsLoading(true);
-
-    const { data, error } = await authClient.signIn.email(
-      {
-        email: input.email,
-        password: input.password,
-      },
-      {
-        onRequest: () => {
-          setIsLoading(true);
-        },
-        onSuccess: () => {
-          router.push('/d');
-        },
-        onError: (ctx) => {
-          setIsLoading(false);
-          toast.error('Invalid email or password.');
-        },
-      },
-    );
-  };
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
+    <FormWrapper form={form} onSubmit={handleSubmit}>
         <div className="grid space-y-6">
-          <FormField
+          <ControlledTextInput
             control={form.control}
             name="email"
-            render={({ field, fieldState: { error } }) => (
-              <FormItem className="space-y-2">
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    {...field}
-                    className={error && 'border-destructive'}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Email"
+            placeholder="Email"
           />
+
 
           <FormField
             control={form.control}
@@ -112,15 +75,13 @@ export const LoginForm = () => {
             )}
           />
 
-          <Button
+          <LoadingButton
             type="submit"
-            disabled={isLoading}
+            pending={isLoading}
           >
-            {isLoading ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
             Login
-          </Button>
+          </LoadingButton>
         </div>
-      </form>
-    </Form>
+    </FormWrapper>
   );
 };

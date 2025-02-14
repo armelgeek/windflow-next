@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { LoginForm } from '@/features/auth/components/organisms/login-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Login',
@@ -18,6 +19,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <LoginForm />
+          <Link href={'/forgot-password'}>Mot de passe oublié ?</Link>
         </CardContent>
       </Card>
     </div>

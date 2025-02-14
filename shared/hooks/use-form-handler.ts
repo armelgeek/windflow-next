@@ -19,7 +19,7 @@ export const useFormHandler = <T extends object>({
                                                    resetAfterSubmit = false,
                                                  }: UseFormHandlerProps<T>): {
   form: UseFormReturn<T>;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  handleSubmit: (e: T) => Promise<void>;
   isSubmitting: boolean;
 } => {
   const hasInitialized = useRef(false);
@@ -36,8 +36,8 @@ export const useFormHandler = <T extends object>({
     }
   }, [initialValues]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
+  const handleSubmit = async () => {
+
     try {
       await form.handleSubmit(async (values) => {
         await onSubmit(values);

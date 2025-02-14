@@ -19,14 +19,7 @@ type ControlledUploadProps<T extends FieldValues> = UseControllerProps<T> & {
   onUploadComplete?: (url: string) => void;
 };
 
-export function ControlledUpload<T extends FieldValues>({
-                                                          name,
-                                                          label,
-                                                          description,
-                                                          control,
-                                                          defaultValue,
-                                                          onUploadComplete,
-                                                         }: ControlledUploadProps<T>) {
+export function ControlledUpload<T extends FieldValues>({ name, label, description, control, defaultValue, onUploadComplete }: ControlledUploadProps<T>) {
   const { field, fieldState } = useController<T>({
     control,
     name,

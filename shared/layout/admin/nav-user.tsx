@@ -18,8 +18,7 @@ import {
 import {
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
+  SidebarMenuItem
 } from '@/components/ui/sidebar';
 
 export function NavUser({
@@ -32,7 +31,6 @@ export function NavUser({
   };
 }) {
   const router = useRouter();
-  const { isMobile } = useSidebar();
 
   const handleSignOut = async () => {
     await authClient.signOut({
@@ -69,7 +67,7 @@ export function NavUser({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'right'}
+            side={'right'}
             align="end"
             sideOffset={4}
           >
