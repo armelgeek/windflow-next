@@ -1,10 +1,9 @@
 import { Metadata } from "next";
 import {
-  updateBio,
+  updateAvatar,
   updateEmail,
-  updateName,
-  updateUsername,
-} from "../_actions";
+  updateName
+} from '../_actions';
 import { headers } from "next/headers";
 import { Label } from "@/components/ui/label";
 import { auth } from '@/auth';
@@ -12,6 +11,7 @@ import { EditableLabelForm } from '@/shared/components/atoms/editable-label-form
 import { ChangePassword } from '@/features/auth/components/organisms/change-password-form';
 import { DeleteAccount } from '@/features/auth/components/organisms/delete-account-form';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditableProfilePhotoForm } from '@/shared/components/atoms/editable-profile-photo-form';
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -28,6 +28,10 @@ export default async function Page() {
             <CardTitle className="text-xl">Profile</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <EditableProfilePhotoForm
+              photoUrl={session?.user?.image ?? undefined}
+              onPhotoChange={updateAvatar}
+            />
             <EditableLabelForm
               disabled={session?.user.isAnonymous}
               action={updateName}
@@ -51,13 +55,6 @@ export default async function Page() {
               className="w-full"
             />
 
-            <EditableLabelForm
-              disabled={session?.user.isAnonymous}
-              action={updateUsername}
-              label="Username"
-              value={session?.user.username}
-              className="w-full"
-            />
 
             <div className="flex flex-col space-y-1.5">
               <Label className="text-sm text-muted-foreground">Password</Label>

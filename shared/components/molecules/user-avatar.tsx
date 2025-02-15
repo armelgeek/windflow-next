@@ -2,9 +2,6 @@
 
 import {
   BadgeCheck,
-  Bell,
-  FileCodeIcon,
-  LibraryBigIcon,
   LogOut,
   UserIcon,
 } from "lucide-react";
@@ -44,7 +41,7 @@ export function UserAvatar({ isAnonymous, user }: Props) {
   const router = useRouter();
   const handleSignOut = async () => {
     await authClient.signOut({
-      fetchOptions: { onSuccess: () => router.refresh() },
+      fetchOptions: { onSuccess: () => router.push('/login') },
     });
   };
 
@@ -53,7 +50,7 @@ export function UserAvatar({ isAnonymous, user }: Props) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="outline"
+            variant="ghost"
             size={"sm"}
             className={cn(
               "flex items-center justify-between gap-3",
@@ -62,10 +59,10 @@ export function UserAvatar({ isAnonymous, user }: Props) {
           >
             <Avatar
               className={cn(
-                "rounded-md", "size-[1.85rem]"
+                "rounded-full"
               )}
             >
-              <AvatarImage src={user.avatar ?? ""} alt={user.name} />
+              <AvatarImage src={user.avatar ?? ""} width={32} height={32} alt={user.name} />
               <AvatarFallback
                 className={cn("rounded-md")}
               >
@@ -83,7 +80,7 @@ export function UserAvatar({ isAnonymous, user }: Props) {
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar ?? ""} alt={user.name} />
+                <AvatarImage src={user.avatar ?? ""}  width={32} height={32} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
                   <UserIcon className="size-4" />
                 </AvatarFallback>

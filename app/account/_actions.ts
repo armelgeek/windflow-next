@@ -14,19 +14,15 @@ export async function updateName(data: FormData) {
     revalidatePath("/", "layout");
   } catch {}
 }
-export async function updateBio(data: FormData) {
-  const h = await headers();
-  try {
-    const value = data.get("value") as string;
-    await auth.api.updateUser({ headers: h, body: { bio: value } });
-  } catch {}
-}
 
 export async function updateAvatar(path: string) {
+  const h = await headers();
   try {
-    await auth.api.updateUser({ body: { image: path } });
+    await auth.api.updateUser({ header: h, body: { image: path } });
     revalidatePath("/", "layout");
-  } catch {}
+  } catch {
+
+  }
 }
 
 export async function updateUsername(data: FormData) {
