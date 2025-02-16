@@ -1,16 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 
 
 
-import { SettingsIcon } from "lucide-react";
+import { ActivityIcon, SettingsIcon, UsersRoundIcon } from "lucide-react";
 
 
 
 import { cn } from '@/shared/lib/utils';
 import { HomeIcon } from '@radix-ui/react-icons';
-import { Link } from '@/i18n/routing';
 
 
 

@@ -1,5 +1,6 @@
 import { buttonVariants } from "@/components/ui/button";
-import { Link } from '@/i18n/routing';
+import Link from "next/link";
+
 export default function EmailVerifiedPage() {
   return (
     <div className="flex grow flex-col items-center justify-center p-4">
@@ -10,7 +11,7 @@ export default function EmailVerifiedPage() {
         Your email has been successfully verified.
       </p>
       <Link
-        href="/public"
+        href="/"
         className={buttonVariants({
           variant: "default",
         })}

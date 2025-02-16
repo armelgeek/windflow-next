@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRouter } from '@/i18n/routing';
+import { useRouter } from 'next/navigation';
 import { LoginPayload } from '@/core/domain/types/auth.type';
 import { authClient } from '@/auth-client';
 const useLogin = () => {

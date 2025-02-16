@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { Add } from '../../../../../../features/brand/components/organisms/add';
+import { Add } from '../../../../../features/brand/components/organisms/add';
 import { BrandClientPage } from './page.client';
 
 export const metadata: Metadata = {

@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
-import createNextIntlPlugin from 'next-intl/plugin';
 
-const withNextIntl = createNextIntlPlugin();
-
-const nextConfig: NextConfig = withNextIntl({
+const nextConfig: NextConfig = {
   output: "standalone",
   // experimental: {
   //   reactCompiler: true,
@@ -36,6 +33,6 @@ const nextConfig: NextConfig = withNextIntl({
       },
     ],
   },
-});
+};
 
 export default nextConfig;

@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 
 import { LoginForm } from '@/features/auth/components/organisms/login-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from '@/i18n/routing';
-
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Login',

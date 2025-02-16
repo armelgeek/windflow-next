@@ -1,7 +1,7 @@
 "use client";
 import { ReactNode } from "react";
 import { cn } from '@/shared/lib/utils';
-import { Link } from '@/i18n/routing';
+import Link from 'next/link';
 
 type Props = { title?: ReactNode; className?: string; children?: ReactNode };
 
