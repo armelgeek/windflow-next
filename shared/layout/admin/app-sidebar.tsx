@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Link from 'next/link';
 
 import { Minus, Plus, Smartphone } from 'lucide-react';
 
@@ -20,6 +19,7 @@ import {
 } from '@/components/ui/sidebar';
 
 import { NavUser } from './nav-user';
+import { Link } from '@/i18n/routing';
 
 // This is sample data.
 const data = {

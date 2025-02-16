@@ -30,7 +30,6 @@ export default async function Page() {
           <CardContent className="space-y-4">
             <EditableProfilePhotoForm
               photoUrl={session?.user?.image ?? undefined}
-              onPhotoChange={updateAvatar}
             />
             <EditableLabelForm
               disabled={session?.user.isAnonymous}

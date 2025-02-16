@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from '@/i18n/routing';
 import { authClient } from '@/auth-client';
 import { ResetPasswordPayload } from '@/core/domain/types/reset-password.type';
 import { toast } from 'sonner';

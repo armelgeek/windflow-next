@@ -7,6 +7,7 @@ import { sendChangeEmailVerification, sendResetPasswordEmail, sendVerificationEm
 import { username } from 'better-auth/plugins/username';
 import { anonymous } from 'better-auth/plugins/anonymous';
 import { nextCookies } from 'better-auth/next-js';
+import { admin } from 'better-auth/plugins/admin';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -39,7 +40,7 @@ export const auth = betterAuth({
   },
   user: {
    additionalFields: {
-     username: { type: "string", required: false },
+     username: { type: "string", required: false }
    },
     changeEmail: {
       enabled: true,
@@ -95,5 +96,5 @@ export const auth = betterAuth({
 
     },
   },
-  plugins: [username(), anonymous(), nextCookies()],
+  plugins: [username(), anonymous(), nextCookies(), admin()],
 });

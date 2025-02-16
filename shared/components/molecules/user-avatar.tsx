@@ -15,8 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from '@/i18n/routing';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +30,7 @@ import {
 import { authClient } from '@/auth-client';
 import { cn } from '@/shared/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Link } from '@/i18n/routing';
 
 type Props = {
   isAnonymous: boolean;

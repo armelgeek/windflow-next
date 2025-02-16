@@ -1,0 +1,10 @@
+{
+  "home": {
+    "title": "Accueil"
+  },
+  "not-found": {
+    "description": "La ressource pourrait avoir été déplacée, renommée ou n'existe pas. Vérifiez l'URL ou utilisez le menu.",
+    "go-home": "Retour à l'accueil",
+    "title": "🫠 Page non trouvée ! 🥲"
+  }
+}

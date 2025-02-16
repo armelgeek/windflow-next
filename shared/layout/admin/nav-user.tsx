@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 
 import { BadgeCheck, ChevronsUpDown, LogOut, Sparkles } from 'lucide-react';
 
@@ -20,6 +19,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar';
+import { useRouter } from '@/i18n/routing';
 
 export function NavUser({
   user,
