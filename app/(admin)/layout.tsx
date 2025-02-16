@@ -10,6 +10,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
+        <SidebarTrigger />
         <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>

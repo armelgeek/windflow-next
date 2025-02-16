@@ -27,7 +27,7 @@ export function NavUser({
   user: {
     name: string;
     email: string;
-    avatar: string;
+    avatar: string | undefined;
   };
 }) {
   const router = useRouter();
@@ -87,15 +87,9 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/account')} className="cursor-pointer">
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>

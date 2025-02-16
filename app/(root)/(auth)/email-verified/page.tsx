@@ -11,7 +11,7 @@ export default function EmailVerifiedPage() {
         Your email has been successfully verified.
       </p>
       <Link
-        href="/"
+        href="/public"
         className={buttonVariants({
           variant: "default",
         })}

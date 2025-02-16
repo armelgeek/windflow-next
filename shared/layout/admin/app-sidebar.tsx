@@ -20,6 +20,8 @@ import {
 } from '@/components/ui/sidebar';
 
 import { NavUser } from './nav-user';
+import { auth } from '@/auth';
+import { headers } from 'next/headers';
 
 // This is sample data.
 const data = {
@@ -42,7 +44,10 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -101,7 +106,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={session ? {
+          name: session?.user?.name,
+          email: session?.user?.email,
+          avatar: session?.user?.image
+        }: {
+          name: '',
+          email: '',
+          avatar: ''
+        }}/>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
