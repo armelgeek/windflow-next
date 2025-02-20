@@ -1,6 +1,6 @@
 import type { Config } from 'tailwindcss';
-
-const defaultTheme = require('tailwindcss/defaultTheme');
+import defaultTheme from 'tailwindcss/defaultTheme';
+import tailwindAnimate from 'tailwindcss-animate';
 
 export default {
   darkMode: ['class'],
@@ -8,6 +8,7 @@ export default {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './shared/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -16,6 +17,7 @@ export default {
         serif: [...defaultTheme.fontFamily.serif],
         mono: [...defaultTheme.fontFamily.mono],
       },
+      
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -90,12 +92,24 @@ export default {
             height: '0',
           },
         },
+        'scale-up-center': {
+          '0%': { transform: 'scale(0.5)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        'scale-down-center': {
+          '0%': { transform: 'scale(1)' },
+          '100%': { transform: 'scale(0.5)' },
+        },
       },
       animation: {
+        'scale-up-center':
+          'scale-up-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both',
+        'scale-down-center':
+          'scale-down-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [tailwindAnimate],
 } satisfies Config;

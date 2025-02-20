@@ -7,6 +7,7 @@ import { headers } from 'next/headers';
 import { UserAvatar } from '@/shared/components/molecules/user-avatar';
 import Link from 'next/link';
 import { AppLogo } from '@/shared/components/molecules/layout/app-logo';
+import AppFooter from '@/shared/components/molecules/layout/app-footer';
 interface RootLayoutProps {
   readonly children: React.ReactNode;
 }
@@ -16,11 +17,26 @@ export default async function BaseLayout({ children }: RootLayoutProps) {
 
 
   return (
-    <>
-          <header className="z-10 flex sticky top-0 bg-background h-14 shrink-0 items-center gap-2 border-b px-4 justify-between">
+    <div  className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+          <header  className="flex items-center justify-between py-5 font-medium">
             <div className="flex gap-1 sm:gap-2 md:gap-3 items-center">
              <AppLogo/>
             </div>
+            <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
+              {[
+                { href: "/", label: "HOME" },
+                { href: "/collection", label: "COLLECTION" },
+                { href: "/about", label: "ABOUT" },
+                { href: "/contact", label: "CONTACT" }
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="flex flex-col items-center gap-1 group">
+                    <p>{item.label}</p>
+                    <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
             <div className="flex items-center gap-1 sm:gap-2">
               {session ? (
                 <UserAvatar
@@ -41,6 +57,7 @@ export default async function BaseLayout({ children }: RootLayoutProps) {
           <main>
               {children}
           </main>
-    </>
+          <AppFooter/>
+    </div>
   );
 }
