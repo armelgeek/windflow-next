@@ -1,17 +1,14 @@
 import { Metadata } from "next";
 import {
-  updateAvatar,
   updateEmail,
   updateName
 } from './_actions';
 import { headers } from "next/headers";
-import { Label } from "@/components/ui/label";
 import { auth } from '@/auth';
 import { EditableLabelForm } from '@/shared/components/atoms/editable-label-form';
 import { ChangePassword } from '@/features/auth/components/organisms/change-password-form';
 import { DeleteAccount } from '@/features/auth/components/organisms/delete-account-form';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EditableProfilePhotoForm } from '@/shared/components/atoms/editable-profile-photo-form';
 
 export const metadata: Metadata = { title: "Settings" };
 

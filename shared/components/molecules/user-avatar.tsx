@@ -3,6 +3,7 @@
 import {
   BadgeCheck,
   LogOut,
+  User2Icon,
   UserIcon,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -98,8 +99,8 @@ export function UserAvatar({ isAnonymous, user }: Props) {
           <DropdownMenuGroup>
             <Link href="/account" passHref>
               <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+                <User2Icon />
+                My profile
               </DropdownMenuItem>
             </Link>
           </DropdownMenuGroup>

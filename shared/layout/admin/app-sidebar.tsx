@@ -175,6 +175,7 @@ export default function AppSidebar({session}: {session: Session} ) {
                       <AvatarImage
                         src={session?.user?.image || ''}
                         alt={session?.user?.name || ''}
+                        className='rounded-full'
                       />
                       <AvatarFallback className='rounded-lg'>
                         {session?.user?.name?.slice(0, 2)?.toUpperCase() ||
@@ -195,15 +196,11 @@ export default function AppSidebar({session}: {session: Session} ) {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <SidebarMenuButton
-                    asChild
-                   >
-                    <Link href={'/account'}>
-                      <User2Icon/> My profile
-                    </Link>
-                    </SidebarMenuButton>
-                  </DropdownMenuItem>
+                  <Link href="/account" passHref>
+                    <DropdownMenuItem>
+                        <User2Icon/> My profile
+                    </DropdownMenuItem>
+                  </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
