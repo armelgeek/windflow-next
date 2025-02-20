@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const AppFooter = () => {
   const scrollToTop = () => {
     window.scrollTo({
@@ -22,18 +24,15 @@ const AppFooter = () => {
           <p className="text-xl font-medium mb-5">COMPANY</p>
 
           <ul className="flex flex-col flex-1 text-gray-600 cursor-pointer">
-            <li  className="mb-2">
+            <Link href="/"  className="mb-2">
               Home
-            </li>
-            <li  className="mb-2">
+            </Link>
+            <Link href="/about"  className="mb-2">
               About Us
-            </li>
-            <li className="mb-2">
-              Delivery
-            </li>
-            <li  className="mb-2">
-              Privacy policy
-            </li>
+            </Link>
+            <Link href="/contact"  className="mb-2">
+              Contact Us
+            </Link>
           </ul>
         </div>
 

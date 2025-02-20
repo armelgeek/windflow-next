@@ -13,6 +13,8 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Session } from 'better-auth';
+import { User2Icon } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 export function UserNav({ session }: { session: Session }) {
   
@@ -31,6 +33,7 @@ export function UserNav({ session }: { session: Session }) {
               <AvatarImage
                 src={session.user?.image ?? ''}
                 alt={session.user?.name ?? ''}
+                className='h-8 w-8 rounded-full'
               />
               <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
             </Avatar>
@@ -49,14 +52,11 @@ export function UserNav({ session }: { session: Session }) {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-               My profile
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Settings
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            <Link href="/account" passHref>
+                <DropdownMenuItem>
+                 <User2Icon size={20} />My profile
+                </DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut}>
