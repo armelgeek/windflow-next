@@ -44,11 +44,8 @@ export function EditableProfilePhotoForm({
   }
 
   return (
-    <form {...form} className={cn("flex flex-col items-center gap-2", className)}>
-      <Label className="text-muted-foreground text-xs leading-none">
-        {label ?? "Profile Photo"}
-      </Label>
-
+    <form {...form} className={cn("flex flex-col gap-2", className)}>
+     
       <div
         className="relative"
         onMouseEnter={() => setIsHovered(true)}
@@ -80,7 +77,7 @@ export function EditableProfilePhotoForm({
           )}
 
           {!disabled && isHovered && !isLoading && (
-            <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center gap-2">
+            <div className="rounded-full bg-black/50 flex items-center justify-center gap-2">
               <UploadButton<OurFileRouter, 'imageUploader'>
                 endpoint={'imageUploader'}
                 onUploadBegin={() => {

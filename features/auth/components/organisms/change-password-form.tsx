@@ -64,7 +64,7 @@ export function ChangePassword() {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button className="w-32" variant="outline">
           Update Password
         </Button>
       </DialogTrigger>
