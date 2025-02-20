@@ -40,10 +40,10 @@ export function DataTableFacetedFilter<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          className="h-8 border-dashed"
+          className="h-8 ml-2 border-dashed"
         >
           <PlusCircle
-            className="-ms-1 me-2"
+            className="mx-2"
             size={16}
             strokeWidth={2}
             aria-hidden="true"

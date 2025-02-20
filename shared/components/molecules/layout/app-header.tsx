@@ -1,28 +1,30 @@
-"use client";
-import { ReactNode } from "react";
-import { cn } from '@/shared/lib/utils';
-import Link from 'next/link';
+import React from 'react';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
+import SearchInput from '@/components/ui/search-input';
+import { BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import ThemeToggle from '@/components/ui/theme-toggle';
+import { auth } from '@/auth';
+import { headers } from 'next/headers';
+import { UserNav } from './user-nav';
 
-type Props = { title?: ReactNode; className?: string; children?: ReactNode };
-
-export function AppHeader({ title, className, children }: Props) {
-
+export default async function Header() {
+  const session  = await auth.api.getSession({headers: await headers()});
   return (
-    <div
-      className={cn(
-        "flex gap-4 items-center",
-        children ? "justify-between" : "justify-start",
-        className
-      )}
-    >
-    <Link href='/'>
-      {typeof title === "string" ? (
-            <h1 className="flex-1 text-xl">{title}</h1>
-          ) : (
-            title
-          )}
-    </Link>
-      {children}
-    </div>
+    <header className='flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12'>
+      <div className='flex items-center gap-2 px-4'>
+        <SidebarTrigger className='-ml-1' />
+        <Separator orientation='vertical' className='mr-2 h-4' />
+        <BreadcrumbSeparator />
+      </div>
+
+      <div className='flex items-center gap-2 px-4'>
+        <div className='hidden md:flex'>
+          <SearchInput />
+        </div>
+        <UserNav session={session} />
+        <ThemeToggle />
+      </div>
+    </header>
   );
 }

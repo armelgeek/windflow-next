@@ -1,14 +1,25 @@
-import * as React from 'react';
-import Link from 'next/link';
-
-import { Minus, Plus, Smartphone } from 'lucide-react';
-
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+'use client';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
+} from '@/components/ui/collapsible';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -17,104 +28,197 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
+  useSidebar
 } from '@/components/ui/sidebar';
+import {
+  BadgeCheck,
+  Bell,
+  ChevronRight,
+  ChevronsUpDown,
+  CreditCard,
+  GalleryVerticalEnd,
+  LogOut
+} from 'lucide-react';
+import Link from 'next/link';
+import { usePathname,useRouter } from 'next/navigation';
+import * as React from 'react';
+import { navItems } from '@/core/domain/constants/app.constant';
+import { Icons } from '@/components/ui/icons';
+import { authClient } from '@/auth-client';
+import { Session } from 'better-auth';
 
-import { NavUser } from './nav-user';
-import { auth } from '@/auth';
-import { headers } from 'next/headers';
-
-// This is sample data.
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
-  navMain: [
-    {
-      title: 'Master',
-      url: '#',
-      items: [
-        {
-          title: 'Brand',
-          url: '/d/master/brand',
-        },
-      ],
-    },
-  ],
+export const company = {
+  name: 'Acme Inc',
+  logo: GalleryVerticalEnd,
+  plan: 'Enterprise'
 };
 
-export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const session = await auth.api.getSession({ headers: await headers() });
+export default function AppSidebar({session}: {session: Session} ) {
+  const router = useRouter();
+  const pathname = usePathname();
+  //const { state, isMobile } = useSidebar();
 
-
+  const handleSignOut = async () => {
+      await authClient.signOut({
+        fetchOptions: { onSuccess: () => router.push('/login') },
+      });
+    };
   return (
-    <Sidebar {...props}>
+    <Sidebar collapsible='icon'>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              asChild
-            >
-              <Link href="/d">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Smartphone className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Review</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <div className='flex gap-2 py-2 text-sidebar-accent-foreground'>
+          <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
+            <company.logo className='size-4' />
+          </div>
+          <div className='grid flex-1 text-left text-sm leading-tight'>
+            <span className='truncate font-semibold'>{company.name}</span>
+            <span className='truncate text-xs'>{company.plan}</span>
+          </div>
+        </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
+          <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
-            {data.navMain.map((item, index) => (
-              <Collapsible
-                key={item.title}
-                defaultOpen={index === 1}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton>
-                      {item.title}{' '}
-                      <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
-                      <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  {item.items?.length ? (
+            {navItems.map((item) => {
+              const Icon = item.icon ? Icons[item.icon] : Icons.logo;
+              return item?.items && item?.items?.length > 0 ? (
+                <Collapsible
+                  key={item.title}
+                  asChild
+                  defaultOpen={item.isActive}
+                  className='group/collapsible'
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton
+                        tooltip={item.title}
+                        isActive={pathname === item.url}
+                      >
+                        {item.icon && <Icon />}
+                        <span>{item.title}</span>
+                        <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                        {item.items.map((item) => (
-                          <SidebarMenuSubItem key={item.title}>
-                            <SidebarMenuSubButton asChild>
-                              <Link href={item.url}>{item.title}</Link>
+                        {item.items?.map((subItem) => (
+                          <SidebarMenuSubItem key={subItem.title}>
+                            <SidebarMenuSubButton
+                              asChild
+                              isActive={pathname === subItem.url}
+                            >
+                              <Link href={subItem.url}>
+                                <span>{subItem.title}</span>
+                              </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))}
                       </SidebarMenuSub>
                     </CollapsibleContent>
-                  ) : null}
+                  </SidebarMenuItem>
+                </Collapsible>
+              ) : (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    tooltip={item.title}
+                    isActive={pathname === item.url}
+                  >
+                    <Link href={item.url}>
+                      <Icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
-              </Collapsible>
-            ))}
+              );
+            })}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={session ? {
-          name: session?.user?.name,
-          email: session?.user?.email,
-          avatar: session?.user?.image
-        }: {
-          name: '',
-          email: '',
-          avatar: ''
-        }}/>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  size='lg'
+                  className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+                >
+                  <Avatar className='h-8 w-8 rounded-lg'>
+                    <AvatarImage
+                      src={session?.user?.image || ''}
+                      alt={session?.user?.name || ''}
+                    />
+                    <AvatarFallback className='rounded-lg'>
+                      {session?.user?.name?.slice(0, 2)?.toUpperCase() || 'CN'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className='grid flex-1 text-left text-sm leading-tight'>
+                    <span className='truncate font-semibold'>
+                      {session?.user?.name || ''}
+                    </span>
+                    <span className='truncate text-xs'>
+                      {session?.user?.email || ''}
+                    </span>
+                  </div>
+                  <ChevronsUpDown className='ml-auto size-4' />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg'
+                side='bottom'
+                align='end'
+                sideOffset={4}
+              >
+                <DropdownMenuLabel className='p-0 font-normal'>
+                  <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
+                    <Avatar className='h-8 w-8 rounded-lg'>
+                      <AvatarImage
+                        src={session?.user?.image || ''}
+                        alt={session?.user?.name || ''}
+                      />
+                      <AvatarFallback className='rounded-lg'>
+                        {session?.user?.name?.slice(0, 2)?.toUpperCase() ||
+                          'CN'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className='grid flex-1 text-left text-sm leading-tight'>
+                      <span className='truncate font-semibold'>
+                        {session?.user?.name || ''}
+                      </span>
+                      <span className='truncate text-xs'>
+                        {' '}
+                        {session?.user?.email || ''}
+                      </span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <BadgeCheck />
+                    Account
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <CreditCard />
+                    Billing
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Bell />
+                    Notifications
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

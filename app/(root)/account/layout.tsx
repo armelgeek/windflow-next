@@ -5,7 +5,6 @@ import { headers } from "next/headers";
 import { ReactNode } from "react";
 import { auth } from '@/auth';
 import { kAppName } from '@/core/domain/constants/app.constant';
-import { AppHeader } from '@/shared/components/molecules/layout/app-header';
 import { AccountNav } from '@/shared/components/molecules/navs/account-nav';
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -34,8 +33,7 @@ export default async function Layout({ children }: Props) {
         <div className="flex flex-col gap-6">
           <Card className="border-0 shadow-sm bg-white/50 backdrop-blur supports-[backdrop-filter]:bg-white/50">
             <div className="p-6">
-              <AppHeader
-                title={
+              
                   <div className="flex items-center gap-4">
                     <Avatar className="h-12 w-12 ring-2 ring-offset-2 ring-offset-background ring-primary/10">
                       <AvatarImage
@@ -57,8 +55,7 @@ export default async function Layout({ children }: Props) {
                       </h5>
                     </div>
                   </div>
-                }
-              />
+            
             </div>
 
             <AccountNav className="px-2 pb-2" />
