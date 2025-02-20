@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { RegisterForm } from '@/features/auth/components/organisms/register-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Register',
@@ -18,6 +19,9 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <RegisterForm />
+           <div className='flex items-center py-2 justify-center'>
+            <Link href={'/login'}>Go back to Login</Link>
+         </div>
         </CardContent>
       </Card>
     </div>

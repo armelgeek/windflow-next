@@ -1,6 +1,4 @@
 import React, { ReactNode } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
-import { UserIcon } from 'lucide-react';
 import { auth } from '@/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -15,6 +13,9 @@ import {
   Trash,
   LogOut
 } from 'lucide-react';
+import SignOutButton from '../../atoms/signout-button';
+import Link from 'next/link';
+import { EditableProfilePhotoForm } from '../../atoms/editable-profile-photo-form';
 
 const AppProfile = async ({children}: {children: ReactNode}) => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -31,21 +32,12 @@ const AppProfile = async ({children}: {children: ReactNode}) => {
               <div className="border rounded-lg p-3 w-full">
                 <div className="text-center border-b p-4">
                   <div className="relative mb-2 inline-block">
-                    <Avatar className="h-16 w-16 ring-2 ring-offset-2 ring-offset-background ring-primary/10">
-                      <AvatarImage
-                        width={80}
-                        height={80}
-                        src={session?.user.image ?? ""}
-                        alt={session?.user.username ?? session?.user.name}
-                        className="object-cover rounded-full"
-                      />
-                      <AvatarFallback className="bg-primary/5">
-                        <UserIcon className="h-6 w-6 text-primary/70" />
-                      </AvatarFallback>
-                    </Avatar>
+                    <EditableProfilePhotoForm
+                      photoUrl={session?.user?.image ?? undefined}
+                    />
                   </div>
                   <h6 className="mb-0 font-medium">{session?.user.name}</h6>
-                  <a href="#" className="text-sm text-gray-600 hover:text-primary-600">{session?.user.email}</a>
+                  <Link href="/account" className="text-sm text-gray-600 hover:text-primary-600">{session?.user.email}</Link>
                 </div>
 
                 <div className="mt-4">
@@ -54,10 +46,7 @@ const AppProfile = async ({children}: {children: ReactNode}) => {
                       My profile
                     </NavItem>
 
-
-                    <NavItem href="#" icon="logout" active={false} className="text-red-600">
-                      Sign Out
-                    </NavItem>
+                    <SignOutButton active={false}/>
                   </ul>
                 </div>
               </div>
@@ -78,7 +67,7 @@ const NavItem = ({ href, icon, children, active, className = '' }: { href: strin
   
   return (
     <li>
-      <a 
+      <Link 
         href={href}
         className={`${baseClasses} ${activeClasses} ${className}`}
       >
@@ -86,7 +75,7 @@ const NavItem = ({ href, icon, children, active, className = '' }: { href: strin
           {getIcon(icon)}
         </span>
         {children}
-      </a>
+      </Link>
     </li>
   );
 };

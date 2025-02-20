@@ -19,7 +19,10 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <LoginForm />
-          <Link href={'/forgot-password'}>Mot de passe oublié ?</Link>
+         <div className='flex items-center py-2 justify-between'>
+            <Link href={'/forgot-password'}>Forgot password ?</Link>
+            <Link href={'/register'}>Register</Link>
+         </div>
         </CardContent>
       </Card>
     </div>

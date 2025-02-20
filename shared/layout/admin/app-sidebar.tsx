@@ -27,17 +27,15 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarRail,
-  useSidebar
+  SidebarRail
 } from '@/components/ui/sidebar';
 import {
   BadgeCheck,
-  Bell,
   ChevronRight,
   ChevronsUpDown,
-  CreditCard,
   GalleryVerticalEnd,
-  LogOut
+  LogOut,
+  User2Icon
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname,useRouter } from 'next/navigation';
@@ -198,16 +196,13 @@ export default function AppSidebar({session}: {session: Session} ) {
 
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
-                    <BadgeCheck />
-                    Account
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Bell />
-                    Notifications
+                    <SidebarMenuButton
+                    asChild
+                   >
+                    <Link href={'/account'}>
+                      <User2Icon/> My profile
+                    </Link>
+                    </SidebarMenuButton>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
