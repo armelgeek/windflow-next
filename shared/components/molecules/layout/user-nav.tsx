@@ -17,7 +17,7 @@ import { User2Icon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 export function UserNav({ session }: { session: Session }) {
-
+  
   const router = useRouter();
   const handleSignOut = async () => {
     await authClient.signOut({
@@ -29,11 +29,11 @@ export function UserNav({ session }: { session: Session }) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
-            <Avatar className='h-6 w-6'>
+            <Avatar className='h-8 w-8'>
               <AvatarImage
                 src={session.user?.image ?? ''}
                 alt={session.user?.name ?? ''}
-                className='h-6 w-6 rounded-full'
+                className='h-8 w-8 rounded-full'
               />
               <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
             </Avatar>
@@ -53,9 +53,9 @@ export function UserNav({ session }: { session: Session }) {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <Link href="/account" passHref>
-              <DropdownMenuItem>
-                <User2Icon size={20} />My profile
-              </DropdownMenuItem>
+                <DropdownMenuItem>
+                 <User2Icon size={20} />My profile
+                </DropdownMenuItem>
             </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
