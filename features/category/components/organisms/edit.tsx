@@ -2,20 +2,11 @@
 
 import { useState } from 'react';
 
-
-
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-
-
-
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-
-
-import { CategoryServiceImpl } from '../../domain/category.service';
-import { Category, CategoryPayload } from '../../config/category.type';
+import { useCategory, useCategoryMutations } from '../../hooks/use-category';
 import { CategoryForm } from '../molecules/category-form';
-import { categoryKeys } from '../../config/category.key';
+import { LoadingSpinner } from '@/shared/components/atoms/loading-spinner';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 
 interface EditProps {
   slug: string;
@@ -24,29 +15,24 @@ interface EditProps {
 }
 
 export function Edit({ slug, setIsOpenDropdown }: EditProps) {
-  const queryClient = useQueryClient();
-
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data, isPending } = useQuery({
-    queryKey: categoryKeys.detail(slug),
-    queryFn: () => new CategoryServiceImpl().detail(slug),
-  });
+  const { category, isLoading } = useCategory(slug);
+  const { updateCategory, isUpdating } = useCategoryMutations();
 
-  const { mutate, isPending: isPendingMutation } = useMutation({
-    mutationFn: (payload: CategoryPayload) => {
-      return new CategoryServiceImpl().update(slug, payload);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: categoryKeys.all });
-    },
-  });
-
-  const handleSubmit = async (input: CategoryPayload) => {
-    mutate(input);
+  const handleSubmit = async (input: any) => {
+    await updateCategory({ slug, data: input });
     setIsOpen(false);
     setIsOpenDropdown(false);
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (!category) {
+    return <div>Catégorie non trouvée</div>;
+  }
 
   return (
     <Sheet
@@ -63,15 +49,19 @@ export function Edit({ slug, setIsOpenDropdown }: EditProps) {
         </SheetHeader>
 
         <div className="grid gap-4 py-4">
-          {isPending ? (
-            'Loading...'
-          ) : (
-            <CategoryForm
-              initialData={data as Category}
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-medium">Modifier la catégorie</h3>
+              <p className="text-sm text-muted-foreground">
+                Modifiez les informations de la catégorie
+              </p>
+            </div>
+            <CategoryForm 
+              initialData={category}
               onSubmit={handleSubmit}
-            //isLoading={isPendingMutation}
+              isSubmitting={isUpdating}
             />
-          )}
+          </div>
         </div>
       </SheetContent>
     </Sheet>

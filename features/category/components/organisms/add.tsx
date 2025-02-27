@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +16,7 @@ import {
 import { CategoryServiceImpl } from '../../domain/category.service';
 import { CategoryPayload } from '../../config/category.type';
 import { CategoryForm } from '../molecules/category-form';
+import { useCategoryMutations } from '../../hooks/use-category';
 import { categoryKeys } from '../../config/category.key';
 
 export function Add() {
@@ -23,18 +24,12 @@ export function Add() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: (payload: CategoryPayload) => {
-      return new CategoryServiceImpl().create(payload);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: categoryKeys.all });
-    },
-  });
+  const { createCategory, isCreating } = useCategoryMutations();
 
   const handleSubmit = async (input: CategoryPayload) => {
-    await mutateAsync(input);
+    await createCategory(input);
     setIsOpen(false);
+    queryClient.invalidateQueries({ queryKey: categoryKeys.all });
   };
 
   return (
@@ -63,7 +58,7 @@ export function Add() {
           <CategoryForm
             initialData={null}
             onSubmit={handleSubmit}
-          // isLoading={isPending}
+            isSubmitting={isCreating}
           />
         </div>
       </SheetContent>
