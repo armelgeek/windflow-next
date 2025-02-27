@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { EditableProfilePhotoForm } from '../../atoms/editable-profile-photo-form';
 import AppProfileNav from './app-profile-nav';
+import SignOutButton from '../../atoms/signout-button';
 
 const AppProfile = async ({children}: {children: ReactNode}) => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -19,22 +20,18 @@ const AppProfile = async ({children}: {children: ReactNode}) => {
       <div className="flex flex-col xl:flex-row gap-6">
         <div className="xl:w-1/4">
           <div className="flex-col p-3 xl:p-0">
-            <div className="h-full" tabIndex={-1}>
-              <div className="border rounded-lg p-3 w-full">
-                <div className="text-center border-b p-4">
-                  <div className="relative mb-2 inline-block">
-                    <EditableProfilePhotoForm
-                      photoUrl={session?.user?.image ?? undefined}
-                    />
-                  </div>
-                  <h6 className="mb-0 font-medium">{session?.user.name}</h6>
-                  <Link href="/account" className="text-sm text-gray-600 hover:text-primary-600">{session?.user.email}</Link>
-                </div>
-                <div className="mt-4">
-                  <AppProfileNav/>
-                </div>
-              </div>
+            <div className={`flex flex-col gap-1 group`}>
+              <p className='font-medium text-md uppercase text-gray-500'>Personal information</p>
+              <hr className="border-t transition-opacity duration-300 opacity-100 group-hover:opacity-100" />
             </div>
+            <div className="h-full py-4" tabIndex={-1}>
+                  <AppProfileNav/>
+            </div>
+            <div className={`flex flex-col mb-2 gap-1 group`}>
+              <p className='font-medium text-md uppercase text-gray-500'>Settings</p>
+              <hr className="border-t transition-opacity duration-300 opacity-100 group-hover:opacity-100" />
+            </div>
+             <SignOutButton active={false}/>
           </div>
         </div>
         <div className="xl:w-3/4">

@@ -10,7 +10,6 @@ const AppNav = () => {
         <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
             {[
                 { href: "/", label: "HOME" },
-                { href: "/collection", label: "COLLECTION" },
                 { href: "/about", label: "ABOUT" },
                 { href: "/contact", label: "CONTACT" }
             ].map((item) => (

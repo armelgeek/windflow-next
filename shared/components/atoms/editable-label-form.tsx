@@ -48,7 +48,7 @@ export function EditableLabelForm({ className, placeholder, value, label, type =
     >
       <Label
         htmlFor="__value"
-        className="text-muted-foreground text-xs leading-none"
+        className="text-muted-foreground text-sm leading-none"
       >
         {label ?? "Value"}
       </Label>

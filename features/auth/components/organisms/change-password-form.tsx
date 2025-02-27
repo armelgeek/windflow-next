@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, Lock } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -65,7 +65,7 @@ export function ChangePassword() {
     >
       <DialogTrigger asChild>
         <Button className="w-32" variant="outline">
-          Update Password
+          <Lock size={16} className="mr-2" /> Update Password
         </Button>
       </DialogTrigger>
       <DialogContent className="p-8">
@@ -137,9 +137,10 @@ export function ChangePassword() {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full pt-2"
               disabled={form.formState.isSubmitting}
             >
+
               {form.formState.isSubmitting ? (
                 <Loader2 className="animate-spin" />
               ) : null}

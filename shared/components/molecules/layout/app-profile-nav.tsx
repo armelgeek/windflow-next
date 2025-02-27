@@ -9,9 +9,9 @@ import {
   ShoppingBag,
   Heart,
   Trash,
-  LogOut
+  LogOut,
+  Key
 } from 'lucide-react';
-import SignOutButton from '../../atoms/signout-button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 const NavItem = ({ href, icon, children, active, className = '' }: { href: string; icon: string; children: ReactNode; active: boolean; className?: string }) => {
@@ -19,7 +19,7 @@ const NavItem = ({ href, icon, children, active, className = '' }: { href: strin
   const activeClasses = active ? "bg-gray-200 text-gray-800" : "";
   return (
     <li>
-      <Link 
+      <Link
         href={href}
         className={`${baseClasses} ${activeClasses} ${className}`}
       >
@@ -34,29 +34,29 @@ const NavItem = ({ href, icon, children, active, className = '' }: { href: strin
 
 const getIcon = (name: string) => {
   const icons = {
-    user: <User size={18}/>,
-    shield: <Shield size={18}/>,
-    bell: <Bell size={18}/>,
-    briefcase: <Briefcase size={18}/>,
-    "credit-card": <CreditCard size={18}/>,
-    "shopping-bag": <ShoppingBag size={18}/>,
-    heart: <Heart size={18}/>,
-    trash: <Trash size={18}/>,
-    logout: <LogOut size={18}/>
+    user: <User size={18} />,
+    password: <Key size={18} />,
+    trash: <Trash size={18} />,
+    logout: <LogOut size={18} />
   };
-  
+
   return icons[name as keyof typeof icons] || null;
 };
 const AppProfileNav = () => {
-    const pathname = usePathname();
-    return (<div>
-        <ul>
-            <NavItem href="/account" icon="user" active={pathname === '/account'}>
-                My profile
-            </NavItem>
-            <SignOutButton active={false}/>
-        </ul>
-    </div>);
+  const pathname = usePathname();
+  return (<div>
+    <ul className='flex flex-col space-y-2'>
+      <NavItem href="/account" icon="user" active={pathname === '/account'}>
+        Edit profile
+      </NavItem>
+      <NavItem href="/account/update-password" icon="password" active={pathname === '/account/update-password'}>
+        Update password
+      </NavItem>
+      <NavItem href="/account/delete-account" icon="trash" active={pathname === '/account/delete-account'}>
+        Delete profile
+      </NavItem>
+    </ul>
+  </div>);
 };
 
 export default AppProfileNav;

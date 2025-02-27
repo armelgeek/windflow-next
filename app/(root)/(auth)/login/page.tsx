@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 
 import { LoginForm } from '@/features/auth/components/organisms/login-form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Login',
@@ -11,20 +9,6 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>Enter your email below to login to your account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <LoginForm />
-         <div className='flex items-center py-2 justify-between'>
-            <Link href={'/forgot-password'}>Forgot password ?</Link>
-            <Link href={'/register'}>Register</Link>
-         </div>
-        </CardContent>
-      </Card>
-    </div>
+    <LoginForm/>
   );
 }

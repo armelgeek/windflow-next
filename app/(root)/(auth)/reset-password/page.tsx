@@ -3,7 +3,7 @@ import { ResetPasswordForm } from '@/features/auth/components/organisms/reset-pa
 export default function Page() {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-lg">
         <ResetPasswordForm />
       </div>
     </div>
