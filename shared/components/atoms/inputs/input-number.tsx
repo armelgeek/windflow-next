@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Plus, Minus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 
 interface InputNumberProps {
   value: number;
@@ -68,7 +68,7 @@ export const InputNumber: React.FC<InputNumberProps> = ({
           <Minus size={16} />
         </button>
       )}
-      
+
       <input
         type="number"
         value={formatValue(value)}

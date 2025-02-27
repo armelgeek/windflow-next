@@ -13,7 +13,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { CategoryServiceImpl } from '../../domain/category.service';
 import { CategoryPayload } from '../../config/category.type';
 import { CategoryForm } from '../molecules/category-form';
 import { useCategoryMutations } from '../../hooks/use-category';
