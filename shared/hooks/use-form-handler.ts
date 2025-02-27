@@ -53,7 +53,6 @@ export const useFormHandler = <T extends object>({
       console.error('Form submission error:', error);
     }
   };
-  console.log('[!] Errors', form.formState.errors);
   return {
     form,
     handleSubmit,
