@@ -33,8 +33,8 @@ interface DataTableProps<TData, TValue> {
   search: string | null;
   sortBy: string | null;
   sortDir: SortDirection | null;
-  page: number;
-  pageSize: number;
+  page: number | null;
+  pageSize: number | null;
   filter?: ColumnFiltersState | null;
   onSearchChange: (search: string | null) => void;
   onSortByChange: (sort: string | null) => void;

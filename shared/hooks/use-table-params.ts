@@ -36,8 +36,8 @@ export function useTableParams() {
       search,
       sortBy,
       sortDir: sortDir as SortDirection,
-      page: page || 1,
-      pageSize: pageSize || 10,
+      page: Number(page) || 1,
+      pageSize: Number(pageSize) || 10,
       ...handlers,
     },
   };

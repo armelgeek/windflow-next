@@ -7,11 +7,11 @@ import type { Category } from '@/features/category/config/category.type';
 
 import { DataTableRowActions } from './data-table-row-actions';
 
-export const columns: ColumnDef<Category & { parent: Category | null }>[] = [
+export const columns: ColumnDef<Category>[] = [
   {
     id: 'name',
     meta: 'Name',
-    accessorFn: (row) => row.name,
+    accessorKey: 'name',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
