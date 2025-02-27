@@ -19,11 +19,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { RegisterFormSchema } from '@/core/domain/schema/auth/auth.schema';
-import { RegisterPayload } from '@/core/domain/types/auth.type';
 import { cn } from '@/shared/lib/utils';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { RegisterPayload } from '../../config/auth.type';
+import { RegisterFormSchema } from '../../config/auth.schema';
 
 export const RegisterForm = () => {
   const router = useRouter();

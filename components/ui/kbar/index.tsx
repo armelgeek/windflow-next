@@ -9,8 +9,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import RenderResults from './render-result';
-import { navItems } from '@/core/domain/constants/app.constant';
-
+import { navItems } from '@/shared/lib/constants/app.constant';
 export default function KBar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
@@ -26,14 +25,14 @@ export default function KBar({ children }: { children: React.ReactNode }) {
         const baseAction =
           navItem.url !== '#'
             ? {
-                id: `${navItem.title.toLowerCase()}Action`,
-                name: navItem.title,
-                shortcut: navItem.shortcut,
-                keywords: navItem.title.toLowerCase(),
-                section: 'Navigation',
-                subtitle: `Go to ${navItem.title}`,
-                perform: () => navigateTo(navItem.url)
-              }
+              id: `${navItem.title.toLowerCase()}Action`,
+              name: navItem.title,
+              shortcut: navItem.shortcut,
+              keywords: navItem.title.toLowerCase(),
+              section: 'Navigation',
+              subtitle: `Go to ${navItem.title}`,
+              perform: () => navigateTo(navItem.url)
+            }
             : null;
 
         // Map child items into actions

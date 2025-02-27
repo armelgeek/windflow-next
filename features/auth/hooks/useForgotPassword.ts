@@ -1,7 +1,7 @@
 import { authClient } from "@/auth-client";
-import { ForgotPasswordPayload } from "@/core/domain/types/forgot-password.type";
 import { useState } from "react";
 import { toast } from 'sonner';
+import { ForgotPasswordPayload } from "../config/forgot-password.type";
 
 const useForgotPassword = () => {
     const [pending, setPending] = useState(false);

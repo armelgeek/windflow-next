@@ -6,11 +6,11 @@ import { LoadingButton } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { resetPasswordSchema } from '@/core/domain/schema/auth/reset-password.schema';
-import { ResetPasswordPayload } from '@/core/domain/types/reset-password.type';
 import { useFormHandler } from '@/shared/hooks/use-form-handler';
 import useResetPassword from '@/features/auth/hooks/useResetPassword';
 import { cn } from '@/shared/lib/utils';
+import { resetPasswordSchema } from "../../config/reset-password.schema";
+import { ResetPasswordPayload } from "../../config/reset-password.type";
 
 
 function ResetPasswordFormNoSuspense({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
@@ -19,14 +19,14 @@ function ResetPasswordFormNoSuspense({ className, ...props }: React.ComponentPro
   const invalid_token_error = searchParams.get("error");
   const token = searchParams.get("token");
   const { handleResetPassword, pending } = useResetPassword(token);
-  const { form,handleSubmit } = useFormHandler<ResetPasswordPayload>({
-    schema:resetPasswordSchema,
+  const { form, handleSubmit } = useFormHandler<ResetPasswordPayload>({
+    schema: resetPasswordSchema,
     initialValues: {
       password: '',
       confirmPassword: '',
     },
-    onSubmit:handleResetPassword,
-    onSuccess: () => {},
+    onSubmit: handleResetPassword,
+    onSuccess: () => { },
     resetAfterSubmit: true,
   });
 

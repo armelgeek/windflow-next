@@ -15,18 +15,18 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { LoginFormSchema } from '@/core/domain/schema/auth/auth.schema';
-import { LoginPayload } from '@/core/domain/types/auth.type';
 import { cn } from '@/shared/lib/utils';
 import useLogin from '../../hooks/useLogin';
 import FormWrapper from '@/shared/components/molecules/form/FormWrapper';
 import { ControlledTextInput } from '@/shared/components/molecules/form/ControlledTextInput';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
+import { LoginFormSchema } from '../../config/auth.schema';
+import { LoginPayload } from '../../config/auth.type';
 
 export const LoginForm = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const {isLoading, handleSubmit} = useLogin();
+  const { isLoading, handleSubmit } = useLogin();
   const form = useForm<LoginPayload>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -44,52 +44,52 @@ export const LoginForm = () => {
         </CardHeader>
         <CardContent>
           <FormWrapper form={form} onSubmit={handleSubmit}>
-              <div className="grid space-y-6">
-                <ControlledTextInput
-                  control={form.control}
-                  name="email"
-                  label="Email"
-                  placeholder="Email"
-                />
+            <div className="grid space-y-6">
+              <ControlledTextInput
+                control={form.control}
+                name="email"
+                label="Email"
+                placeholder="Email"
+              />
 
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field, fieldState: { error } }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            type={isShowPassword ? 'text' : 'password'}
-                            {...field}
-                            className={cn('pr-10', error && 'border-destructive')}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                            onClick={() => setIsShowPassword((prevState) => !prevState)}
-                            aria-label={isShowPassword ? 'Hide password' : 'Show password'}
-                          >
-                            {isShowPassword ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-                          </Button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field, fieldState: { error } }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={isShowPassword ? 'text' : 'password'}
+                          {...field}
+                          className={cn('pr-10', error && 'border-destructive')}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setIsShowPassword((prevState) => !prevState)}
+                          aria-label={isShowPassword ? 'Hide password' : 'Show password'}
+                        >
+                          {isShowPassword ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+                        </Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <LoadingButton
-                  type="submit"
-                  pending={isLoading}
-                >
-                  Login
-                </LoadingButton>
-              </div>
+              <LoadingButton
+                type="submit"
+                pending={isLoading}
+              >
+                Login
+              </LoadingButton>
+            </div>
           </FormWrapper>
           <div className="flex flex-col items-center space-y-4 text-sm">
             <Link href="/forgot-password" className="text-blue-600 mt-4 hover:text-blue-800 transition-colors duration-200 underline-offset-2 hover:underline">

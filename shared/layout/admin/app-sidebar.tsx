@@ -30,7 +30,6 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar';
 import {
-  BadgeCheck,
   ChevronRight,
   ChevronsUpDown,
   GalleryVerticalEnd,
@@ -38,29 +37,29 @@ import {
   User2Icon
 } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname,useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
-import { navItems } from '@/core/domain/constants/app.constant';
 import { Icons } from '@/components/ui/icons';
 import { authClient } from '@/auth-client';
 import { Session } from 'better-auth';
+import { navItems } from '@/shared/lib/constants/app.constant';
 
 export const company = {
-  name: 'Acme Inc',
+  name: 'Boilerplate',
   logo: GalleryVerticalEnd,
   plan: 'Enterprise'
 };
 
-export default function AppSidebar({session}: {session: Session} ) {
+export default function AppSidebar({ session }: { session: Session }) {
   const router = useRouter();
   const pathname = usePathname();
   //const { state, isMobile } = useSidebar();
 
   const handleSignOut = async () => {
-      await authClient.signOut({
-        fetchOptions: { onSuccess: () => router.push('/login') },
-      });
-    };
+    await authClient.signOut({
+      fetchOptions: { onSuccess: () => router.push('/login') },
+    });
+  };
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
@@ -198,7 +197,7 @@ export default function AppSidebar({session}: {session: Session} ) {
                 <DropdownMenuGroup>
                   <Link href="/account" passHref>
                     <DropdownMenuItem>
-                        <User2Icon/> My profile
+                      <User2Icon /> My profile
                     </DropdownMenuItem>
                   </Link>
                 </DropdownMenuGroup>
