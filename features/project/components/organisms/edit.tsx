@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useCategory, useCategoryMutations } from '../../hooks/use-category';
+import { useProject, useProjectMutations } from '../../hooks/use-project';
 import { EntityForm } from '@/shared/components/molecules/form/add-entity';
-import { CategoryForm } from '../molecules/category-form';
-import { CategoryPayload } from '../../config/category.type';
+import { ProjectForm } from '../molecules/project-form';
+import { ProjectPayload } from '../../config/project.type';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { EditIcon } from 'lucide-react';
 
@@ -15,16 +15,16 @@ interface EditProps {
 
 export function Edit({ slug, onComplete }: EditProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { category } = useCategory(slug);
-  const { updateCategory } = useCategoryMutations();
+  const { project } = useProject(slug);
+  const { updateProject } = useProjectMutations();
 
-  const handleSubmit = async (data: CategoryPayload) => {
-    await updateCategory({ slug, data });
+  const handleSubmit = async (data: ProjectPayload) => {
+    await updateProject({ slug, data });
     setIsOpen(false);
     onComplete?.();
   };
 
-  if (!category) {
+  if (!project) {
     return null;
   }
 
@@ -39,15 +39,15 @@ export function Edit({ slug, onComplete }: EditProps) {
         <EditIcon size={16} className="mr-2" />
         Edit
       </DropdownMenuItem>
-      {/**<EntityForm
-        title="Modifier la catégorie"
-        description="Modifier les informations de la catégorie"
+      <EntityForm
+        title="Modifier la projet"
+        description="Modifier les informations de la projet"
         isOpen={isOpen}
         onOpenChange={setIsOpen}
         onSubmit={handleSubmit}
       >
-        <CategoryForm defaultValues={category} />
-      </EntityForm>**/}
+        <ProjectForm defaultValues={project} />
+      </EntityForm>
     </>
   );
 }

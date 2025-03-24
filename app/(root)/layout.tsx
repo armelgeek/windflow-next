@@ -22,7 +22,7 @@ export default async function BaseLayout({ children }: RootLayoutProps) {
       <main>
         {children}
       </main>
-      <AppFooter/>
+      {/**<AppFooter/>**/}
     </div>
   );
 }

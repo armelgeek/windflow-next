@@ -12,5 +12,13 @@ export const API_ENDPOINTS = {
     detail: (slug: string) => `/categories/${slug}`,
     update: (slug: string) => `/categories/${slug}`,
     delete: (slug: string) => `/categories/${slug}`,
+  },
+  projects: {
+    base: '/projects',
+    list: (qs: string) => `/projects${qs}`,
+    create: '/projects',
+    detail: (slug: string) => `/projects/${slug}`,
+    update: (slug: string) => `/projects/${slug}`,
+    delete: (slug: string) => `/projects/${slug}`,
   }
 } as const;
