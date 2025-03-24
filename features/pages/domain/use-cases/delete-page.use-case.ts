@@ -3,13 +3,13 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/drizzle/db';
 import { pages } from '@/drizzle/schema/pages';
 
-export async function deleteProject(slug: string) {
-  const existingProject = await db.query.pages.findFirst({
+export async function deletePage(slug: string) {
+  const existingPage = await db.query.pages.findFirst({
     where: eq(pages.slug, slug),
   });
 
-  if (!existingProject) {
-    throw new Error('Project not found');
+  if (!existingPage) {
+    throw new Error('Page not found');
   }
 
   await db

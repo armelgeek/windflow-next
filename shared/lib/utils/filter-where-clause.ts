@@ -29,9 +29,12 @@ export function filterWhereClause(columns: string[], filter: Filter) {
     const searchCondition = filterSearchCondition(columns, filter.search as string);
     if (searchCondition) conditions.push(searchCondition);
   }
+  if (filter.projectId) {
+    conditions.push(sql`project_id=${filter.projectId}`);
+  }
 
   Object.entries(filter).forEach(([key, value]) => {
-    if (key === 'search') return;
+    if (key === 'search' || key == 'projectId') return;
     if (Array.isArray(value)) {
       const condition = filterArrayCondition(key, value);
       if (condition) conditions.push(condition);

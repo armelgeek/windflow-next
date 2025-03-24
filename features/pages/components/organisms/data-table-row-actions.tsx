@@ -14,7 +14,7 @@ import {
 
 import { Delete } from './delete';
 import { Edit } from './edit';
-import { Project } from '../../config/project.type';
+import { Page } from '../../config/page.type';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -22,7 +22,7 @@ interface DataTableRowActionsProps<TData> {
 
 export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TData>) {
   const [isOpen, setIsOpen] = useState(false);
-  const category = row.original as Project;
+  const page = row.original as Page;
 
   return (
     <DropdownMenu
@@ -47,10 +47,11 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
         className="w-[160px]"
       >
         <Edit
-          slug={category.slug}
+          slug={page.slug}
+        
         />
         <Delete
-          slug={category.slug}
+          slug={page.slug}
         />
       </DropdownMenuContent>
     </DropdownMenu>

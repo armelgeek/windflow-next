@@ -50,15 +50,7 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
-    title: 'Category',
-    url: '/d/master/category',
-    icon: 'post',
-    shortcut: ['c', 'c'],
-    isActive: false,
-    items: []
-  },
-  {
-    title: 'Project',
+    title: 'Projects',
     url: '/d/master/project',
     icon: 'post',
     shortcut: ['p', 'p'],

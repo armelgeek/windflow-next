@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Plus, Pencil } from 'lucide-react';
+import { Plus, Pencil, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -99,24 +99,26 @@ export function EntityForm<T>({
       onOpenChange={(open) => setIsOpen(open)}
     >
       <SheetTrigger asChild>
-        <Button variant={buttonVariant}>
-          {isEditMode ? (
-            <Pencil
-              className="-ms-1 me-2"
-              size={16}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-          ) : (
-            <Plus
-              className="-ms-1 me-2"
-              size={16}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-          )}
+        {!isEditMode ? (<Button variant={buttonVariant}>
+
+          <Plus
+            className="-ms-1 me-2"
+            size={16}
+            strokeWidth={2}
+            aria-hidden="true"
+          />
           {buttonLabel || `${actionText} ${title}`}
+        </Button>) : (
+          <Button variant={buttonVariant} className='flex items-start w-full justify-start bg-transparent hover:bg-inherit border-none outline-none'> 
+          <Edit
+            className="-ms-1 me-2"
+            size={16}
+            strokeWidth={2}
+            aria-hidden="true"
+          />
+          {actionText}
         </Button>
+        )}
       </SheetTrigger>
       <SheetContent className={className}>
         <SheetHeader>

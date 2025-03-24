@@ -20,5 +20,17 @@ export const API_ENDPOINTS = {
     detail: (slug: string) => `/projects/${slug}`,
     update: (slug: string) => `/projects/${slug}`,
     delete: (slug: string) => `/projects/${slug}`,
-  }
+  },
+  pages: {
+    base: '/pages',
+    list: (qs: string) => `/pages${qs}`,
+    create: '/pages',
+    detail: (slug: string) => `/pages/${slug}`,
+    pagesByProject: (qs: string) => `/pages/projects/${qs}`,
+    update: (slug: string) => `/pages/${slug}`,
+    delete: (slug: string) => `/pages/${slug}`,
+    updateContent: (slug: string) => `/pages/content/${slug}`,
+    
+  },
+  
 } as const;
