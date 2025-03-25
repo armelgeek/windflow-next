@@ -602,7 +602,7 @@ export const persistCustomFonts = (editor) => {
                         if (fontData && fontData.files) {
                             console.log(`Restauration de la police ${font.name}...`);
 
-                            if (window.fontManager?.addCustomFont) {
+                            if (typeof window !== "undefined" && window.fontManager?.addCustomFont) {
                                 window.fontManager.addCustomFont(
                                     font.name,
                                     fontData.files,
@@ -710,7 +710,7 @@ export const fixWOFF2Persistence = (editor) => {
     };
     
     const setupFontManagerOverride = () => {
-      if (window.fontManager && window.fontManager.addCustomFont) {
+      if (typeof window !== "undefined" && window.fontManager && window.fontManager.addCustomFont) {
         const originalAddCustomFont = window.fontManager.addCustomFont;
         
         window.fontManager.addCustomFont = async (fontFamily, fontFiles, fontWeight = 400, fontStyle = 'normal') => {
@@ -757,7 +757,7 @@ export const fixWOFF2Persistence = (editor) => {
           }
           
           // Restaurer la police à l'aide du fontManager
-          if (window.fontManager && window.fontManager.addCustomFont) {
+          if (typeof window !== "undefined" && window.fontManager && window.fontManager.addCustomFont) {
             const added = window.fontManager.addCustomFont(
               storedFont.name,
               storedFont.data,
