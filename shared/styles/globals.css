@@ -72,6 +72,24 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 253 91% 58%%;
   }
+
+}
+:root {
+  --gjs-primary-color: #546e7a;
+  --gjs-secondary-color: #90a4ae;
+  --gjs-tertiary-color: #455a64;
+  
+  --gjs-quaternary-color: #263238;
+  --gjs-quinary-color: #37474f;
+  
+  /* Couleurs d'accentuation */
+  --gjs-accent-color: #4361ee;
+  --gjs-accent-dark-color: #3a56d4;
+  
+  /* Autres variables */
+  --gjs-main-bg-color: #f8f9fa;
+  --gjs-tool-bg-color: #e9ecef;
+  --gjs-font-color: #343a40;
 }
 
 @layer base {
