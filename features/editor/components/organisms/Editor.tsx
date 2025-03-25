@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useRef, useState } from "react";
 import "grapesjs/dist/css/grapes.min.css";
 import grapesjs, { usePlugin } from 'grapesjs'
@@ -9,14 +10,23 @@ import gjsComponentCodeEditor from "grapesjs-component-code-editor";
 import gjsParserPostcss from "grapesjs-parser-postcss";
 import gjsTooltip from "grapesjs-tooltip";
 import grapesjsIcons from 'grapesjs-icons'
-
+import grapeJsUiSuggestClasses from '@silexlabs/grapesjs-ui-suggest-classes';
 import gjsTuiImageEditor from "grapesjs-tui-image-editor";
-
+import gjsForms from 'grapesjs-plugin-forms';
+import gjsRulers from 'grapesjs-rulers';
+import gjsBlocksTable from 'grapesjs-blocks-table';
+import grapesjsTabs from 'grapesjs-tabs'
+import grapesjsStyleBg from 'grapesjs-style-bg'
+import grapesjsStyleGradient from 'grapesjs-style-gradient'
+import grapesjsUserBlocks from 'grapesjs-user-blocks';
+import grapejsRteExtensions from 'grapesjs-rte-extensions';
+import 'grapesjs-rte-extensions/dist/grapesjs-rte-extensions.min.css';
 import { Plus, Trash2, FileText, Download } from "lucide-react";
+
 import toast from "react-hot-toast";
 import axios from "axios";
 import JSZip from "jszip";
-import { fixWOFF2Persistence, initFontSystem, persistCustomFonts } from "@/shared/lib/fonts";
+import { fixWOFF2Persistence, initFontSystem } from "@/shared/lib/fonts";
 import { addTailwindV3Blocks, configureDarkModeSupport, configureTailwindExport, configureTailwindJIT, configureTailwindV3, generateTailwindConfig } from "@/shared/lib/tailwind";
 import { localStorageAPI } from "@/shared/lib/storage";
 import { replaceImageURLs } from "@/shared/lib/image";
@@ -55,7 +65,15 @@ const Editor = () => {
         gjsTuiImageEditor,
         gjsCustomCode,
         gjsComponentCodeEditor,
-        grapesjsIcons
+        grapesjsIcons,
+        grapeJsUiSuggestClasses,
+        gjsForms,
+        gjsBlocksTable,
+        grapesjsStyleBg,
+        grapesjsStyleGradient,
+        gjsRulers,
+        grapesjsUserBlocks,
+        grapejsRteExtensions
       ],
       pluginsOpts: {
         [grapesjsTailwind]: {
@@ -69,12 +87,72 @@ const Editor = () => {
             'uim', // Unicons Monochrome by Iconscout
             'streamline-emojis' // Streamline Emojis by Streamline
           ]
+        },
+        [grapeJsUiSuggestClasses]: {
+
+        },
+        [gjsForms]:{
+          blocks: ['form', 'input', 'textarea', 'select', 'button', 'label', 'checkbox', 'radio'],
+          category: 'Form',
+          block: (blockId) => ({})
+        },
+        [gjsBlocksTable]:{
+          'containerId' : '#gjs' 
+        },
+        [grapesjsTabs]: {
+
+        },
+        [grapesjsStyleBg]:{
+
+        },
+        [grapesjsStyleGradient]:{},
+        [gjsRulers]: {},
+        [grapesjsUserBlocks]:{},
+        'grapesjs-rte-extensions': {
+          // default options
+          base: {
+            bold: true,
+            italic: true,
+            underline: true,
+            strikethrough: true,
+            link: true,
+          },
+          fonts: {
+            fontSize: true,
+            fontColor: true,
+            hilite: true,
+          },
+          format: {
+            heading1: true,
+            heading2: true,
+            heading3: true,
+            //heading4: false,
+            //heading5: false,
+            //heading6: false,
+            paragraph: true,
+            //quote: false,
+            clearFormatting: true,
+          },
+          subscriptSuperscript: true,
+          indentOutdent: true,
+          list: true,
+          align: true,
+          actions: {
+           copy: true,
+          cut: true,
+          paste: true,
+          delete: true,
+          },
+          undoredo: true,
+          extra: false,
+          darkColorPicker: true,
+          maxWidth: '600px'
         }
       }
     });
 
     editorRef.current = editor;
-    window.editor = editor;
+    if(typeof window!=undefined) window.editor = editor;
 
     configureTailwindV3(editor);
     addTailwindV3Blocks(editor);
@@ -82,9 +160,22 @@ const Editor = () => {
     configureDarkModeSupport(editor);
     configureTailwindExport(editor);
     const fontManager = initFontSystem(editor);
-    window.fontManager = fontManager;
+
+    if(typeof window!=undefined) window.fontManager = fontManager;
     const fontPersistence = fixWOFF2Persistence(editor);
-    window.fontPersistence = fontPersistence;
+    if(typeof window!=undefined) window.fontPersistence = fontPersistence;
+    editor.StyleManager.addProperty('decorations', {
+      type: 'gradient', 
+      name: 'Gradient',
+      property: 'background-image',
+      defaults: 'none',
+      full: true,
+    });
+    
+    editor.StyleManager.addProperty('decorations', {
+      extend: 'background-image', 
+      name: 'Gradient Background',
+    });
     editor.Commands.add("set-internal-link", {
       run(editor) {
         const slug = prompt("Enter page slug (e.g. home, about, contact)");
@@ -380,7 +471,7 @@ const Editor = () => {
     const css = editor.getCss();
     const pageName = page.get("name") || "previewpage";
     localStorage.setItem(`preview-${pageName}`, JSON.stringify({ html, css }));
-    window.open(`/previewpage/${pageName}`, "_blank");
+    if(typeof window!=undefined) window.open(`/previewpage/${pageName}`, "_blank");
   };
 
   const handleSaveTemplate = () => {

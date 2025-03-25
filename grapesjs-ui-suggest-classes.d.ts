@@ -1,0 +1,1 @@
+declare module '@silexlabs/grapesjs-ui-suggest-classes';
