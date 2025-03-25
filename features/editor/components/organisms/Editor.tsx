@@ -1,6 +1,5 @@
 'use client';
 import React from "react";
-import "grapesjs/dist/css/grapes.min.css";
 
 import { useEditor } from "../../hooks/useEditor";
 import { usePages } from "../../hooks/usePages";

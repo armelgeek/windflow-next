@@ -18,7 +18,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   
   return (
     <html lang="en" className={`${outfit.className}`} suppressHydrationWarning>
-     
+      <head>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@800&display=swap" rel="stylesheet"/>
+      </head>
       <body>
         <NextTopLoader showSpinner={true} />
         <Provider>

@@ -125,7 +125,6 @@ export const useEditor = () => {
     configureTailwindV3(editor);
     addTailwindV3Blocks(editor);
     configureTailwindJIT(editor);
-    configureDarkModeSupport(editor);
     configureTailwindExport(editor);
 
     const fontManager = initFontSystem(editor);

@@ -194,7 +194,7 @@ export const useExport = (editorRef, templateDetails) => {
 
           try {
             const base64Content = base64Data.split(',')[1];
-            assetsFolder.file(fileName, base64Content, { base64: true });
+            if(assetsFolder) assetsFolder.file(fileName, base64Content, { base64: true });
 
             processedImages[base64Data] = imagePath;
             processedHtml = processedHtml.replace(base64Data, imagePath);
@@ -220,7 +220,7 @@ export const useExport = (editorRef, templateDetails) => {
 
           try {
             const base64Content = base64Data.split(',')[1];
-            assetsFolder.file(fileName, base64Content, { base64: true });
+            if(assetsFolder) assetsFolder.file(fileName, base64Content, { base64: true });
 
             processedImages[base64Data] = imagePath;
             processedHtml = processedHtml.replace(base64Data, imagePath);
@@ -282,16 +282,16 @@ export const useExport = (editorRef, templateDetails) => {
                 </body>
                 </html>`;
                 
-        if (pagesFolder) pagesFolder.file(`${pageId}.html`, processedHtml);
-        indexContent += `
-            <li><a href="pages/${pageId}.html" class="text-blue-600 hover:underline">${pageName}</a></li>`;
-      }
+                  if (pagesFolder) pagesFolder.file(`${pageId}.html`, processedHtml);
+                  indexContent += `
+                      <li><a href="pages/${pageId}.html" class="text-blue-600 hover:underline">${pageName}</a></li>`;
+                }
       
-      indexContent += `
-          </ul>
-        </div>
-      </body>
-      </html>`;
+                  indexContent += `
+                </ul>
+              </div>
+            </body>
+            </html>`;
 
       zip.file("index.html", indexContent);
 

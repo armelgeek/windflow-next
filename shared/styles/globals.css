@@ -101,7 +101,6 @@
   }
 }
 
-/* Refined shadow utilities for better layering */
 @layer utilities {
   .shadow-card-dark {
     box-shadow:
@@ -115,7 +114,6 @@
       0 5px 15px rgba(0, 0, 0, 0.4);
   }
 
-  /* New utility for subtle hover states */
   .hover-elevation-dark {
     transition: background-color 0.2s ease;
   }
@@ -125,11 +123,11 @@
 }
 @layer utilities {
   .min-h-screen {
-    min-height: 100vh; /* Fallback */
+    min-height: 100vh; 
     min-height: 100dvh;
   }
   .h-screen {
-    height: 100vh; /* Fallback */
+    height: 100vh;
     height: 100dvh;
   }
 }
@@ -143,8 +141,6 @@
   }
 }
 
-
-
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -157,7 +153,6 @@
   background-color: transparent;
 }
 
-/* scrollbar itself */
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 16px;
@@ -174,4 +169,858 @@ iframe {
   -moz-transition: 0.2s ease-in-out;
   -ms-transition: 0.2s ease-in-out;
   -o-transition: 0.2s ease-in-out;
+}
+
+
+/* Dark GrapeJS Theme */
+
+/* Main editor background */
+.gjs-one-bg {
+  background-color: #1e1e2e!important;
+}
+
+/* Secondary background color */
+.gjs-two-color {
+  color: #8be9fd!important;
+}
+.gjs-two-color-h:hover {
+  color: #50fa7b!important;
+}
+
+.gjs-three-bg {
+  background-color: #44475a!important;
+}
+.gjs-three-color {
+  color: #bd93f9!important;
+}
+
+/* Text color */
+.gjs-four-color,
+.gjs-four-color-h:hover {
+  color: #f8f8f2!important;
+}
+
+/* Border color */
+.gjs-editor, .gjs-editor-cont,
+.gjs-block,
+.gjs-block-category,
+.gjs-block-category.gjs-open,
+.gjs-block-categories,
+.gjs-category-open,
+.gjs-category-title,
+.gjs-layers .gjs-layer,
+.gjs-layer > #gjs-layer-name,
+.gjs-layer-title,
+.gjs-layer-name,
+.gjs-layer-count {
+  border-color: #44475a;
+}
+
+/* Panel background */
+.gjs-pn-commands,
+.gjs-pn-views,
+.gjs-pn-views-container,
+.gjs-block-category.gjs-open,
+.gjs-block-categories,
+.gjs-select option,
+.gjs-clm-tags .gjs-sm-title,
+.gjs-sm-sector,
+.gjs-clm-tags .gjs-sm-header,
+.gjs-clm-tags .gjs-sm-properties,
+.gjs-sm-sector .gjs-sm-title,
+.gjs-sm-sector-title,
+.gjs-sm-sector,
+.gjs-sm-stack #gjs-sm-add,
+.gjs-editor, .gjs-editor-cont {
+  background-color: #282a36;
+}
+
+/* Panel buttons */
+.gjs-pn-btn {
+  border-radius: 4px;
+  margin-right: 5px;
+  background-color: #44475a;
+  box-shadow: none;
+  color: #f8f8f2;
+}
+
+.gjs-pn-btn.gjs-pn-active {
+  background-color: #6272a4;
+  color: #f8f8f2;
+}
+
+.gjs-pn-btn:hover {
+  color: #50fa7b;
+}
+
+.gjs-pn-btn.gjs-pn-active:hover {
+  color: #f8f8f2;
+}
+
+/* Panel border */
+.gjs-pn-panel {
+  border-color: #44475a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Block styling */
+.gjs-block {
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  border: 1px solid #44475a;
+  background-color: rgb(14 23 42);
+}
+
+.gjs-block:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-color: #8be9fd;
+  transform: translateY(-2px);
+}
+.gjs-clm-header-label,.gjs-sm-sector-label{
+  font-family: 'Outfit' !important;
+}
+.gjs-block-label {
+  color: #f8f8f2;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-family: 'Outfit'!important;
+}
+.gjs-cv-canvas__frames {
+  background: rgb(36 36 36 / 12%);
+  transform: scale(1) translate(0px, 0px);
+  border-radius: 12px;
+  border: 2px solid #36363685;
+}
+.gjs-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60px!important;
+}
+.gjs-block__media {
+  margin-bottom: 0px!important;
+}
+.gjs-block__media svg {
+  width: 24px;
+  height: 24px;
+}
+/* Category styling */
+.gjs-block-category.gjs-open {
+  border-bottom: 1px solid #44475a;
+}
+.gjs-title,
+#gjs-clm-tag-label,
+.gjs-clm-label-sel,
+.gjs-clm-sel-rule,
+#gjs-sm-input-holder,
+.gjs-input-unit,
+input, select, textarea, button, option,
+.gjs-radio-item-label,
+.gjs-badge,
+.gjs-layer-title,
+.gjs-block-label,
+.gjs-sm-title,
+.gjs-sm-label,
+.gjs-mdl-title,
+.gjs-device-label,
+.gjs-toolbar-item,
+.gjs-dropdown-item,
+.gjs-context-menu-item {
+  font-family: 'Outfit' !important;
+}
+.gjs-badge{
+  background-color: #44475a!important;
+  color: #f8f8f2!important;
+  border-radius: 4px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.gjs-toolbar{
+  font-family: 'Outfit' !important;
+  background-color: #282a36 !important;
+  color: #f8f8f2;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  font-family: 'Outfit' !important;
+}
+.gjs-toolbar-item{
+  margin-top: 10px;
+}
+.gjs-toolbar-item svg{
+  width: 16px;
+  height: 16px;
+}
+.gjs-block-category.gjs-open .gjs-title {
+  background-color: #282a36;
+  color: #f8f8f2;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  font-family: 'Outfit' !important;
+}
+
+/* Command buttons */
+.gjs-btn-prim {
+  background-color: #bd93f9;
+  border-color: #6272a4;
+  color: rgb(14 23 42);
+  border-radius: 4px;
+}
+
+.gjs-btn-prim:hover {
+  background-color: #ff79c6;
+}
+
+.gjs-btn-group {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Modal styling */
+.gjs-mdl-dialog {
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  border: none;
+  background-color: #282a36;
+  color: #f8f8f2;
+}
+
+.gjs-mdl-header {
+  background-color: #282a36;
+  border-bottom: 1px solid #44475a;
+  padding: 15px 20px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.gjs-mdl-title {
+  color: #f8f8f2;
+  font-weight: 600;
+  font-family: 'Outfit' !important;
+}
+
+.gjs-mdl-btn-close {
+  color: #f8f8f2;
+}
+
+/* Layer manager styling */
+.gjs-layer {
+  border-radius: 4px;
+  margin-bottom: 5px;
+  padding: 10px;
+  background-color: rgb(14 23 42);
+  border: 1px solid #44475a;
+  transition: all 0.2s ease;
+}
+
+.gjs-layer.gjs-selected {
+  background-color: #44475a;
+  border-color: #d9e5e8;
+}
+
+.gjs-layer-title {
+  color: #f8f8f2;
+  font-family: 'Outfit' !important;
+}
+
+.gjs-layer-count {
+  background-color: #44475a;
+  color: #f8f8f2;
+  border-radius: 999px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  font-family: 'Outfit' !important;
+}
+
+/* Style manager */
+.gjs-sm-header {
+  background-color: #282a36;
+  border-bottom: 1px solid #44475a;
+  padding: 10px 15px;
+}
+
+.gjs-sm-title {
+  color: #f8f8f2;
+  font-weight: 600;
+  font-family: 'Outfit' !important;
+  font-size: 0.875rem;
+}
+
+.gjs-sm-sector {
+  border-radius: 6px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  background-color: #282a36;
+}
+
+.gjs-sm-label {
+  color: #f8f8f2;
+  font-size: 0.75rem;
+  font-family: 'Outfit' !important;
+  letter-spacing: 0.025em;
+}
+
+.gjs-sm-property {
+  border-bottom: 1px solid #44475a;
+}
+
+.gjs-sm-input {
+  border-radius: 4px;
+  border: 1px solid #44475a;
+  padding: 6px 10px;
+  transition: all 0.2s ease;
+  background-color: rgb(14 23 42);
+  color: #f8f8f2;
+}
+
+.gjs-sm-input:focus {
+  border-color: #8be9fd;
+  box-shadow: 0 0 0 2px rgba(139, 233, 253, 0.2);
+}
+
+.gjs-field {
+  background-color: rgb(14 23 42);
+  border-color: #44475a;
+  color: #f8f8f2;
+}
+
+.gjs-field-arrow {
+  border-top: 4px solid #f8f8f2;
+}
+
+.gjs-field-units {
+  background-color: rgb(14 23 42);
+  color: #f8f8f2;
+}
+
+.gjs-field-unit {
+  background-color: rgb(14 23 42);
+  color: #f8f8f2;
+}
+
+.gjs-field-unit.gjs-active {
+  background-color: #44475a;
+}
+
+.gjs-color-picker {
+  border-radius: 4px;
+  border: 1px solid #44475a;
+  overflow: hidden;
+}
+
+/* RTE (Rich Text Editor) styling */
+.gjs-rte-toolbar {
+  background-color: #282a36;
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.gjs-rte-actionbar {
+  background-color: #282a36;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.gjs-rte-action {
+  border-radius: 4px;
+  color: #f8f8f2;
+  background-color: transparent;
+  padding: 5px;
+  margin: 0 2px;
+}
+
+.gjs-rte-action:hover {
+  background-color: #44475a;
+}
+
+.gjs-rte-action.gjs-rte-active {
+  background-color: #bd93f9;
+  color: rgb(14 23 42);
+}
+
+/* Device manager */
+.gjs-device-label {
+  color: #f8f8f2;
+  border-radius: 4px;
+  padding: 6px 10px;
+}
+
+.gjs-device-label.gjs-four-color {
+  background-color: rgb(14 23 42);
+}
+
+.gjs-device-label.gjs-four-color.gjs-two-color {
+  background-color: #6272a4;
+  color: #f8f8f2;
+}
+
+/* Canvas */
+.gjs-frame-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  border: 1px solid #44475a;
+}
+
+/* Component highlighting */
+.gjs-highlight {
+  outline: 2px solid #8be9fd !important;
+}
+
+.gjs-badge {
+  background-color: #bd93f9;
+  color: rgb(14 23 42);
+  border-radius: 4px;
+}
+
+.gjs-toolbar {
+  background-color: #282a36;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  padding: 4px;
+}
+
+.gjs-toolbar-item {
+  color: #f8f8f2;
+  margin: 0 2px;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.gjs-toolbar-item:hover {
+  background-color: #44475a;
+}
+
+.gjs-toolbar-item.gjs-active {
+  background-color: #bd93f9;
+  color: rgb(14 23 42);
+}
+
+/* Component selected */
+.gjs-selected {
+  outline: 2px solid #8be9fd !important;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #282a36;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6272a4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bd93f9;
+}
+
+/* Dropdown styling */
+.gjs-field-select option {
+  background-color: #282a36;
+  color: #f8f8f2;
+}
+
+/* Input fields */
+.gjs-field input,
+.gjs-field select,
+.gjs-field textarea {
+  background-color: rgb(14 23 42);
+  color: #f8f8f2;
+  border-color: #44475a;
+}
+
+/* Color picker */
+.gjs-field-colorp {
+  background-color: rgb(14 23 42);
+  border-color: #44475a;
+}
+
+/* Trait manager */
+.gjs-trt-trait {
+  border-bottom: 1px solid #44475a;
+}
+
+.gjs-trt-header {
+  background-color: #282a36;
+}
+
+.gjs-trt-trait .gjs-label {
+  color: #f8f8f2;
+}
+
+/* Asset manager */
+.gjs-am-preview-cont {
+  background-color: rgb(14 23 42);
+  border-color: #44475a;
+}
+
+.gjs-am-assets-cont {
+  background-color: #282a36;
+}
+
+.gjs-am-asset {
+  background-color: rgb(14 23 42);
+  border-color: #44475a;
+}
+
+.gjs-am-asset.gjs-am-selected {
+  border-color: #8be9fd;
+  box-shadow: 0 0 0 2px rgba(139, 233, 253, 0.3);
+}
+
+/* File upload */
+.gjs-am-file-uploader {
+  background-color: rgb(14 23 42);
+  border-color: #44475a;
+  color: #f8f8f2;
+}
+
+.gjs-am-btn-add {
+  background-color: #50fa7b;
+  color: rgb(14 23 42);
+}
+
+/* Code editor */
+.CodeMirror {
+  background-color: #282a36 !important;
+  color: #f8f8f2 !important;
+  border-color: #44475a !important;
+}
+
+.CodeMirror-gutters {
+  background-color: rgb(14 23 42) !important;
+  border-color: #44475a !important;
+}
+
+.CodeMirror-linenumber {
+  color: #6272a4 !important;
+}
+
+.cm-s-default .cm-keyword {
+  color: #ff79c6 !important;
+}
+
+.cm-s-default .cm-string {
+  color: #f1fa8c !important;
+}
+
+.cm-s-default .cm-number {
+  color: #bd93f9 !important;
+}
+
+.cm-s-default .cm-comment {
+  color: #6272a4 !important;
+}
+
+.cm-s-default .cm-tag {
+  color: #ff79c6 !important;
+}
+
+.cm-s-default .cm-attribute {
+  color: #50fa7b !important;
+}
+
+.cm-s-default .cm-property {
+  color: #8be9fd !important;
+}
+
+/* Fix any dialogs that might have wrong colors */
+.gjs-mdl-container {
+  color: #f8f8f2;
+}
+
+.gjs-mdl-content {
+  background-color: #282a36;
+  color: #f8f8f2;
+}
+
+.gjs-mdl-dialog button {
+  background-color: #44475a;
+  color: #f8f8f2;
+  border-color: #6272a4;
+}
+
+.gjs-mdl-dialog button:hover {
+  background-color: #6272a4;
+}
+
+/* Component manager */
+.gjs-com-badge, .gjs-com-name {
+  color: #f8f8f2;
+}
+
+.gjs-com-container {
+  color: #f8f8f2;
+  background-color: #282a36;
+}
+
+/* Block manager search */
+.gjs-block-manager-search {
+  background-color: rgb(14 23 42);
+  border-color: #44475a;
+  color: #f8f8f2;
+}
+
+/* Commands */
+.gjs-command {
+  background-color: #282a36;
+  color: #f8f8f2;
+  border-color: #44475a;
+}
+
+.gjs-command:hover {
+  background-color: #44475a;
+}
+
+.gjs-command-active {
+  background-color: #bd93f9;
+  color: rgb(14 23 42);
+}
+
+/* Inputs and selects */
+input, select, textarea, .gjs-fields {
+  background-color: rgb(14 23 42) !important;
+  color: #f8f8f2 !important;
+  border-color: #44475a !important;
+}
+
+/* Alert messages */
+.gjs-am-message {
+  background-color: #282a36;
+  color: #f8f8f2;
+  border: 1px solid #44475a;
+}
+
+/* Help icons */
+.gjs-sm-icon {
+  color: #8be9fd;
+}
+
+/* Toast notifications */
+.toast-container {
+  background-color: #282a36 !important;
+  color: #f8f8f2 !important;
+  border-color: #44475a !important;
+}
+
+.toast-success {
+  background-color: #50fa7b !important;
+  color: rgb(14 23 42) !important;
+}
+
+.toast-error {
+  background-color: #ff5555 !important;
+  color: #f8f8f2 !important;
+}
+
+.toast-info {
+  background-color: #8be9fd !important;
+  color: rgb(14 23 42) !important;
+}
+
+.toast-warning {
+  background-color: #f1fa8c !important;
+  color: rgb(14 23 42) !important;
+}
+
+/* Tabs */
+.gjs-tab {
+  background-color: rgb(14 23 42);
+  border-color: #44475a;
+  color: #f8f8f2;
+}
+
+.gjs-tab.gjs-active {
+  background-color: #282a36;
+  border-bottom-color: #282a36;
+}
+
+/* Drag items */
+.gjs-drag-helper {
+  background-color: rgba(189, 147, 249, 0.5);
+  border: 2px solid #bd93f9;
+}
+
+/* Custom buttons */
+.custom-button {
+  background-color: rgb(14 23 42);
+  color: #f8f8f2;
+  border: 1px solid #44475a;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.custom-button:hover {
+  background-color: #6272a4;
+}
+
+.custom-button-primary {
+  background-color: #bd93f9;
+  color: rgb(14 23 42);
+}
+
+.custom-button-primary:hover {
+  background-color: #ff79c6;
+}
+
+/* Canvas/preview container */
+#gjs-cv-wrapper {
+  background-color: rgb(14 23 42);
+}
+
+/* Ensure the canvas itself maintains normal colors for website content */
+#gjs-frame {
+  background-color: #ffffff !important;
+}
+
+/* Component container */
+.gjs-comp-selected {
+  outline: 2px solid #8be9fd !important;
+  outline-offset: 1px;
+}
+
+.gjs-comp-selected-parent {
+  outline: 1px solid #ff79c6 !important;
+}
+
+/* Dropdown menus */
+.gjs-dropdown {
+  background-color: #282a36;
+  border-color: #44475a;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.gjs-dropdown-item {
+  color: #f8f8f2;
+}
+
+.gjs-dropdown-item:hover {
+  background-color: #44475a;
+}
+
+/* SVG Icons */
+.gjs-pn-btn svg {
+  fill: #f8f8f2;
+}
+
+.gjs-pn-btn:hover svg {
+  fill: #8be9fd;
+}
+
+/* Resizing handles */
+.gjs-resizer-handler {
+  background-color: #8be9fd;
+  border-color: rgb(14 23 42);
+}
+
+/* Fix for font previews */
+.gjs-sm-preview {
+  color: #f8f8f2;
+  font-family: 'Outfit' !important;
+}
+
+/* Color picker adjustments */
+.gjs-field-color-picker {
+  background-color: rgb(14 23 42);
+  border-color: #44475a;
+}
+.gjs-one-bg{
+  background-color: rgb(14 23 42)!important;
+}
+.gjs-one-bg.gjs-checker-bg {
+  background-color: rgb(14 23 42);
+  background-image: linear-gradient(45deg, #44475a 25%, transparent 25%),
+    linear-gradient(-45deg, #44475a 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #44475a 75%),
+    linear-gradient(-45deg, transparent 75%, #44475a 75%);
+}
+
+/* Autocomplete */
+.gjs-autocomplete {
+  background-color: #282a36;
+  border-color: #44475a;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.gjs-autocomplete-item {
+  color: #f8f8f2;
+}
+
+.gjs-autocomplete-item.gjs-autocompl-selected {
+  background-color: #44475a;
+}
+
+/* Loading indicators */
+.gjs-spinner {
+  border-top-color: #bd93f9;
+}
+
+/* Button styles */
+.gjs-btn-alt {
+  background-color: #44475a;
+  color: #f8f8f2;
+}
+
+.gjs-btn-alt:hover {
+  background-color: #6272a4;
+}
+
+/* Make sure context menus are dark too */
+.gjs-context-menu {
+  background-color: #282a36;
+  border-color: #44475a;
+  color: #f8f8f2;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.gjs-context-menu-item:hover {
+  background-color: #44475a;
+}
+
+/* Make sure the editor UI doesn't affect the HTML content being edited */
+/* The canvas frame should keep normal colors for website content */
+#gjs-clm-new, 
+#gjs-clm-add-tag, 
+#gjs-sm-add, 
+#gjs-comp-tagInput {
+  color: #f8f8f2;
+  background-color: rgb(14 23 42);
+  border-color: #44475a;
+}
+
+/* Fix any other elements that might need color adjustments */
+.gjs-off-prv {
+  color: #f8f8f2;
+}
+
+.gjs-color-warn {
+  color: #f1fa8c;
+}
+
+.gjs-color-error {
+  color: #ff5555;
+}
+
+/* Add some subtle transitions for better UX */
+.gjs-pn-btn,
+.gjs-field,
+.gjs-block,
+.gjs-layer,
+.gjs-toolbar-item,
+.gjs-sm-input,
+.gjs-btn-prim,
+.gjs-btn-alt {
+  transition: all 0.2s ease-in-out;
 }
