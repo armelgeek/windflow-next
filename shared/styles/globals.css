@@ -75,7 +75,6 @@
 
 }
 :root {
-  --gjs-primary-color: #546e7a;
   --gjs-secondary-color: #90a4ae;
   --gjs-tertiary-color: #455a64;
   
@@ -90,6 +89,22 @@
   --gjs-main-bg-color: #f8f9fa;
   --gjs-tool-bg-color: #e9ecef;
   --gjs-font-color: #343a40;
+
+  --left: #262626;
+  --right: #131313;
+
+  --light: #252525;
+  --gjs-primary-color: #131313 !important;
+
+  --accent: #A3D9FF;
+
+  --code-editor: rgba(34, 34, 34, 0.611);
+  --button: rgba(54, 54, 54, 0.54);
+  --color: #e7e7e7;
+  --color-t: rgba(231, 231, 231, 0.6);
+
+  --red: #e54242;
+  --green: #5dbf2f;
 }
 
 @layer base {
@@ -144,8 +159,35 @@
 }
 
 
-body {
-  margin: 0;
-  padding: 0;
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track:hover {
+  background-color: transparent;
+}
+
+/* scrollbar itself */
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+iframe {
+  border-radius: 12px;
+  transition: 0.2s ease-in-out;
+  -webkit-transition: 0.2s ease-in-out;
+  -moz-transition: 0.2s ease-in-out;
+  -ms-transition: 0.2s ease-in-out;
+  -o-transition: 0.2s ease-in-out;
 }
 

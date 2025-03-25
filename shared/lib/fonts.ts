@@ -629,3 +629,173 @@ export const persistCustomFonts = (editor) => {
         restoreCustomFonts
     };
 };
+
+
+export const fixWOFF2Persistence = (editor) => {
+    const openFontsDatabase = () => {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('FontsDatabase', 1);
+        
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains('fonts')) {
+            const store = db.createObjectStore('fonts', { keyPath: 'id' });
+            store.createIndex('name', 'name', { unique: false });
+            store.createIndex('format', 'format', { unique: false });
+          }
+        };
+        
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    };
+    
+    const storeFont = async (fontId, fontName, fontData, format = 'woff2') => {
+      try {
+        const db = await openFontsDatabase();
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction(['fonts'], 'readwrite');
+          const store = transaction.objectStore('fonts');
+          
+          const fontRecord = {
+            id: fontId,
+            name: fontName,
+            data: fontData,
+            format: format,
+            timestamp: Date.now()
+          };
+          
+          const request = store.put(fontRecord);
+          request.onsuccess = () => resolve(true);
+          request.onerror = () => reject(request.error);
+        });
+      } catch (error) {
+        console.error('Erreur lors du stockage de la police:', error);
+        return false;
+      }
+    };
+    
+    const retrieveFont = async (fontId) => {
+      try {
+        const db = await openFontsDatabase();
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction(['fonts'], 'readonly');
+          const store = transaction.objectStore('fonts');
+          
+          const request = store.get(fontId);
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+      } catch (error) {
+        console.error('Erreur lors de la récupération de la police:', error);
+        return null;
+      }
+    };
+    
+    const getAllFonts = async () => {
+      try {
+        const db = await openFontsDatabase();
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction(['fonts'], 'readonly');
+          const store = transaction.objectStore('fonts');
+          
+          const request = store.getAll();
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+      } catch (error) {
+        console.error('Erreur lors de la récupération des polices:', error);
+        return [];
+      }
+    };
+    
+    const setupFontManagerOverride = () => {
+      if (window.fontManager && window.fontManager.addCustomFont) {
+        const originalAddCustomFont = window.fontManager.addCustomFont;
+        
+        window.fontManager.addCustomFont = async (fontFamily, fontFiles, fontWeight = 400, fontStyle = 'normal') => {
+ 
+          const result = originalAddCustomFont(fontFamily, fontFiles, fontWeight, fontStyle);
+          
+          if (result) {
+            try {
+              const fontId = `font-${fontFamily.replace(/\s+/g, '-').toLowerCase()}-${fontWeight}-${fontStyle}`;
+              
+              await storeFont(fontId, fontFamily, fontFiles, 
+                             typeof fontFiles === 'string' && fontFiles.includes('woff2') ? 'woff2' : 'other');
+              
+              console.log(`Police ${fontFamily} sauvegardée dans IndexedDB`);
+            } catch (error) {
+              console.error(`Erreur lors de la sauvegarde de la police ${fontFamily}:`, error);
+            }
+          }
+          
+          return result;
+        };
+      }
+    };
+    
+    const restoreFontsOnLoad = async () => {
+      try {
+        const storedFonts = await getAllFonts();
+        
+        if (storedFonts.length === 0) {
+          console.log('Aucune police persistante trouvée');
+          return;
+        }
+        
+        console.log(`Restauration de ${storedFonts.length} polices...`);
+        
+        const savedFonts = localStorage.getItem('gjs-fonts');
+        const fonts = savedFonts ? JSON.parse(savedFonts) : { system: [], google: [], custom: [] };
+        
+        const loadedFonts = new Set(fonts.custom.map(f => f.name));
+        
+        for (const storedFont of storedFonts) {
+          if (loadedFonts.has(storedFont.name)) {
+            continue;
+          }
+          
+          // Restaurer la police à l'aide du fontManager
+          if (window.fontManager && window.fontManager.addCustomFont) {
+            const added = window.fontManager.addCustomFont(
+              storedFont.name,
+              storedFont.data,
+              storedFont.weight || 400,
+              storedFont.style || 'normal'
+            );
+            
+            if (added) {
+              console.log(`Police ${storedFont.name} restaurée avec succès`);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors de la restauration des polices:', error);
+      }
+    };
+    
+    const setupEventListeners = () => {
+      editor.on('load', () => {
+        setTimeout(() => {
+          restoreFontsOnLoad();
+        }, 300);
+      });
+      
+      editor.on('canvas:load', () => {
+        setTimeout(() => {
+          restoreFontsOnLoad();
+        }, 300);
+      });
+    };
+    
+    setupFontManagerOverride();
+    setupEventListeners();
+    
+    return {
+      storeFont,
+      retrieveFont,
+      getAllFonts,
+      restoreFonts: restoreFontsOnLoad
+    };
+  };

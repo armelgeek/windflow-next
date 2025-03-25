@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import grapesjs from "grapesjs";
 import "grapesjs/dist/css/grapes.min.css";
-
+import grapesjs, { usePlugin } from 'grapesjs'
 import gjsPresetWebpage from "grapesjs-preset-webpage";
 import gjsBlocksBasic from "grapesjs-blocks-basic";
 import grapesjsTailwind from "grapesjs-tailwind";
@@ -9,13 +8,15 @@ import gjsCustomCode from "grapesjs-custom-code";
 import gjsComponentCodeEditor from "grapesjs-component-code-editor";
 import gjsParserPostcss from "grapesjs-parser-postcss";
 import gjsTooltip from "grapesjs-tooltip";
+import grapesjsIcons from 'grapesjs-icons'
+
 import gjsTuiImageEditor from "grapesjs-tui-image-editor";
 
 import { Plus, Trash2, FileText, Download } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import JSZip from "jszip";
-import { initFontSystem, persistCustomFonts } from "@/shared/lib/fonts";
+import { fixWOFF2Persistence, initFontSystem, persistCustomFonts } from "@/shared/lib/fonts";
 import { addTailwindV3Blocks, configureDarkModeSupport, configureTailwindExport, configureTailwindJIT, configureTailwindV3, generateTailwindConfig } from "@/shared/lib/tailwind";
 import { localStorageAPI } from "@/shared/lib/storage";
 import { replaceImageURLs } from "@/shared/lib/image";
@@ -54,10 +55,20 @@ const Editor = () => {
         gjsTuiImageEditor,
         gjsCustomCode,
         gjsComponentCodeEditor,
+        grapesjsIcons
       ],
       pluginsOpts: {
         [grapesjsTailwind]: {
           useCustomBreakpoints: true
+        },
+        [grapesjsIcons]: {
+          // see https://icon-sets.iconify.design/
+          collections: [
+            'ri', // Remix Icon by Remix Design
+            'mdi', // Material Design Icons by Pictogrammers
+            'uim', // Unicons Monochrome by Iconscout
+            'streamline-emojis' // Streamline Emojis by Streamline
+          ]
         }
       }
     });
@@ -72,7 +83,8 @@ const Editor = () => {
     configureTailwindExport(editor);
     const fontManager = initFontSystem(editor);
     window.fontManager = fontManager;
-    persistCustomFonts(editor);
+    const fontPersistence = fixWOFF2Persistence(editor);
+    window.fontPersistence = fontPersistence;
     editor.Commands.add("set-internal-link", {
       run(editor) {
         const slug = prompt("Enter page slug (e.g. home, about, contact)");
@@ -645,6 +657,7 @@ const Editor = () => {
         <title>${templateDetails.title || 'Exported Template'}</title>
         ${fonts.google && fonts.google.filter(font => font && font.url).map(font => `<link href="${font.url}" rel="stylesheet">`).join('\n  ')}
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
         ${fonts.custom && fonts.custom.length > 0 ? '<link rel="stylesheet" href="css/fonts.css">' : ''}
         <link rel="stylesheet" href="css/main.css">
       </head>
@@ -675,6 +688,7 @@ const Editor = () => {
                   <title>${pageName}</title>
                   ${fonts.google && fonts.google.filter(font => font && font.url).map(font => `<link href="${font.url}" rel="stylesheet">`).join('\n  ')}
                   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+                  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
                   ${fonts.custom && fonts.custom.length > 0 ? '<link rel="stylesheet" href="../css/fonts.css">' : ''}
                   <link rel="stylesheet" href="../css/main.css">
                   <link rel="stylesheet" href="../css/${pageId}.css">
