@@ -1,18 +1,19 @@
-import { useState } from "react";
+import { useState, RefObject } from "react";
 import toast from "react-hot-toast";
-import axios from "axios";
-import { localStorageAPI } from "@/shared/lib/storage";
-import html2canvas from "html2canvas";
-
-export const useTemplate = (editorRef) => {
+import { useSession } from '../../../shared/hooks/use-session-info';
+import { templateApi } from "../services/template.api";
+export const useTemplate = (editorRef: RefObject<any>) => {
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [templateDetails, setTemplateDetails] = useState({
     title: "",
     description: "",
     category: "",
   });
+  
+  const { data: session } = useSession();
 
-  const handleModalChange = (e) => {
+  const handleModalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setTemplateDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
   };
@@ -22,9 +23,9 @@ export const useTemplate = (editorRef) => {
   };
 
   const captureHomePageScreenshot = async () => {
+    if (!editorRef.current) return null;
+    
     const editor = editorRef.current;
-    if (!editor) return null;
-
     const frame = editor.Canvas.getFrameEl();
     const canvasEl = frame?.contentWindow?.document?.body;
 
@@ -34,138 +35,117 @@ export const useTemplate = (editorRef) => {
     }
 
     try {
+      const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(canvasEl);
       return canvas.toDataURL("image/png");
     } catch (error) {
-      console.error("Error capturing screenshot:", error);
+      console.error("Failed to capture screenshot", error);
       return null;
     }
   };
 
-  const handleModalSubmit = async (e) => {
+  const handleModalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const editor = editorRef.current;
-
-    if (!editor) {
-      toast.error("Editor not initialized");
+    
+    if (!editorRef.current || !session?.user) {
+      toast.error("You must be logged in to save templates");
       return;
     }
 
-    const image = await captureHomePageScreenshot();
-    const pm = editor.Pages;
+    setIsLoading(true);
+    
+    try {
+      const editor = editorRef.current;
 
-    // Save current page state
-    const saveCurrentPageState = () => {
+      const image = await captureHomePageScreenshot();
+      
+      const pm = editor.Pages;
       const currentPage = pm.getSelected();
       if (currentPage) {
         currentPage.set("customHtml", editor.getHtml());
         currentPage.set("customCss", editor.getCss());
       }
-    };
 
-    saveCurrentPageState();
+      const projectPages = pm.getAll().map((page) => {
+        return {
+          id: page.id,
+          name: page.get("name"),
+          html: page.get("customHtml") || "",
+          css: page.get("customCss") || "",
+        };
+      });
 
-    const projectPages = pm.getAll().map((page) => {
-      return {
-        id: page.id,
-        name: page.get("name"),
-        html: page.get("customHtml") || "",
-        css: page.get("customCss") || "",
-      };
-    });
+      const templateId = localStorage.getItem('currentTemplateId');
 
-    const userDetails = JSON.parse(localStorage.getItem('userDetails') || '{"_id": "local-user", "role": "user"}');
-    const templateId = localStorage.getItem('currentTemplateId');
-
-    const projectData = {
-      id: templateId,
-      userID: userDetails._id,
-      title: templateDetails.title,
-      description: templateDetails.description,
-      category: templateDetails.category,
-      image,
-      pages: projectPages,
-      settings: {
+      const projectData = {
+        userID: session.user.id,
         title: templateDetails.title,
         description: templateDetails.description,
         category: templateDetails.category,
-      }
-    };
-
-    const savedTemplate = localStorageAPI.saveTemplate(projectData);
-    localStorage.setItem('currentTemplateId', savedTemplate.id);
-
-    if (userDetails.role === 'user') {
-      try {
-        let templateRes;
-
-        if (templateId) {
-          try {
-            templateRes = await axios.put(`${AppRoutes.template}/${templateId}`, projectData);
-            toast.success("Template updated in main library!");
-          } catch (apiError) {
-            console.error("Failed to update template on server", apiError);
-            toast.success("Template saved locally! (Server update failed)");
-            templateRes = { data: savedTemplate };
-          }
-        } else {
-          try {
-            templateRes = await axios.post(AppRoutes.template, projectData);
-            toast.success("Template saved to main library!");
-            localStorage.setItem('currentTemplateId', templateRes.data._id);
-          } catch (apiError) {
-            console.error("Failed to save template to server", apiError);
-            toast.success("Template saved locally! (Server save failed)");
-            templateRes = { data: savedTemplate };
-          }
+        image,
+        pages: projectPages,
+        settings: {
+          title: templateDetails.title,
+          description: templateDetails.description,
+          category: templateDetails.category,
         }
+      };
 
-        const savedServerTemplate = templateRes.data;
-
+      let savedTemplate;
+      
+      if (templateId) {
         try {
-          await axios.post(`${AppRoutes.userTemplate}`, {
-            userID: userDetails._id,
-            templateID: savedServerTemplate._id || savedTemplate.id,
-            name: savedServerTemplate.name || savedTemplate.title,
-            description: savedServerTemplate.description || savedTemplate.description,
-            category: savedServerTemplate.category || savedTemplate.category,
-            title: savedServerTemplate.title || savedTemplate.title,
+          savedTemplate = await templateApi.updateTemplate(templateId, projectData);
+          toast.success("Template updated successfully!");
+        } catch (error) {
+          console.error("Failed to update template:", error);
+          toast.error("Failed to update template. Please try again.");
+          setIsLoading(false);
+          return;
+        }
+      } else {
+        try {
+          savedTemplate = await templateApi.createTemplate(projectData);
+          toast.success("Template saved successfully!");
+          
+          // Store the new template ID
+          if (savedTemplate.id) {
+            localStorage.setItem('currentTemplateId', savedTemplate.id);
+          }
+        } catch (error) {
+          console.error("Failed to save template:", error);
+          toast.error("Failed to save template. Please try again.");
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Add to user's personal templates
+      if (savedTemplate.id) {
+        try {
+          await templateApi.addToUserTemplates({
+            userID: session.user.id,
+            templateID: savedTemplate.id,
+            name: savedTemplate.title,
+            description: savedTemplate.description,
+            category: savedTemplate.category,
+            title: savedTemplate.title,
             pages: projectPages,
           });
           toast.success("Also added to your personal dashboard!");
         } catch (apiError) {
-          console.error("Failed to save to user template collection", apiError);
+          console.error("Failed to add to user templates:", apiError);
+          // Non-critical error, don't show toast
         }
-      } catch (error) {
-        toast.error("Error with API calls, but template is saved locally.");
-        console.error(error);
       }
-    } else {
-      try {
-        if (templateId) {
-          try {
-            await axios.put(`${AppRoutes.template}/${templateId}`, projectData);
-            toast.success("Template updated successfully!");
-          } catch (apiError) {
-            console.error("Failed to update template on server", apiError);
-            toast.success("Template saved locally! (Server update failed)");
-          }
-        } else {
-          try {
-            const response = await axios.post(AppRoutes.template, projectData);
-            localStorage.setItem('currentTemplateId', response.data._id);
-            toast.success("Template saved successfully!");
-          } catch (apiError) {
-            console.error("Failed to save template to server", apiError);
-            toast.success("Template saved locally! (Server save failed)");
-          }
-        }
-      } catch (error) {
-        toast.error("Error with API calls, but template is saved locally.");
-      }
-    }
 
-    setShowModal(false);
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error saving template:", error);
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
@@ -174,6 +154,8 @@ export const useTemplate = (editorRef) => {
     handleSaveTemplate,
     handleModalSubmit,
     showModal,
-    setShowModal
+    setShowModal,
+    captureHomePageScreenshot,
+    isLoading
   };
 };

@@ -1,4 +1,3 @@
-// hooks/useExport.js
 import { useState } from 'react';
 import JSZip from 'jszip';
 import toast from 'react-hot-toast';
@@ -22,11 +21,9 @@ export const useExport = (editorRef, templateDetails) => {
       const fontsFolder = zip.folder("fonts");
       const pagesFolder = zip.folder("pages");
 
-      // Get custom fonts from localStorage
       const savedFonts = localStorage.getItem('gjs-fonts');
       const fonts = savedFonts ? JSON.parse(savedFonts) : { system: [], google: [], custom: [] };
 
-      // Process custom fonts
       if (fonts.custom && fonts.custom.length > 0) {
         let fontCssContent = '';
 
@@ -55,7 +52,7 @@ export const useExport = (editorRef, templateDetails) => {
 
                   const fontFileName = `${fontName}.${extension}`;
 
-                  fontsFolder.file(fontFileName, base64Data, { base64: true });
+                  if(fontsFolder) fontsFolder.file(fontFileName, base64Data, { base64: true });
 
                   fontCssContent += `
                   @font-face {
@@ -70,7 +67,6 @@ export const useExport = (editorRef, templateDetails) => {
                 console.error(`Error processing font ${font.name}:`, error);
               }
             } else if (Array.isArray(font.files)) {
-              // Process multiple variants of the same font
               for (let i = 0; i < font.files.length; i++) {
                 const file = font.files[i];
                 if (file && file.url && typeof file.url === 'string' && file.url.startsWith('data:')) {
@@ -94,16 +90,16 @@ export const useExport = (editorRef, templateDetails) => {
                       const style = file.style || 'normal';
                       const fontFileName = `${fontName}-${weight}-${style}.${extension}`;
 
-                      fontsFolder.file(fontFileName, base64Data, { base64: true });
+                      if(fontsFolder) fontsFolder.file(fontFileName, base64Data, { base64: true });
 
                       fontCssContent += `
-@font-face {
-  font-family: "${font.name}";
-  src: url("../fonts/${fontFileName}") format("${extension === 'ttf' ? 'truetype' : extension}");
-  font-weight: ${weight};
-  font-style: ${style};
-}
-`;
+                        @font-face {
+                          font-family: "${font.name}";
+                          src: url("../fonts/${fontFileName}") format("${extension === 'ttf' ? 'truetype' : extension}");
+                          font-weight: ${weight};
+                          font-style: ${style};
+                        }
+                        `;
                     }
                   } catch (error) {
                     console.error(`Error processing font variant for ${font.name}:`, error);
@@ -112,14 +108,12 @@ export const useExport = (editorRef, templateDetails) => {
               }
             }
           } else if (font.fontFaceData) {
-            // If we don't have files but have @font-face data
             try {
               const urlMatch = font.fontFaceData.match(/url\("([^"]+)"\)/);
               if (urlMatch && urlMatch.length > 1) {
                 const fontUrl = urlMatch[1];
 
                 if (fontUrl.startsWith('data:')) {
-                  // Base64 encoded font
                   const matches = fontUrl.match(/^data:([^;]+);base64,(.+)$/);
 
                   if (matches && matches.length === 3) {
@@ -136,9 +130,8 @@ export const useExport = (editorRef, templateDetails) => {
                     }
 
                     const fontFileName = `${fontName}.${extension}`;
-                    fontsFolder.file(fontFileName, base64Data, { base64: true });
+                    if(fontsFolder) fontsFolder.file(fontFileName, base64Data, { base64: true });
 
-                    // Extract weight and style from existing rule
                     const weightMatch = font.fontFaceData.match(/font-weight\s*:\s*([^;]+);/);
                     const styleMatch = font.fontFaceData.match(/font-style\s*:\s*([^;]+);/);
 
@@ -146,20 +139,18 @@ export const useExport = (editorRef, templateDetails) => {
                     const style = styleMatch && styleMatch.length > 1 ? styleMatch[1].trim() : 'normal';
 
                     fontCssContent += `
-@font-face {
-  font-family: "${font.name}";
-  src: url("../fonts/${fontFileName}") format("${extension === 'ttf' ? 'truetype' : extension}");
-  font-weight: ${weight};
-  font-style: ${style};
-}
-`;
+                      @font-face {
+                        font-family: "${font.name}";
+                        src: url("../fonts/${fontFileName}") format("${extension === 'ttf' ? 'truetype' : extension}");
+                        font-weight: ${weight};
+                        font-style: ${style};
+                      }
+                      `;
                   }
                 } else {
-                  // External URL, copy the @font-face rule
                   fontCssContent += font.fontFaceData;
                 }
               } else {
-                // No URL found, copy the @font-face rule
                 fontCssContent += font.fontFaceData;
               }
             } catch (error) {
@@ -174,20 +165,15 @@ export const useExport = (editorRef, templateDetails) => {
         }
       }
 
-      // Add Tailwind config
       zip.file("tailwind.config.js", generateTailwindConfig(fonts));
 
-      // Process all pages
       const allPages = pm.getAll();
-      const processedImages = {};
+      const processedImages = {} as any;
       let imageCount = 0;
 
-      // Extract images from all pages
       for (const page of allPages) {
-        const pageId = page.id;
         const pageHtml = page.get("customHtml") || "";
 
-        // Extract images from img tags
         const base64Regex = /<img[^>]+src=["'](data:image\/[^;]+;base64,[^"']+)["'][^>]*>/g;
         let match;
         let processedHtml = pageHtml;
@@ -217,12 +203,10 @@ export const useExport = (editorRef, templateDetails) => {
           }
         }
 
-        // Extract background images
         const backgroundRegex = /background(?:-image)?:\s*url\(["']?(data:image\/[^;]+;base64,[^"')]+)["']?\)/g;
         while ((match = backgroundRegex.exec(pageHtml)) !== null) {
           const base64Data = match[1];
 
-          // Skip if already processed
           if (processedImages[base64Data]) {
             processedHtml = processedHtml.replace(base64Data, processedImages[base64Data]);
             continue;
@@ -246,7 +230,6 @@ export const useExport = (editorRef, templateDetails) => {
         }
       }
 
-      // Create index.html
       let indexContent = `<!DOCTYPE html>
       <html lang="en">
       <head>
@@ -267,7 +250,6 @@ export const useExport = (editorRef, templateDetails) => {
 
       const allCSS = [];
 
-      // Process each page
       for (const page of allPages) {
         const pageId = page.id;
         const pageName = page.get("name") || pageId;
@@ -313,11 +295,9 @@ export const useExport = (editorRef, templateDetails) => {
 
       zip.file("index.html", indexContent);
 
-      // Combine and deduplicate CSS
       const combinedCSS = Array.from(new Set(allCSS.join('\n').split('\n'))).join('\n');
       if (cssFolder) cssFolder.file("main.css", combinedCSS);
 
-      // Add README.md
       zip.file("README.md", `# ${templateDetails.title || 'Untitled'} - Template Tailwind v3
 
       ## Description
@@ -342,10 +322,8 @@ export const useExport = (editorRef, templateDetails) => {
 
       *Exported on: ${new Date().toLocaleString()}*`);
 
-      // Generate the zip file
       const content = await zip.generateAsync({ type: "blob" });
 
-      // Create a download link
       const zipFilename = `${templateDetails.title || 'template'}-export-${new Date().getTime()}.zip`.replace(/\s+/g, '-').toLowerCase();
       const url = URL.createObjectURL(content);
       const a = document.createElement('a');

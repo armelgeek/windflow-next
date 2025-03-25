@@ -2,7 +2,6 @@ import { useRef, useEffect } from "react";
 import grapesjs from 'grapesjs';
 import "grapesjs/dist/css/grapes.min.css";
 
-// Import all plugins
 import gjsPresetWebpage from "grapesjs-preset-webpage";
 import gjsBlocksBasic from "grapesjs-blocks-basic";
 import grapesjsTailwind from "grapesjs-tailwind";
@@ -31,11 +30,13 @@ import {
   configureTailwindJIT, 
   configureTailwindV3
 } from "@/shared/lib/tailwind";
-import { localStorageAPI } from "@/shared/lib/storage";
 import toast from "react-hot-toast";
+import { templateApi } from "@/features/editor/services/template.api";
+import { useSession } from '../../../shared/hooks/use-session-info';
 
 export const useEditor = () => {
   const editorRef = useRef(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const editor = grapesjs.init({
@@ -180,7 +181,7 @@ export const useEditor = () => {
     editor.on("load", loadTemplate);
 
     return () => editor.destroy();
-  }, []);
+  }, [session]);
 
   const setupTailwindBlocks = (editor) => {
     editor.BlockManager.add('tailwind-container', {
@@ -219,30 +220,25 @@ export const useEditor = () => {
   const loadTemplate = async () => {
     const editor = editorRef.current;
     const id = localStorage.getItem('currentTemplateId');
+    
     if (id) {
       try {
-        const templateData = localStorageAPI.getTemplate(id);
+        let templateData;
+        
+        try {
+          templateData = await templateApi.getTemplate(id);
+          toast.success("Template loaded successfully!");
+        } catch (apiError) {
+          console.log("Failed to load template from API", apiError);
+          createNewHomePage(editor);
+          return;
+        }
 
         if (templateData) {
           handleTemplateData(editor, templateData);
         } else {
-          try {
-            const res = await axios.get(`${AppRoutes.template}/${id}`);
-            const data = res.data;
-
-            localStorageAPI.saveTemplate({
-              id,
-              ...data
-            });
-
-            handleTemplateData(editor, data);
-          } catch (apiError) {
-            console.log("Failed to load template from API", apiError);
-            createNewHomePage(editor);
-          }
+          createNewHomePage(editor);
         }
-
-        toast.success("Template loaded successfully!");
       } catch (err) {
         console.log("Failed to load template", err);
         createNewHomePage(editor);

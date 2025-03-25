@@ -1,58 +1,49 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, RefObject } from "react";
 import toast from "react-hot-toast";
-import axios from "axios";
-import { localStorageAPI } from "@/shared/lib/storage";
+import { useSession } from '../../../shared/hooks/use-session-info';
+import { templateApi } from "../services/template.api";
 
-export const usePages = (editorRef) => {
+export const usePages = (editorRef: RefObject<any>) => {
   const [pages, setPages] = useState([]);
   const [currentPage, setCurrentPage] = useState("");
   const [showAddPageModal, setShowAddPageModal] = useState(false);
   const [newPageName, setNewPageName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (!editorRef.current) return;
 
     const editor = editorRef.current;
     
-    const updatePagesState = () => {
-      const pm = editor.Pages;
-      if (pm && pm.getAll) {
-        setPages(pm.getAll().map((p) => ({ id: p.id, name: p.get("name") })));
+    const updatePages = () => {
+      if (editor && editor.Pages) {
+        const allPages = editor.Pages.getAll().map((p) => ({ 
+          id: p.id, 
+          name: p.get("name") 
+        }));
+        setPages(allPages);
+        
+        const selected = editor.Pages.getSelected();
+        if (selected) {
+          setCurrentPage(selected.id);
+        }
       }
     };
 
-    editor.on("canvas:click", (event) => {
-      const el = event.target;
-      if (el.tagName === "A" && el.getAttribute("href")) {
-        event.preventDefault();
-
-        const href = el.getAttribute("href");
-        const pm = editor.Pages;
-
-        const page = pm.getAll().find((p) => p.id === href);
-        if (page) {
-          switchToPage(href);
-        } else {
-          toast.error("Page not found!");
-        }
-      }
-    });
-
-    editor.on("load", () => {
-      const pm = editor.Pages;
-      if (pm && pm.getAll) {
-        updatePagesState();
-        
-        const selectedPage = pm.getSelected();
-        if (selectedPage) {
-          setCurrentPage(selectedPage.id);
-        }
-      }
-    });
+    editor.on("page", updatePages);
+    editor.on("page:select", updatePages);
+    editor.on("page:add", updatePages);
+    editor.on("page:remove", updatePages);
+    editor.on("load", updatePages);
 
     return () => {
-      editor.off("canvas:click");
-      editor.off("load");
+      editor.off("page", updatePages);
+      editor.off("page:select", updatePages);
+      editor.off("page:add", updatePages);
+      editor.off("page:remove", updatePages);
+      editor.off("load", updatePages);
     };
   }, [editorRef]);
 
@@ -61,15 +52,15 @@ export const usePages = (editorRef) => {
     
     const editor = editorRef.current;
     const pm = editor.Pages;
-    const currentPageObj = pm.getSelected();
+    const currentPage = pm.getSelected();
     
-    if (currentPageObj) {
-      currentPageObj.set("customHtml", editor.getHtml());
-      currentPageObj.set("customCss", editor.getCss());
+    if (currentPage) {
+      currentPage.set("customHtml", editor.getHtml());
+      currentPage.set("customCss", editor.getCss());
     }
   };
 
-  const switchToPage = (pageId) => {
+  const switchToPage = (pageId: string) => {
     if (!editorRef.current) return;
     
     const editor = editorRef.current;
@@ -90,7 +81,7 @@ export const usePages = (editorRef) => {
     setShowAddPageModal(true);
   };
 
-  const handleAddPageSubmit = () => {
+  const handleAddPageSubmit = async () => {
     if (!editorRef.current) return;
     
     const editor = editorRef.current;
@@ -102,19 +93,50 @@ export const usePages = (editorRef) => {
       return;
     }
     
-    const pageId = pageName.toLowerCase().replace(/\s+/g, "-");
-    pm.add({
-      id: pageId,
-      name: pageName,
-      component: `<div class='p-4'>${pageName} Page</div>`,
-    });
+    setIsLoading(true);
     
-    setPages(pm.getAll().map((p) => ({ id: p.id, name: p.get("name") })));
-    switchToPage(pageId);
-    setShowAddPageModal(false);
+    try {
+      const pageId = pageName.toLowerCase().replace(/\s+/g, "-");
+      
+      pm.add({
+        id: pageId,
+        name: pageName,
+        component: `<div class='p-4'>${pageName} Page</div>`,
+      });
+      
+      const templateId = localStorage.getItem('currentTemplateId');
+      if (templateId && session?.user) {
+        saveCurrentPageState();
+        
+        const allPages = pm.getAll().map((page) => ({
+          id: page.id,
+          name: page.get("name"),
+          html: page.get("customHtml") || "",
+          css: page.get("customCss") || ""
+        }));
+        
+        try {
+          await templateApi.updateTemplate(templateId, {
+            userID: session.user.id,
+            pages: allPages
+          });
+        } catch (error) {
+          console.error("Failed to save page to database, continuing locally", error);
+        }
+      }
+      
+      switchToPage(pageId);
+      setShowAddPageModal(false);
+      toast.success(`Page "${pageName}" created successfully`);
+    } catch (error) {
+      console.error("Error adding page:", error);
+      toast.error("Failed to add page. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDeletePage = async (pageId) => {
+  const handleDeletePage = async (pageId: string) => {
     if (!editorRef.current) return;
     
     const editor = editorRef.current;
@@ -125,41 +147,37 @@ export const usePages = (editorRef) => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
-      const id = localStorage.getItem('currentTemplateId');
+      const templateId = localStorage.getItem('currentTemplateId');
 
-      if (id) {
-        const success = localStorageAPI.deletePage(id, pageId);
-
-        if (success) {
-          toast.success("Page deleted from local storage!");
-        } else {
-          try {
-            await axios.delete(`${AppRoutes.template}/${id}/page/${pageId}`);
-            toast.success("Page deleted from server!");
-          } catch (apiError) {
-            console.error("Failed to delete page from API", apiError);
-            toast.error("Failed to delete page from server, but removed locally.");
-          }
+      if (templateId && session?.user) {
+        try {
+          await templateApi.deletePage(templateId, pageId);
+          toast.success("Page deleted successfully!");
+        } catch (apiError) {
+          console.error("Failed to delete page from database:", apiError);
+          toast.error("Failed to delete page from database, but will continue locally.");
         }
-      } else {
-        toast.success("Page deleted locally!");
       }
 
       pm.remove(pageId);
-      setPages(pm.getAll().map((p) => ({ id: p.id, name: p.get("name") })));
 
       if (currentPage === pageId) {
         const firstPage = pm.getAll()[0];
         if (firstPage) switchToPage(firstPage.id);
       }
     } catch (error) {
-      toast.error("Failed to delete page.");
+      console.error("Error deleting page:", error);
+      toast.error("Failed to delete page. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSavePage = () => {
-    if (!editorRef.current) return;
+  const handleSavePage = async () => {
+    if (!editorRef.current || !session?.user) return;
     
     const editor = editorRef.current;
     const page = editor.Pages.getSelected();
@@ -169,49 +187,62 @@ export const usePages = (editorRef) => {
       return;
     }
     
-    const pageData = {
-      id: page.id,
-      name: page.get("name"),
-      html: editor.getHtml(),
-      css: editor.getCss(),
-    };
+    setIsLoading(true);
+    
+    try {
+      const pageData = {
+        id: page.id,
+        name: page.get("name"),
+        html: editor.getHtml(),
+        css: editor.getCss(),
+      };
 
-    localStorage.setItem(`page-${page.id}`, JSON.stringify(pageData));
-
-    const templateId = localStorage.getItem('currentTemplateId');
-    if (templateId) {
-      const template = localStorageAPI.getTemplate(templateId);
-      if (template) {
-        const pageIndex = template.pages.findIndex(p => p.id === page.id);
-        if (pageIndex >= 0) {
-          template.pages[pageIndex] = pageData;
-        } else {
-          template.pages.push(pageData);
+      const templateId = localStorage.getItem('currentTemplateId');
+      if (templateId) {
+        try {
+          const template = await templateApi.getTemplate(templateId);
+          
+          const updatedPages = [...template.pages];
+          const pageIndex = updatedPages.findIndex(p => p.id === page.id);
+          
+          if (pageIndex >= 0) {
+            updatedPages[pageIndex] = pageData;
+          } else {
+            updatedPages.push(pageData);
+          }
+          
+          await templateApi.updateTemplate(templateId, {
+            ...template,
+            pages: updatedPages
+          });
+          
+          toast.success("Page saved successfully!");
+        } catch (error) {
+          console.error("Failed to save page to database:", error);
+          toast.error("Failed to save page to database. Please try again.");
         }
-        localStorageAPI.saveTemplate(template);
+      } else {
+        toast("Please save the template first");
       }
+    } catch (error) {
+      console.error("Error saving page:", error);
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-
-    toast.success("Page saved successfully!");
   };
 
   const handlePreviewPage = () => {
     if (!editorRef.current) return;
     
-    const editor = editorRef.current;
-    const page = editor.Pages.getSelected();
+    //const editor = editorRef.current;
+    //const page = editor.Pages.getSelected();
+    //const html = editor.getHtml();
+    //const css = editor.getCss();
+    //const pageName = page.get("name") || "previewpage";
     
-    if (!page) {
-      toast.error("No page selected");
-      return;
-    }
-    
-    const html = editor.getHtml();
-    const css = editor.getCss();
-    const pageName = page.get("name") || "previewpage";
-    
-    localStorage.setItem(`preview-${pageName}`, JSON.stringify({ html, css }));
-    if (typeof window !== undefined) window.open(`/previewpage/${pageName}`, "_blank");
+    //localStorage.setItem(`preview-${pageName}`, JSON.stringify({ html, css }));
+    //window.open(`/previewpage/${pageName}`, "_blank");
   };
 
   return {
@@ -227,6 +258,6 @@ export const usePages = (editorRef) => {
     setShowAddPageModal,
     newPageName,
     setNewPageName,
-   // saveCurrentPageState
+    isLoading
   };
 };

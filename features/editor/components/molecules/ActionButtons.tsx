@@ -35,13 +35,6 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
       </button>
 
       <button
-        onClick={handlePreviewPage}
-        className="flex items-center justify-center w-full p-2 bg-yellow-600 hover:bg-yellow-700 rounded"
-      >
-        <FileText className="w-4 h-4 mr-2" /> Preview
-      </button>
-
-      <button
         onClick={handleSaveTemplate}
         className="flex items-center justify-center w-full p-2 bg-purple-600 hover:bg-purple-700 rounded"
       >
