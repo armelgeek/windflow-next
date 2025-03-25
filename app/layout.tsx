@@ -18,6 +18,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   
   return (
     <html lang="en" className={`${outfit.className}`} suppressHydrationWarning>
+     
       <body>
         <NextTopLoader showSpinner={true} />
         <Provider>

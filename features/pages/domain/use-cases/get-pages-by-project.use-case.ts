@@ -17,7 +17,6 @@ export async function getPagesByProject(filter: Filter & {projectId: string}) {
     search: filter.search,
     projectId: filter.projectId
   };
-  console.log('whereClause',whereClause);
   const conditions = filterWhereClause(searchColumns, whereClause);
   const sort = filterOrderByClause(sortColumns, filter.sortBy, filter.sortDir);
 

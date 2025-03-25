@@ -1,0 +1,1 @@
+declare module 'grapesjs-component-code-editor';
