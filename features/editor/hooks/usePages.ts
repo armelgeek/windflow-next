@@ -5,6 +5,8 @@ import { useSession } from '../../../shared/hooks/use-session-info';
 import { usePageMutations } from "@/features/pages/hooks/use-page-info";
 import { pageService } from "@/features/pages/domain/page.service";
 
+
+
 export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
   const [pages, setPages] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -14,6 +16,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
   const [newPageName, setNewPageName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [showPageTransition, setShowPageTransition] = useState(false);
   const { updateByIdMutation, isUpdatingById } = usePageMutations();
   const { data: session } = useSession();
@@ -22,15 +25,15 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
     if (!editorRef.current) return;
 
     const editor = editorRef.current;
-    
+
     const updatePages = () => {
       if (editor && editor.Pages) {
-        const allPages = editor.Pages.getAll().map((p) => ({ 
-          id: p.id, 
-          name: p.get("name") 
+        const allPages = editor.Pages.getAll().map((p) => ({
+          id: p.id,
+          name: p.get("name")
         }));
         setPages(allPages);
-        
+
         const selected = editor.Pages.getSelected();
         if (selected) {
           setCurrentPage(selected.id);
@@ -53,11 +56,44 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
     };
   }, [editorRef]);
 
+  /**useEffect(() => {
+    if (!editorRef.current) return;
+
+    const editor = editorRef.current;
+
+    const handleDragStart = () => {
+      setIsDragging(true);
+    };
+
+    const handleDragEnd = () => {
+      setTimeout(() => {
+        setIsDragging(false);
+      }, 100);
+    };
+
+    editor.on("block:drag:start", handleDragStart);
+    editor.on("component:add", handleDragEnd);
+    editor.on("block:drag:stop", handleDragEnd);
+
+    editor.on("component:mount", () => {
+      setTimeout(() => {
+        setIsDragging(false);
+      }, 500);
+    });
+
+    return () => {
+      editor.off("block:drag:start", handleDragStart);
+      editor.off("component:add", handleDragEnd);
+      editor.off("block:drag:stop", handleDragEnd);
+      editor.off("component:mount");
+    };
+  }, [editorRef]);**/
+
   useEffect(() => {
     if (!editorRef.current) return;
     const editor = editorRef.current;
     const pm = editor.Pages;
-        
+
     const loadPagesFromAPI = async () => {
       setIsSyncing(true);
       try {
@@ -70,13 +106,13 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
           newPage.set("customHtml", page.html);
           newPage.set("customCss", page.css);
         });
-        
+
         if (pagesData.length > 0) {
           pm.select(pagesData[0].id);
           editor.setComponents(pagesData[0].html || "");
           editor.setStyle(pagesData[0].css || "");
         }
-        
+
         toast.success("All pages loaded from the server");
       } catch (error) {
         console.error("Failed to load pages from API", error);
@@ -96,19 +132,19 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
 
   const saveCurrentPageState = async (sync = false) => {
     if (!editorRef.current) return;
-    
+
     const editor = editorRef.current;
     const pm = editor.Pages;
     const currentPageObj = pm.getSelected();
-    
+
     if (currentPageObj) {
       currentPageObj.set("customHtml", editor.getHtml());
       currentPageObj.set("customCss", editor.getCss());
-      
+
       if (sync) {
         try {
           setIsSyncing(true);
-          
+
           await updateByIdMutation({
             id: currentPageObj.id,
             data: {
@@ -130,7 +166,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
 
   const switchToPage = async (pageId: string) => {
     if (!editorRef.current) return;
-    
+
     const editor = editorRef.current;
     const pm = editor.Pages;
     const nextPage = pm.get(pageId);
@@ -139,7 +175,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
       setShowPageTransition(true);
       await saveCurrentPageState(true);
       await new Promise(resolve => setTimeout(resolve, 50));
-      
+
       try {
         if (!nextPage.get("customHtml") || !nextPage.get("customCss")) {
           try {
@@ -154,7 +190,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
           }
         }
         pm.select(pageId);
-        
+
         editor.setStyle(nextPage.get("customCss") || "");
         editor.setComponents(nextPage.get("customHtml") || "");
         setCurrentPage(pageId);
@@ -175,28 +211,28 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
 
   const handleAddPageSubmit = async () => {
     if (!editorRef.current) return;
-    
+
     const editor = editorRef.current;
     const pm = editor.Pages;
     const pageName = newPageName.trim();
-    
+
     if (!pageName) {
       toast.error("Page name cannot be empty");
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       const pageId = pageName.toLowerCase().replace(/\s+/g, "-");
       const initialHtml = `<div class='p-4'>${pageName} Page</div>`;
-      
+
       pm.add({
         id: pageId,
         name: pageName,
         component: initialHtml,
       });
-      
+
       if (session?.user) {
         try {
           setIsSyncing(true);
@@ -214,7 +250,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
           setIsSyncing(false);
         }
       }
-      
+
       switchToPage(pageId);
       setShowAddPageModal(false);
     } catch (error) {
@@ -227,10 +263,10 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
 
   const handleDeletePage = async (pageId: string) => {
     if (!editorRef.current) return;
-    
+
     const editor = editorRef.current;
     const pm = editor.Pages;
-    
+
     if (pm.getAll().length <= 1) {
       toast.error("Cannot delete the last page");
       return;
@@ -261,7 +297,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
         const firstPage = pm.getAll()[0];
         if (firstPage) switchToPage(firstPage.id);
       }
-      
+
       toast.success("Page deleted successfully");
     } catch (error) {
       console.error("Error deleting page:", error);
@@ -276,17 +312,17 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
       toast("You must be logged in to save pages");
       return;
     }
-   
+
     const editor = editorRef.current;
     const page = editor.Pages.getSelected();
-    
+
     if (!page) {
       toast.error("No page selected");
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       const pageData = {
         id: page.id,
@@ -296,7 +332,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
       };
 
       setIsSyncing(true);
-     // await pageApi.updatePage(projectId, page.id, pageData);
+      // await pageApi.updatePage(projectId, page.id, pageData);
       toast.success("Page saved successfully!");
     } catch (error) {
       console.error("Failed to save page:", error);
@@ -312,31 +348,31 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
       toast("You must be logged in to preview pages");
       return;
     }
-    
+
     const editor = editorRef.current;
     const page = editor.Pages.getSelected();
-    
+
     if (!page) {
       toast.error("No page selected");
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       await saveCurrentPageState(true);
-      
-     // const { previewUrl } = await pageApi.generatePreview(projectId, page.id);
-      
-     // window.open(previewUrl, "_blank");
+
+      // const { previewUrl } = await pageApi.generatePreview(projectId, page.id);
+
+      // window.open(previewUrl, "_blank");
     } catch (error) {
       console.error("Failed to generate preview:", error);
       toast.error("Failed to generate preview. Please try again.");
-      
+
       const html = editor.getHtml();
       const css = editor.getCss();
       const pageName = page.get("name") || "previewpage";
-      
+
       localStorage.setItem(`preview-${pageName}`, JSON.stringify({ html, css }));
       window.open(`/previewpage/${pageName}`, "_blank");
     } finally {
@@ -361,6 +397,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
     setNewPageName,
     isLoading,
     isSyncing,
-    showPageTransition
+    showPageTransition,
+    isDragging
   };
 };

@@ -14,6 +14,63 @@ import { usePageLists } from "@/features/pages/hooks/use-page-info";
 import { useTableParams } from "@/shared/hooks/use-table-params";
 import { createPortal } from "react-dom";
 
+
+const DragDropLoadingOverlay = ({isDragging}: {isDragging: boolean}) => {
+  if (!isDragging) return null;
+  
+  // Sélectionner uniquement la zone des frames
+  const framesContainer = document.querySelector('.gjs-frames');
+  
+  if (!framesContainer) return null;
+  
+  return createPortal(
+    <div 
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255, 255, 255, 0.5)', // Plus transparent que l'overlay de page
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 9999,
+        pointerEvents: 'none', // Permet le clic à travers l'overlay
+      }}
+    >
+      <div 
+        className="loading-spinner" 
+        style={{ 
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          padding: '15px 20px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+        }}
+      >
+        <svg width="30" height="30" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#09f">
+          <g fill="none" fillRule="evenodd">
+            <g transform="translate(1 1)" strokeWidth="2">
+              <circle strokeOpacity=".5" cx="18" cy="18" r="18"/>
+              <path d="M36 18c0-9.94-8.06-18-18-18">
+                <animateTransform
+                  attributeName="transform"
+                  type="rotate"
+                  from="0 18 18"
+                  to="360 18 18"
+                  dur="0.8s"
+                  repeatCount="indefinite"/>
+              </path>
+            </g>
+          </g>
+        </svg>
+        <p style={{ marginTop: '8px', fontSize: '14px' }}>Chargement...</p>
+      </div>
+    </div>,
+    framesContainer
+  );
+};
+
   
 const PageTransitionOverlay = ({ showPageTransition }: {
   showPageTransition: boolean
@@ -92,7 +149,8 @@ const EditorComponent = ({pageData }:  {
     newPageName, 
     setNewPageName,
     setShowAddPageModal,
-    showPageTransition
+    showPageTransition,
+    isDragging
   } = usePages(editorRef, pageData);
   
   const { 
@@ -145,6 +203,7 @@ const EditorComponent = ({pageData }:  {
         />
       )}
         <PageTransitionOverlay showPageTransition={showPageTransition} />
+        <DragDropLoadingOverlay isDragging={isDragging}/>
     </div>
   );
 }
