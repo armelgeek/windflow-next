@@ -29,6 +29,7 @@ export const API_ENDPOINTS = {
     pagesByProject: (qs: string) => `/pages/projects/${qs}`,
     update: (slug: string) => `/pages/${slug}`,
     delete: (slug: string) => `/pages/${slug}`,
+    updateById: (id: string) => `/pages/update/${id}`,
     updateContent: (slug: string) => `/pages/content/${slug}`,
     
   },

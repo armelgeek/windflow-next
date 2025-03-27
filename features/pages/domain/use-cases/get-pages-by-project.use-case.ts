@@ -35,6 +35,10 @@ export async function getPagesByProject(filter: Filter & {projectId: string}) {
       id: pages.id,
       name: pages.name,
       slug: pages.slug,
+      content: pages.content,
+      project_id: pages.projectId,
+      html: pages.html,
+      css: pages.css,
       created_at: pages.createdAt,
       updated_at: pages.updatedAt,
     })

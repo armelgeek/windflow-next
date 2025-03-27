@@ -18,7 +18,6 @@ import gjsBlocksTable from 'grapesjs-blocks-table';
 import grapesjsTabs from 'grapesjs-tabs';
 import grapesjsStyleBg from 'grapesjs-style-bg';
 import grapesjsStyleGradient from 'grapesjs-style-gradient';
-import grapesjsUserBlocks from 'grapesjs-user-blocks';
 import 'grapesjs-rte-extensions/dist/grapesjs-rte-extensions.min.css';
 
 import { fixWOFF2Persistence, initFontSystem } from "@/shared/lib/fonts";
@@ -61,7 +60,6 @@ export const useEditor = () => {
         grapesjsStyleBg,
         grapesjsStyleGradient,
         gjsRulers,
-        grapesjsUserBlocks,
         grapesjsTabs,
       ],
       pluginsOpts: {
@@ -193,21 +191,21 @@ export const useEditor = () => {
           toast.success("Template loaded successfully!");
         } catch (apiError) {
           console.log("Failed to load template from API", apiError);
-          //createNewHomePage(editor);
+          createNewHomePage(editor);
           return;
         }
 
         if (templateData) {
           //handleTemplateData(editor, templateData);
         } else {
-        //  createNewHomePage(editor);
+          createNewHomePage(editor);
         }
       } catch (err) {
         console.log("Failed to load template", err);
-     //   createNewHomePage(editor);
+       createNewHomePage(editor);
       }
     } else {
-     // createNewHomePage(editor);
+     createNewHomePage(editor);
     }
   };
 

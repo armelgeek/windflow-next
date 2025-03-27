@@ -8,6 +8,7 @@ export const PAGE_KEYS = {
   all: ['pages'] as const,
   lists: () => [...PAGE_KEYS.all, 'list'] as const,
   getPagesByProject: (filters: any) => [...PAGE_KEYS.lists(), { filters }] as const,
+  
   list: (filters: any) => [...PAGE_KEYS.lists(), { filters }] as const,
   details: () => [...PAGE_KEYS.all, 'detail'] as const,
   detail: (slug: string) => [...PAGE_KEYS.details(), slug] as const,
@@ -79,6 +80,19 @@ export const usePageMutations = () => {
     },
   });
 
+  const updateByIdMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: PagePayload }) =>{
+      return pageService.updateById(id, data);
+    },
+    onSuccess: () => {
+      toast.success('Page mise à jour avec succès');
+      handleSuccess();
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (slug: string) => pageService.remove(slug),
     onSuccess: () => {
@@ -109,9 +123,11 @@ export const usePageMutations = () => {
     updatePage: updateMutation.mutate,
     deletePage: deleteMutation.mutate,
     updateContent: updateContentMutation.mutate,
+    updateByIdMutation: updateByIdMutation.mutate,
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
     isUpdatingContent: updateContentMutation.isPending,
+    isUpdatingById: updateByIdMutation.isPending
   };
 };

@@ -61,6 +61,14 @@ export class PageServiceImpl implements PageService {
       body: JSON.stringify(payload),
     });
   }
+  async updateById(id: string, payload: PagePayload): Promise<{ message: string }> {
+    return this.fetchData<{ message: string }>(`${API_URL}${API_ENDPOINTS.pages.updateById(id)}`, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  }
+  
 
   async remove(slug: string): Promise<{ message: string }> {
     return this.fetchData<{ message: string }>(`${API_URL}${API_ENDPOINTS.pages.delete(slug)}`, {

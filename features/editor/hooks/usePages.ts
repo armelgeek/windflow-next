@@ -2,9 +2,7 @@ import { useState, useEffect, RefObject } from "react";
 import toast from "react-hot-toast";
 import { useSession } from '../../../shared/hooks/use-session-info';
 import { pageApi } from "../services/page.api";
-import { useParams } from "next/navigation";
-import { log } from "console";
-import { usePageLists } from "@/features/pages/hooks/use-page-info";
+import { usePageLists, usePageMutations } from "@/features/pages/hooks/use-page-info";
 import { useTableParams } from "@/shared/hooks/use-table-params";
 
 export const usePages = (editorRef: RefObject<any>, projectId: string) => {
@@ -19,6 +17,7 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
     ...filters,
     projectId 
   });
+  const { updateByIdMutation, isUpdatingById } = usePageMutations();
   const { data: session } = useSession();
   useEffect(() => {
     if (!editorRef.current) return;
@@ -95,7 +94,7 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
   }, [session, editorRef]);
 
   const saveCurrentPageState = async (sync = false) => {
-    if (!editorRef.current || !projectId || !session?.user) return;
+    if (!editorRef.current) return;
     
     const editor = editorRef.current;
     const pm = editor.Pages;
@@ -108,11 +107,14 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
       if (sync) {
         try {
           setIsSyncing(true);
-          await pageApi.updatePage(projectId, currentPageObj.id, {
+          
+          await updateByIdMutation({
             id: currentPageObj.id,
-            name: currentPageObj.get("name"),
-            html: editor.getHtml(),
-            css: editor.getCss()
+            data: {
+              name: currentPageObj.get("name"),
+              html: editor.getHtml(),
+              css: editor.getCss()
+            }
           });
           toast.success("Page saved to server");
         } catch (error) {

@@ -10,8 +10,6 @@ import Sidebar from "../molecules/Sidebar";
 import Canvas from "../molecules/Canvas";
 import TemplateModal from "../molecules/TemplateModal";
 import AddPageModal from "../molecules/AddPageModal";
-import { useParams } from "next/navigation";
-import { useProject } from "@/features/project/hooks/use-project";
 
 const Editor = ({project}: {
   project: any

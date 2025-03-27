@@ -53,10 +53,9 @@ const PagesList: React.FC<PagesListProps> = ({
     
     setEditingPageId(null);
   };
-  console.log('pages',pages);
   return (
     <div className="space-y-1">
-      {pages.filter(f => f.name!='').map(page => {
+      {pages.map(page => {
         const { name } = getPageInfo(page.name);
         const isActive = page.id === currentPage;
 
