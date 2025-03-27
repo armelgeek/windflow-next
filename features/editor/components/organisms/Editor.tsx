@@ -77,15 +77,12 @@ const PageTransitionOverlay = ({ showPageTransition }: {
 }) => {
   const [mounted, setMounted] = useState(false);
   
- 
   useEffect(() => {
     setMounted(true);
     return () => setMounted(false);
   }, []);
 
   if (!showPageTransition) return null;
-  
-  
   if (!mounted) return null;
   
   const framesContainer = document.querySelector('.gjs-frames');
@@ -94,37 +91,45 @@ const PageTransitionOverlay = ({ showPageTransition }: {
   
   return createPortal(
     <div 
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(255, 255, 255, 1)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 9999,
-      }}
+      className="absolute inset-0 bg-white flex flex-col justify-center items-center z-50"
     >
-      <div className="loading-spinner">
-        <svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#09f">
-          <g fill="none" fillRule="evenodd">
-            <g transform="translate(1 1)" strokeWidth="2">
-              <circle strokeOpacity=".5" cx="18" cy="18" r="18"/>
-              <path d="M36 18c0-9.94-8.06-18-18-18">
-                <animateTransform
-                  attributeName="transform"
-                  type="rotate"
-                  from="0 18 18"
-                  to="360 18 18"
-                  dur="1s"
-                  repeatCount="indefinite"/>
-              </path>
-            </g>
-          </g>
-        </svg>
-        <p style={{ marginTop: '10px' }}>Chargement de la page...</p>
+      <div className="flex flex-col items-center">
+        {/* Logo qui pulse */}
+        <div className="animate-pulse mb-8">
+          <svg 
+            width="60" 
+            height="60" 
+            viewBox="0 0 60 60" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            className="text-blue-500"
+          >
+            <circle cx="30" cy="30" r="28" stroke="currentColor" strokeWidth="4" />
+            <path 
+              d="M18 30C18 23.373 23.373 18 30 18C36.627 18 42 23.373 42 30" 
+              stroke="currentColor" 
+              strokeWidth="4" 
+              strokeLinecap="round"
+              className="animate-spin origin-center"
+              style={{ animationDuration: '1s' }}
+            />
+          </svg>
+        </div>
+
+        {/* Barre de progression avec animation */}
+        <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden mb-4">
+          <div className="h-full bg-blue-500 rounded-full animate-pulse" style={{ width: '75%' }}></div>
+        </div>
+
+        {/* Texte qui apparaît progressivement */}
+        <p className="text-gray-700 font-medium animate-fade-in">Chargement de la page...</p>
+        
+        {/* Points de chargement animés */}
+        <div className="flex space-x-2 mt-2">
+          <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+          <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></span>
+          <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></span>
+        </div>
       </div>
     </div>,
     framesContainer
