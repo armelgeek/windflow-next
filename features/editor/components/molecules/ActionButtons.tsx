@@ -24,7 +24,7 @@ const CompactActionButtons: React.FC<ActionButtonsProps> = ({
    ];
 
   const secondaryActions = [
-    { icon: <SaveAll size={16} />, label: "Save Template", onClick: handleSaveTemplate, color: "hover:bg-slate-700" },
+    //{ icon: <SaveAll size={16} />, label: "Save Template", onClick: handleSaveTemplate, color: "hover:bg-slate-700" },
     { 
       icon: <Download size={16} />, 
       label: isExporting ? "Exporting..." : "Export ZIP", 

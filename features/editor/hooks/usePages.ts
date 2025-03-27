@@ -4,6 +4,7 @@ import { useSession } from '../../../shared/hooks/use-session-info';
 import { pageApi } from "../services/page.api";
 import { usePageLists, usePageMutations } from "@/features/pages/hooks/use-page-info";
 import { useTableParams } from "@/shared/hooks/use-table-params";
+import { pageService } from "@/features/pages/domain/page.service";
 
 export const usePages = (editorRef: RefObject<any>, projectId: string) => {
   const [pages, setPages] = useState([]);
@@ -13,32 +14,36 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const filters = useTableParams();
-  const { data: pagesData } = usePageLists({ 
+  const { data: pagesData = [] } = usePageLists({ 
     ...filters,
     projectId 
   });
+
   const { updateByIdMutation, isUpdatingById } = usePageMutations();
   const { data: session } = useSession();
+ 
+    
+  const updatePages = () => {
+    if (!editorRef.current) return;
+    const editor = editorRef.current;
+    if (editor && editor.Pages) {
+      const allPages = editor.Pages.getAll().map((p) => ({ 
+        id: p.id, 
+        name: p.get("name") 
+      }));
+      setPages(allPages);
+      
+      const selected = editor.Pages.getSelected();
+      if (selected) {
+        setCurrentPage(selected.id);
+      }
+    }
+  };
+
   useEffect(() => {
     if (!editorRef.current) return;
 
     const editor = editorRef.current;
-    
-    const updatePages = () => {
-      if (editor && editor.Pages) {
-        const allPages = editor.Pages.getAll().map((p) => ({ 
-          id: p.id, 
-          name: p.get("name") 
-        }));
-        setPages(allPages);
-        
-        const selected = editor.Pages.getSelected();
-        if (selected) {
-          setCurrentPage(selected.id);
-        }
-      }
-    };
-
     editor.on("page", updatePages);
     editor.on("page:select", updatePages);
     editor.on("page:add", updatePages);
@@ -55,12 +60,15 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
   }, [editorRef]);
 
   useEffect(() => {
-
     const loadPagesFromAPI = async () => {
+      if (!editorRef.current) return;
+      if (!pagesData || pagesData.length === 0) {
+        console.log("No pages available from API");
+        return;
+      }
+      
       setIsSyncing(true);
       try {
-        if (!editorRef.current) return;
-      
         const editor = editorRef.current;
         const pm = editor.Pages;
         
@@ -79,9 +87,8 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
           pm.select(pagesData[0].id);
           editor.setComponents(pagesData[0].html || "");
           editor.setStyle(pagesData[0].css || "");
+          toast.success("All pages loaded from the server");
         }
-        
-        toast.success("All pages loaded from the server");
       } catch (error) {
         console.error("Failed to load pages from API", error);
         toast.error("Failed to load pages from the server");
@@ -90,8 +97,10 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
       }
     };
     
-    loadPagesFromAPI();
-  }, [session, editorRef]);
+    if (editorRef.current && projectId) {
+      loadPagesFromAPI();
+    }
+  }, [pagesData, editorRef, projectId]);
 
   const saveCurrentPageState = async (sync = false) => {
     if (!editorRef.current) return;
@@ -135,12 +144,14 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
     const nextPage = pm.get(pageId);
     
     if (nextPage) {
-      await saveCurrentPageState(true);
+      if (currentPage) {
+        await saveCurrentPageState(true);
+      }
       
-      if (projectId && session?.user && (!nextPage.get("customHtml") || !nextPage.get("customCss"))) {
+      if ((!nextPage.get("customHtml") || !nextPage.get("customCss"))) {
         try {
           setIsSyncing(true);
-          const pageData = await pageApi.getPage(projectId, pageId);
+          const pageData = await pageService.detail(pageId);
           nextPage.set("customHtml", pageData.html);
           nextPage.set("customCss", pageData.css);
         } catch (error) {
@@ -290,7 +301,11 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
       };
 
       setIsSyncing(true);
-      await pageApi.updatePage(projectId, page.id, pageData);
+
+      await updateByIdMutation({
+        id: page.id,
+        data: pageData
+      });
       toast.success("Page saved successfully!");
     } catch (error) {
       console.error("Failed to save page:", error);
