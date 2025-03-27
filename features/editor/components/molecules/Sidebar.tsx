@@ -9,12 +9,13 @@ interface SidebarProps {
   switchToPage: (pageId: string) => void;
   handleAddPage: () => void;
   handleDeletePage: (pageId: string) => void;
+  handleRenamePage: (pageId: string, newName: string) => void
   handleSavePage: () => void;
   handleSaveTemplate: () => void;
   handleExportZip: () => void;
   isExporting: boolean;
   isOpen: boolean;
-  setIsOpen: () => void;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
 const SlideSidebar: React.FC<SidebarProps> = ({
@@ -23,6 +24,7 @@ const SlideSidebar: React.FC<SidebarProps> = ({
   switchToPage,
   handleAddPage,
   handleDeletePage,
+  handleRenamePage,
   handleSavePage,
   handleSaveTemplate,
   handleExportZip,
@@ -95,7 +97,9 @@ const SlideSidebar: React.FC<SidebarProps> = ({
                       setIsOpen(false);
                     }
                   }}
+                  handleRenamePage={handleRenamePage}
                   handleDeletePage={handleDeletePage}
+                  handleAddPage={handleAddPage}
                 />
               </div>
             ))}

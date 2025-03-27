@@ -18,7 +18,6 @@ import { createPortal } from "react-dom";
 const DragDropLoadingOverlay = ({isDragging}: {isDragging: boolean}) => {
   if (!isDragging) return null;
   
-  // Sélectionner uniquement la zone des frames
   const framesContainer = document.querySelector('.gjs-frames');
   
   if (!framesContainer) return null;
@@ -31,12 +30,12 @@ const DragDropLoadingOverlay = ({isDragging}: {isDragging: boolean}) => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(255, 255, 255, 0.5)', // Plus transparent que l'overlay de page
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 9999,
-        pointerEvents: 'none', // Permet le clic à travers l'overlay
+        pointerEvents: 'none',
       }}
     >
       <div 
@@ -94,7 +93,6 @@ const PageTransitionOverlay = ({ showPageTransition }: {
       className="absolute inset-0 bg-white flex flex-col justify-center items-center z-50"
     >
       <div className="flex flex-col items-center">
-        {/* Logo qui pulse */}
         <div className="animate-pulse mb-8">
           <svg 
             width="60" 
@@ -116,15 +114,12 @@ const PageTransitionOverlay = ({ showPageTransition }: {
           </svg>
         </div>
 
-        {/* Barre de progression avec animation */}
         <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden mb-4">
           <div className="h-full bg-blue-500 rounded-full animate-pulse" style={{ width: '75%' }}></div>
         </div>
 
-        {/* Texte qui apparaît progressivement */}
         <p className="text-gray-700 font-medium animate-fade-in">Chargement de la page...</p>
         
-        {/* Points de chargement animés */}
         <div className="flex space-x-2 mt-2">
           <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
           <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></span>
@@ -149,6 +144,7 @@ const EditorComponent = ({pageData }:  {
     handleAddPage, 
     handleAddPageSubmit, 
     handleDeletePage, 
+    handleRenamePage,
     handleSavePage,  
     showAddPageModal, 
     newPageName, 
@@ -180,6 +176,7 @@ const EditorComponent = ({pageData }:  {
         switchToPage={switchToPage}
         handleAddPage={handleAddPage}
         handleDeletePage={handleDeletePage}
+        handleRenamePage={handleRenamePage}
         handleSavePage={handleSavePage}
         handleSaveTemplate={handleSaveTemplate}
         handleExportZip={handleExportZip}

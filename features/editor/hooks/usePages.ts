@@ -18,7 +18,11 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showPageTransition, setShowPageTransition] = useState(false);
-  const { updateByIdMutation, isUpdatingById } = usePageMutations();
+  const { 
+    updateByIdMutation, 
+    updatePage,
+    deletePage 
+  } = usePageMutations();
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -261,6 +265,57 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
     }
   };
 
+  
+const handleRenamePage = async(pageId: string, newName: string) => {
+
+  if (!editorRef.current) {
+    return;
+  }
+ 
+  console.log('newName',newName);
+  const editor = editorRef.current;
+  const pm = editor.Pages;
+  const page = pm.get(pageId);
+
+  if (!page) {
+    toast.error("Page not found");
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    page.set("name", newName);
+    
+    setIsSyncing(true);
+    await updateByIdMutation({
+      id: pageId,
+      data: {
+        name: newName
+      }
+    });
+    
+    setPages(prev => prev.map(p => 
+      p.id === pageId ? { ...p, name: newName } : p
+    ));
+    
+    toast.success("Page renamed successfully!");
+  } catch (error) {
+    console.error("Failed to save page:", error);
+    toast.error("Failed to save page. Please try again.");
+    
+    if (page) {
+      const oldName = page.get("name");
+      if (oldName !== newName) {
+        page.set("name", oldName);
+      }
+    }
+  } finally {
+    setIsLoading(false);
+    setIsSyncing(false);
+  }
+}
+
   const handleDeletePage = async (pageId: string) => {
     if (!editorRef.current) return;
 
@@ -274,11 +329,9 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
 
     setIsLoading(true);
 
-    try {
-      /**if (projectId && session?.user) {
         try {
           setIsSyncing(true);
-          await pageApi.deletePage(projectId, pageId);
+          await deletePage(pageId);
           toast.success("Page deleted from server");
         } catch (apiError) {
           console.error("Failed to delete page from server:", apiError);
@@ -289,7 +342,6 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
         } finally {
           setIsSyncing(false);
         }
-      }**/
 
       pm.remove(pageId);
 
@@ -299,12 +351,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
       }
 
       toast.success("Page deleted successfully");
-    } catch (error) {
-      console.error("Error deleting page:", error);
-      toast.error("Failed to delete page. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+
   };
 
   const handleSavePage = async () => {
@@ -332,7 +379,11 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
       };
 
       setIsSyncing(true);
-      // await pageApi.updatePage(projectId, page.id, pageData);
+
+      await updateByIdMutation({
+        id: page.id,
+        data: pageData
+      });
       toast.success("Page saved successfully!");
     } catch (error) {
       console.error("Failed to save page:", error);
@@ -387,6 +438,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
     currentPage,
     switchToPage,
     handleAddPage,
+    handleRenamePage,
     handleAddPageSubmit,
     handleDeletePage,
     handleSavePage,

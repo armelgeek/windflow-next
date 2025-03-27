@@ -5,7 +5,7 @@ import { pages } from '@/drizzle/schema/pages';
 
 export async function deletePage(slug: string) {
   const existingPage = await db.query.pages.findFirst({
-    where: eq(pages.slug, slug),
+    where: eq(pages.id, slug),
   });
 
   if (!existingPage) {
@@ -14,7 +14,7 @@ export async function deletePage(slug: string) {
 
   await db
     .delete(pages)
-    .where(eq(pages.slug, slug));
+    .where(eq(pages.id, slug));
 
   return;
 }
