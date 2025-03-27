@@ -10,10 +10,13 @@ import Sidebar from "../molecules/Sidebar";
 import Canvas from "../molecules/Canvas";
 import TemplateModal from "../molecules/TemplateModal";
 import AddPageModal from "../molecules/AddPageModal";
+import { useParams } from "next/navigation";
+import { useProject } from "@/features/project/hooks/use-project";
 
-const Editor = () => {
+const Editor = ({project}: {
+  project: any
+}) => {
   const { editorRef } = useEditor();
-  
   const { 
     pages, 
     currentPage, 
@@ -27,7 +30,7 @@ const Editor = () => {
     newPageName, 
     setNewPageName,
     setShowAddPageModal
-  } = usePages(editorRef);
+  } = usePages(editorRef, project?.id);
   
   const { 
     templateDetails, 
@@ -52,7 +55,6 @@ const Editor = () => {
         handleAddPage={handleAddPage}
         handleDeletePage={handleDeletePage}
         handleSavePage={handleSavePage}
-        handlePreviewPage={handlePreviewPage}
         handleSaveTemplate={handleSaveTemplate}
         handleExportZip={handleExportZip}
         isExporting={isExporting}

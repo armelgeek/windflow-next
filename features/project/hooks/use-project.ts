@@ -36,12 +36,14 @@ export const useProjects = (filters: any) => {
   };
 };
 
-export const useProject = (slug: string) => {
+export const useProject = (slug: string ) => {
+ 
   const { data, isLoading } = useQuery({
     queryKey: PROJECT_KEYS.detail(slug),
     queryFn: () => projectService.detail(slug),
     enabled: !!slug,
   });
+  if(!slug) return { project: null, isLoading: false };
 
   return {
     project: data,

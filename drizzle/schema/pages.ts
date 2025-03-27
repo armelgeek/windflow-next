@@ -7,6 +7,8 @@ export const pages = pgTable(
         id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
         name: varchar('name', { length: 50 }).notNull().unique(),
         slug: varchar('slug', { length: 50 }).notNull().unique(),
+        html: text('html'),
+        css: text('css'),
         content: text('content'),
         projectId: uuid('project_id').references(() => projects.id),
         createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),

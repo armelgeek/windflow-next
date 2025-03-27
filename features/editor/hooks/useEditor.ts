@@ -19,13 +19,11 @@ import grapesjsTabs from 'grapesjs-tabs';
 import grapesjsStyleBg from 'grapesjs-style-bg';
 import grapesjsStyleGradient from 'grapesjs-style-gradient';
 import grapesjsUserBlocks from 'grapesjs-user-blocks';
-import grapejsRteExtensions from 'grapesjs-rte-extensions';
 import 'grapesjs-rte-extensions/dist/grapesjs-rte-extensions.min.css';
 
 import { fixWOFF2Persistence, initFontSystem } from "@/shared/lib/fonts";
 import { 
   addTailwindV3Blocks, 
-  configureDarkModeSupport, 
   configureTailwindExport, 
   configureTailwindJIT, 
   configureTailwindV3
@@ -43,6 +41,9 @@ export const useEditor = () => {
       container: "#gjs",
       height: "100vh",
       width: "auto",
+      layerManager: {
+        sortable: true,
+      },
       storageManager: { type: null },
       plugins: [
         grapesjsTailwind,
@@ -61,8 +62,7 @@ export const useEditor = () => {
         grapesjsStyleGradient,
         gjsRulers,
         grapesjsUserBlocks,
-        grapejsRteExtensions,
-        grapesjsTabs
+        grapesjsTabs,
       ],
       pluginsOpts: {
         [grapesjsTailwind]: {
@@ -81,41 +81,7 @@ export const useEditor = () => {
         [gjsBlocksTable]: {
           'containerId': '#gjs' 
         },
-        'grapesjs-rte-extensions': {
-          base: {
-            bold: true,
-            italic: true,
-            underline: true,
-            strikethrough: true,
-            link: true,
-          },
-          fonts: {
-            fontSize: true,
-            fontColor: true,
-            hilite: true,
-          },
-          format: {
-            heading1: true,
-            heading2: true,
-            heading3: true,
-            paragraph: true,
-            clearFormatting: true,
-          },
-          subscriptSuperscript: true,
-          indentOutdent: true,
-          list: true,
-          align: true,
-          actions: {
-            copy: true,
-            cut: true,
-            paste: true,
-            delete: true,
-          },
-          undoredo: true,
-          extra: false,
-          darkColorPicker: true,
-          maxWidth: '600px'
-        }
+        
       }
     });
 
@@ -126,14 +92,12 @@ export const useEditor = () => {
     addTailwindV3Blocks(editor);
     configureTailwindJIT(editor);
     configureTailwindExport(editor);
-
     const fontManager = initFontSystem(editor);
     if (typeof window !== "undefined") window.fontManager = fontManager;
     
     const fontPersistence = fixWOFF2Persistence(editor);
     if (typeof window !== "undefined") window.fontPersistence = fontPersistence;
-
-    // Add gradient feature
+    
     editor.StyleManager.addProperty('decorations', {
       type: 'gradient', 
       name: 'Gradient',
@@ -229,21 +193,21 @@ export const useEditor = () => {
           toast.success("Template loaded successfully!");
         } catch (apiError) {
           console.log("Failed to load template from API", apiError);
-          createNewHomePage(editor);
+          //createNewHomePage(editor);
           return;
         }
 
         if (templateData) {
-          handleTemplateData(editor, templateData);
+          //handleTemplateData(editor, templateData);
         } else {
-          createNewHomePage(editor);
+        //  createNewHomePage(editor);
         }
       } catch (err) {
         console.log("Failed to load template", err);
-        createNewHomePage(editor);
+     //   createNewHomePage(editor);
       }
     } else {
-      createNewHomePage(editor);
+     // createNewHomePage(editor);
     }
   };
 

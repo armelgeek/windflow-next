@@ -1,6 +1,6 @@
 'use client';
 
-import { usePageMutations } from '../../hooks/use-page';
+import { usePageMutations } from '../../hooks/use-page-info';
 import { EntityDelete } from '@/shared/components/molecules/table/entity-delete';
 import { pageKeys } from '../../config/page.key';
 

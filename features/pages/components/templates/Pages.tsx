@@ -2,7 +2,7 @@
 
 import { DataTable } from '@/shared/components/molecules/datatable/data-table';
 import { columns } from '@/features/pages/components/organisms/columns';
-import { usePages } from '@/features/pages/hooks/use-page';
+import { usePages } from '@/features/pages/hooks/use-page-info';
 import { Add } from '@/features/pages/components/organisms/add';
 import { useTableParams } from '@/shared/hooks/use-table-params';
 

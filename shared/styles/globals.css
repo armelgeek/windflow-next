@@ -327,7 +327,7 @@ input, select, textarea, button, option,
 .gjs-device-label,
 .gjs-toolbar-item,
 .gjs-dropdown-item,
-.gjs-context-menu-item {
+.gjs-context-menu-item,.gjs-traits-label {
   font-family: 'Outfit' !important;
 }
 .gjs-badge{
@@ -406,7 +406,6 @@ input, select, textarea, button, option,
 
 /* Layer manager styling */
 .gjs-layer {
-  border-radius: 4px;
   margin-bottom: 5px;
   padding: 10px;
   background-color: rgb(14 23 42);
@@ -416,7 +415,7 @@ input, select, textarea, button, option,
 
 .gjs-layer.gjs-selected {
   background-color: #44475a;
-  border-color: #d9e5e8;
+  border-color: #090a0a;
 }
 
 .gjs-layer-title {

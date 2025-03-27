@@ -2,18 +2,24 @@ import { useState, useEffect, RefObject } from "react";
 import toast from "react-hot-toast";
 import { useSession } from '../../../shared/hooks/use-session-info';
 import { pageApi } from "../services/page.api";
+import { useParams } from "next/navigation";
+import { log } from "console";
+import { usePageLists } from "@/features/pages/hooks/use-page-info";
+import { useTableParams } from "@/shared/hooks/use-table-params";
 
-export const usePages = (editorRef: RefObject<any>) => {
+export const usePages = (editorRef: RefObject<any>, projectId: string) => {
   const [pages, setPages] = useState([]);
   const [currentPage, setCurrentPage] = useState("");
   const [showAddPageModal, setShowAddPageModal] = useState(false);
   const [newPageName, setNewPageName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
-  
+  const filters = useTableParams();
+  const { data: pagesData } = usePageLists({ 
+    ...filters,
+    projectId 
+  });
   const { data: session } = useSession();
-  const templateId = typeof window !== 'undefined' ? localStorage.getItem('currentTemplateId') : null;
-
   useEffect(() => {
     if (!editorRef.current) return;
 
@@ -50,14 +56,12 @@ export const usePages = (editorRef: RefObject<any>) => {
   }, [editorRef]);
 
   useEffect(() => {
-    if (!templateId || !session?.user) return;
 
     const loadPagesFromAPI = async () => {
       setIsSyncing(true);
       try {
-        const pagesData = await pageApi.getPages(templateId);
         if (!editorRef.current) return;
-        
+      
         const editor = editorRef.current;
         const pm = editor.Pages;
         
@@ -88,10 +92,10 @@ export const usePages = (editorRef: RefObject<any>) => {
     };
     
     loadPagesFromAPI();
-  }, [templateId, session, editorRef]);
+  }, [session, editorRef]);
 
   const saveCurrentPageState = async (sync = false) => {
-    if (!editorRef.current || !templateId || !session?.user) return;
+    if (!editorRef.current || !projectId || !session?.user) return;
     
     const editor = editorRef.current;
     const pm = editor.Pages;
@@ -104,7 +108,7 @@ export const usePages = (editorRef: RefObject<any>) => {
       if (sync) {
         try {
           setIsSyncing(true);
-          await pageApi.updatePage(templateId, currentPageObj.id, {
+          await pageApi.updatePage(projectId, currentPageObj.id, {
             id: currentPageObj.id,
             name: currentPageObj.get("name"),
             html: editor.getHtml(),
@@ -131,10 +135,10 @@ export const usePages = (editorRef: RefObject<any>) => {
     if (nextPage) {
       await saveCurrentPageState(true);
       
-      if (templateId && session?.user && (!nextPage.get("customHtml") || !nextPage.get("customCss"))) {
+      if (projectId && session?.user && (!nextPage.get("customHtml") || !nextPage.get("customCss"))) {
         try {
           setIsSyncing(true);
-          const pageData = await pageApi.getPage(templateId, pageId);
+          const pageData = await pageApi.getPage(projectId, pageId);
           nextPage.set("customHtml", pageData.html);
           nextPage.set("customCss", pageData.css);
         } catch (error) {
@@ -180,10 +184,10 @@ export const usePages = (editorRef: RefObject<any>) => {
         component: initialHtml,
       });
       
-      if (templateId && session?.user) {
+      if (projectId && session?.user) {
         try {
           setIsSyncing(true);
-          await pageApi.createPage(templateId, {
+          await pageApi.createPage(projectId, {
             id: pageId,
             name: pageName,
             html: initialHtml,
@@ -222,10 +226,10 @@ export const usePages = (editorRef: RefObject<any>) => {
     setIsLoading(true);
 
     try {
-      if (templateId && session?.user) {
+      if (projectId && session?.user) {
         try {
           setIsSyncing(true);
-          await pageApi.deletePage(templateId, pageId);
+          await pageApi.deletePage(projectId, pageId);
           toast.success("Page deleted from server");
         } catch (apiError) {
           console.error("Failed to delete page from server:", apiError);
@@ -260,7 +264,7 @@ export const usePages = (editorRef: RefObject<any>) => {
       return;
     }
     
-    if (!templateId) {
+    if (!projectId) {
       toast("Please save the template first");
       return;
     }
@@ -284,7 +288,7 @@ export const usePages = (editorRef: RefObject<any>) => {
       };
 
       setIsSyncing(true);
-      await pageApi.updatePage(templateId, page.id, pageData);
+      await pageApi.updatePage(projectId, page.id, pageData);
       toast.success("Page saved successfully!");
     } catch (error) {
       console.error("Failed to save page:", error);
@@ -296,7 +300,7 @@ export const usePages = (editorRef: RefObject<any>) => {
   };
 
   const handlePreviewPage = async () => {
-    if (!editorRef.current || !templateId || !session?.user) {
+    if (!editorRef.current || !projectId || !session?.user) {
       toast("You must be logged in to preview pages");
       return;
     }
@@ -314,7 +318,7 @@ export const usePages = (editorRef: RefObject<any>) => {
     try {
       await saveCurrentPageState(true);
       
-      const { previewUrl } = await pageApi.generatePreview(templateId, page.id);
+      const { previewUrl } = await pageApi.generatePreview(projectId, page.id);
       
       window.open(previewUrl, "_blank");
     } catch (error) {

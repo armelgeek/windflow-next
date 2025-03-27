@@ -19,7 +19,7 @@ export const columns: ColumnDef<Project>[] = [
       />
     ),
     cell: ({ row }) => {
-      return <div className="flex w-full"><Link href={`/d/master/project/${row.original.slug}`}>{row.original.name}</Link></div>;
+      return <div className="flex w-full"><Link href={`/editor/${row.original.slug}`}>{row.original.name}</Link></div>;
     },
   },
   {

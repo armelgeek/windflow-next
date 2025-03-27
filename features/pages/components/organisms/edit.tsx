@@ -1,6 +1,6 @@
 'use client';
 
-import { usePage, usePageMutations } from '../../hooks/use-page';
+import { usePage, usePageMutations } from '../../hooks/use-page-info';
 import { EntityForm } from '@/shared/components/molecules/form/add-entity';
 import { PageForm } from '../molecules/page-form';
 import { PagePayload } from '../../config/page.type';

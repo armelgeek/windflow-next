@@ -1,5 +1,5 @@
 import { PageForm } from '../molecules/page-form';
-import { usePageMutations } from '../../hooks/use-page';
+import { usePageMutations } from '../../hooks/use-page-info';
 import { pageKeys } from '../../config/page.key';
 import { PagePayload } from '../../config/page.type';
 import { EntityForm } from '@/shared/components/molecules/form/add-entity';

@@ -4,9 +4,7 @@ import { PageData } from './template.api';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 export const pageApi = {
-  /**
-   * Get a specific page from a template
-   */
+
   async getPage(templateId: string, pageId: string): Promise<PageData> {
     try {
       const response = await axios.get(`${API_BASE_URL}/templates/${templateId}/pages/${pageId}`);
@@ -17,9 +15,7 @@ export const pageApi = {
     }
   },
 
-  /**
-   * Get all pages from a template
-   */
+  
   async getPages(templateId: string): Promise<PageData[]> {
     try {
       const response = await axios.get(`${API_BASE_URL}/templates/${templateId}/pages`);
@@ -30,9 +26,7 @@ export const pageApi = {
     }
   },
 
-  /**
-   * Create a new page
-   */
+
   async createPage(templateId: string, pageData: PageData): Promise<PageData> {
     try {
       const response = await axios.post(`${API_BASE_URL}/templates/${templateId}/pages`, pageData);
@@ -43,9 +37,6 @@ export const pageApi = {
     }
   },
 
-  /**
-   * Update a page
-   */
   async updatePage(templateId: string, pageId: string, pageData: PageData): Promise<PageData> {
     try {
       const response = await axios.put(`${API_BASE_URL}/templates/${templateId}/pages/${pageId}`, pageData);
@@ -56,9 +47,7 @@ export const pageApi = {
     }
   },
 
-  /**
-   * Delete a page
-   */
+  
   async deletePage(templateId: string, pageId: string): Promise<void> {
     try {
       await axios.delete(`${API_BASE_URL}/templates/${templateId}/pages/${pageId}`);
@@ -68,9 +57,7 @@ export const pageApi = {
     }
   },
 
-  /**
-   * Generate a preview URL for a page
-   */
+ 
   async generatePreview(templateId: string, pageId: string): Promise<{ previewUrl: string }> {
     try {
       const response = await axios.post(`${API_BASE_URL}/templates/${templateId}/pages/${pageId}/preview`);

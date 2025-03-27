@@ -108,7 +108,6 @@ export const useTemplate = (editorRef: RefObject<any>) => {
           savedTemplate = await templateApi.createTemplate(projectData);
           toast.success("Template saved successfully!");
           
-          // Store the new template ID
           if (savedTemplate.id) {
             localStorage.setItem('currentTemplateId', savedTemplate.id);
           }

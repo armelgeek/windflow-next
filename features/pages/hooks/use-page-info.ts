@@ -13,7 +13,7 @@ export const PAGE_KEYS = {
   detail: (slug: string) => [...PAGE_KEYS.details(), slug] as const,
 };
 
-export const usePages = (filters: any) => {
+export const usePageLists = (filters: any) => {
   const { data, isLoading } = useQuery({
     queryKey: PAGE_KEYS.getPagesByProject(filters),
     queryFn: () => pageService.pagesByProject(filters),
