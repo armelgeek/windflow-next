@@ -24,7 +24,8 @@ import { fixWOFF2Persistence, initFontSystem } from "@/shared/lib/fonts";
 import { 
   addTailwindV3Blocks, 
   configureTailwindExport, 
-  configureTailwindJIT
+  configureTailwindJIT, 
+  configureTailwindV3
 } from "@/shared/lib/tailwind";
 import toast from "react-hot-toast";
 import { templateApi } from "@/features/editor/services/template.api";
@@ -85,6 +86,7 @@ export const useEditor = () => {
     editorRef.current = editor;
     if (typeof window !== "undefined") window.editor = editor;
 
+    configureTailwindV3(editor);
     addTailwindV3Blocks(editor);
     configureTailwindJIT(editor);
     configureTailwindExport(editor);
@@ -186,27 +188,28 @@ export const useEditor = () => {
         
         try {
           templateData = await templateApi.getTemplate(id);
-          
-          if (templateData && templateData.pages && templateData.pages.length > 0) {
-            handleTemplateData(editor, templateData);
-            toast.success("Template loaded successfully!");
-          } else {
-            console.log("Template has no pages");
-          }
+          toast.success("Template loaded successfully!");
         } catch (apiError) {
           console.log("Failed to load template from API", apiError);
+          createNewHomePage(editor);
+          return;
+        }
+
+        if (templateData) {
+          //handleTemplateData(editor, templateData);
+        } else {
+          createNewHomePage(editor);
         }
       } catch (err) {
         console.log("Failed to load template", err);
+       createNewHomePage(editor);
       }
+    } else {
+     createNewHomePage(editor);
     }
   };
 
   const handleTemplateData = (editor, data) => {
-    if (!data.pages || data.pages.length === 0) {
-      return;
-    }
-    
     const pm = editor.Pages;
     pm.getAll().forEach((p) => pm.remove(p.id));
 
@@ -219,9 +222,22 @@ export const useEditor = () => {
       newPage.set("customCss", page.css);
     });
 
-    pm.select(data.pages[0].id);
-    editor.setComponents(data.pages[0].html || "");
-    editor.setStyle(data.pages[0].css || "");
+    if (data.pages.length > 0) {
+      pm.select(data.pages[0].id);
+
+      editor.setComponents(data.pages[0].html || "");
+      editor.setStyle(data.pages[0].css || "");
+    }
+  };
+
+  const createNewHomePage = (editor) => {
+    const pm = editor.Pages;
+    pm.add({
+      id: "home",
+      name: "Home",
+      component: `<div class='p-4'></div>`,
+    });
+    pm.select("home");
   };
 
   return { editorRef };
