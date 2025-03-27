@@ -1,24 +1,23 @@
 import { useState, useEffect, RefObject } from "react";
 import toast from "react-hot-toast";
+import { createPortal } from "react-dom";
 import { useSession } from '../../../shared/hooks/use-session-info';
-import { pageApi } from "../services/page.api";
-import { usePageLists, usePageMutations } from "@/features/pages/hooks/use-page-info";
-import { useTableParams } from "@/shared/hooks/use-table-params";
+import { usePageMutations } from "@/features/pages/hooks/use-page-info";
+import { pageService } from "@/features/pages/domain/page.service";
 
-export const usePages = (editorRef: RefObject<any>, projectId: string) => {
+export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
   const [pages, setPages] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+
   const [currentPage, setCurrentPage] = useState("");
   const [showAddPageModal, setShowAddPageModal] = useState(false);
   const [newPageName, setNewPageName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
-  const filters = useTableParams();
-  const { data: pagesData } = usePageLists({ 
-    ...filters,
-    projectId 
-  });
+  const [showPageTransition, setShowPageTransition] = useState(false);
   const { updateByIdMutation, isUpdatingById } = usePageMutations();
   const { data: session } = useSession();
+
   useEffect(() => {
     if (!editorRef.current) return;
 
@@ -55,17 +54,14 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
   }, [editorRef]);
 
   useEffect(() => {
-
+    if (!editorRef.current) return;
+    const editor = editorRef.current;
+    const pm = editor.Pages;
+        
     const loadPagesFromAPI = async () => {
       setIsSyncing(true);
       try {
-        if (!editorRef.current) return;
-      
-        const editor = editorRef.current;
-        const pm = editor.Pages;
-        
         pm.getAll().forEach(p => pm.remove(p.id));
-        
         pagesData.forEach(page => {
           const newPage = pm.add({
             id: page.id,
@@ -89,9 +85,14 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
         setIsSyncing(false);
       }
     };
-    
+    const existingPages = pm.getAll();
+    if (existingPages && existingPages.length > 1) {
+      console.log('Pages already exist, skipping loadPagesFromAPI');
+      setIsSyncing(false);
+      return;
+    }
     loadPagesFromAPI();
-  }, [session, editorRef]);
+  }, [pagesData, editorRef]);
 
   const saveCurrentPageState = async (sync = false) => {
     if (!editorRef.current) return;
@@ -133,27 +134,37 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
     const editor = editorRef.current;
     const pm = editor.Pages;
     const nextPage = pm.get(pageId);
-    
+    setIsOpen(false);
     if (nextPage) {
+      setShowPageTransition(true);
       await saveCurrentPageState(true);
+      await new Promise(resolve => setTimeout(resolve, 50));
       
-      if (projectId && session?.user && (!nextPage.get("customHtml") || !nextPage.get("customCss"))) {
-        try {
-          setIsSyncing(true);
-          const pageData = await pageApi.getPage(projectId, pageId);
-          nextPage.set("customHtml", pageData.html);
-          nextPage.set("customCss", pageData.css);
-        } catch (error) {
-          console.error("Failed to load page from server", error);
-        } finally {
-          setIsSyncing(false);
+      try {
+        if (!nextPage.get("customHtml") || !nextPage.get("customCss")) {
+          try {
+            setIsSyncing(true);
+            const pageData = await pageService.detail(pageId);
+            nextPage.set("customCss", pageData.css);
+            nextPage.set("customHtml", pageData.html);
+          } catch (error) {
+            console.error("Failed to load page from server", error);
+          } finally {
+            setIsSyncing(false);
+          }
         }
+        pm.select(pageId);
+        
+        editor.setStyle(nextPage.get("customCss") || "");
+        editor.setComponents(nextPage.get("customHtml") || "");
+        setCurrentPage(pageId);
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (error) {
+        console.error("Error switching page:", error);
+        toast.error("Failed to switch page");
+      } finally {
+        setShowPageTransition(false);
       }
-      
-      pm.select(pageId);
-      editor.setComponents(nextPage.get("customHtml") || "");
-      editor.setStyle(nextPage.get("customCss") || "");
-      setCurrentPage(pageId);
     }
   };
 
@@ -186,15 +197,15 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
         component: initialHtml,
       });
       
-      if (projectId && session?.user) {
+      if (session?.user) {
         try {
           setIsSyncing(true);
-          await pageApi.createPage(projectId, {
+          /**await pageApi.createPage(projectId, {
             id: pageId,
             name: pageName,
             html: initialHtml,
             css: ""
-          });
+          });**/
           toast.success(`Page "${pageName}" created and saved to server`);
         } catch (error) {
           console.error("Failed to save new page to server", error);
@@ -228,7 +239,7 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
     setIsLoading(true);
 
     try {
-      if (projectId && session?.user) {
+      /**if (projectId && session?.user) {
         try {
           setIsSyncing(true);
           await pageApi.deletePage(projectId, pageId);
@@ -242,7 +253,7 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
         } finally {
           setIsSyncing(false);
         }
-      }
+      }**/
 
       pm.remove(pageId);
 
@@ -265,12 +276,7 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
       toast("You must be logged in to save pages");
       return;
     }
-    
-    if (!projectId) {
-      toast("Please save the template first");
-      return;
-    }
-    
+   
     const editor = editorRef.current;
     const page = editor.Pages.getSelected();
     
@@ -290,7 +296,7 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
       };
 
       setIsSyncing(true);
-      await pageApi.updatePage(projectId, page.id, pageData);
+     // await pageApi.updatePage(projectId, page.id, pageData);
       toast.success("Page saved successfully!");
     } catch (error) {
       console.error("Failed to save page:", error);
@@ -302,7 +308,7 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
   };
 
   const handlePreviewPage = async () => {
-    if (!editorRef.current || !projectId || !session?.user) {
+    if (!editorRef.current || !session?.user) {
       toast("You must be logged in to preview pages");
       return;
     }
@@ -320,9 +326,9 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
     try {
       await saveCurrentPageState(true);
       
-      const { previewUrl } = await pageApi.generatePreview(projectId, page.id);
+     // const { previewUrl } = await pageApi.generatePreview(projectId, page.id);
       
-      window.open(previewUrl, "_blank");
+     // window.open(previewUrl, "_blank");
     } catch (error) {
       console.error("Failed to generate preview:", error);
       toast.error("Failed to generate preview. Please try again.");
@@ -339,6 +345,8 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
   };
 
   return {
+    isOpen,
+    setIsOpen,
     pages,
     currentPage,
     switchToPage,
@@ -352,6 +360,7 @@ export const usePages = (editorRef: RefObject<any>, projectId: string) => {
     newPageName,
     setNewPageName,
     isLoading,
-    isSyncing
+    isSyncing,
+    showPageTransition
   };
 };

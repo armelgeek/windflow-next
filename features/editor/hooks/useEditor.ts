@@ -191,21 +191,21 @@ export const useEditor = () => {
           toast.success("Template loaded successfully!");
         } catch (apiError) {
           console.log("Failed to load template from API", apiError);
-          createNewHomePage(editor);
+          //createNewHomePage(editor);
           return;
         }
 
         if (templateData) {
           //handleTemplateData(editor, templateData);
         } else {
-          createNewHomePage(editor);
+          //createNewHomePage(editor);
         }
       } catch (err) {
         console.log("Failed to load template", err);
-       createNewHomePage(editor);
+       //createNewHomePage(editor);
       }
     } else {
-     createNewHomePage(editor);
+     //createNewHomePage(editor);
     }
   };
 

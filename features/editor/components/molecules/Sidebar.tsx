@@ -13,6 +13,8 @@ interface SidebarProps {
   handleSaveTemplate: () => void;
   handleExportZip: () => void;
   isExporting: boolean;
+  isOpen: boolean;
+  setIsOpen: () => void;
 }
 
 const SlideSidebar: React.FC<SidebarProps> = ({
@@ -24,10 +26,11 @@ const SlideSidebar: React.FC<SidebarProps> = ({
   handleSavePage,
   handleSaveTemplate,
   handleExportZip,
-  isExporting
+  isExporting,
+  isOpen,
+  setIsOpen
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+ 
   const pageCategories = pages.reduce((acc, page) => {
     const categoryMatch = page.name.match(/^([^:]+):/);
     const category = categoryMatch ? categoryMatch[1] : "Uncategorized";
