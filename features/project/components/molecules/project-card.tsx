@@ -3,6 +3,7 @@ import { Clock, FileText } from 'lucide-react';
 import { Project } from '../../config/project.type';
 import { formatRelativeDate } from '@/shared/lib/utils/date';
 import { FlexibleViewActions } from '../organisms/flexible-view-actions';
+import Link from 'next/link';
 
 const ProjectCard = ({ data , row }: {
   data: Project,
@@ -35,7 +36,9 @@ const ProjectCard = ({ data , row }: {
       </div>
     
       <div className="p-4">
-        <h3 className="text-lg font-medium text-gray-800 mb-1 truncate">{name}</h3>
+        <Link href={`/editor/${slug}`}>
+        <h3 className="text-xl font-medium text-gray-900 mb-1 truncate">{name}</h3>
+        </Link>
         <p className="text-sm text-gray-400 italic mb-3">Pas de description</p>
         
         <div className="flex items-center text-xs text-gray-500 mb-2">

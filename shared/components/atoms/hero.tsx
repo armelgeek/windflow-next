@@ -1,25 +1,32 @@
+import Link from "next/link";
+
 const Hero = () => {
   return (
-    <div className="flex flex-col sm:flex-row border h-96 pt-5 border-gray-400 ">
-      <div className="w-full sm:w-1/2 flex items-center justify-center py-10 sm:py-0">
-        <div className="text-[#414141]">
-          <p className="w-8 md:w-11 h-[2px] bg-[#414141]"></p>
-          <div className="flex items-center gap-2 ">
-            <p className="font-medium text-sm md:text-base uppercase">Call action text</p>
-          </div>
-          <h1 className="prata-regular text-3xl sm:py-3 lg:text-5xl leading-relaxed ">
-            {' '}
-            <span className="text-[#414141]">Call to action</span>{' '}
-          </h1>
-          <div className="flex items-center gap-2">
-            <p className="font-semibold text-sm md:text-base uppercase">Call action action</p>
-            <p className="w-8 md:w-11 h-[1px] bg-[#414141]"></p>
+    <section className="pt-28 pb-32 px-6">
+      <div className="max-w-5xl mx-auto text-center">
+        <h1 className="text-3xl md:text-5xl font-bold mb-6">Créez des sites web sans code</h1>
+        <p className="text-xl md:text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
+          Un constructeur visuel puissant et intuitif pour créer des sites web professionnels sans écrire une seule ligne de code.
+        </p>
+
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-32">
+          <Link href={'/login'} className="px-8 py-3 bg-black text-white text-lg rounded-md hover:bg-gray-800 transition-all">
+            Essayer gratuitement
+          </Link>
+          <button className="px-8 py-3 border border-gray-200 text-lg rounded-md hover:border-gray-400 transition-all">
+            Voir la démo
+          </button>
+        </div>
+
+        <div className="relative">
+          <div className="absolute -top-6 -left-6 right-6 bottom-6 border-2 border-gray-100 rounded-lg"></div>
+          <div className="relative border border-gray-200 rounded-lg shadow-xl overflow-hidden">
+            <img src="/windflow.png" alt="Interface du constructeur visuel" className="w-full" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
           </div>
         </div>
       </div>
-
-      <div className="w-full sm:w-1/2"></div>
-    </div>
+    </section>
   );
 };
 

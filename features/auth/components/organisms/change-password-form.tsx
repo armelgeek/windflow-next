@@ -63,7 +63,7 @@ export function ChangePassword() {
       }}
     >
       <DialogTrigger asChild>
-        <Button className="w-32" variant="outline">
+        <Button  variant="outline">
           <Lock size={16} className="mr-2" /> Update Password
         </Button>
       </DialogTrigger>

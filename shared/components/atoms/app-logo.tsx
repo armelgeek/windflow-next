@@ -6,8 +6,9 @@ import Link from 'next/link';
 export function AppLogo() {
   return (
     <Link href='/' className="flex items-center gap-3">
-
+      <span className="text-black text-2xl">{ '<>' }</span>
       <span className="truncate font-medium text-xl">
+        
         {kAppName.toUpperCase()}
       </span>
     </Link>
