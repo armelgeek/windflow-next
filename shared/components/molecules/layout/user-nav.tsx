@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Session } from 'better-auth';
-import { User2Icon } from 'lucide-react';
+import { ListIcon, User2Icon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 export function UserNav({ session }: { session: Session }) {
@@ -57,8 +57,18 @@ export function UserNav({ session }: { session: Session }) {
                  <User2Icon size={20} />My profile
                 </DropdownMenuItem>
             </Link>
+
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <Link href="/projects" passHref>
+                <DropdownMenuItem>
+                 <ListIcon size={20} />My projects
+                </DropdownMenuItem>
+            </Link>
+            
+          </DropdownMenuGroup>
+           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut}>
             Log out
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

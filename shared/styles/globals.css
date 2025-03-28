@@ -328,7 +328,7 @@ iframe {
 .gjs-clm-sel-rule,
 #gjs-sm-input-holder,
 .gjs-input-unit,
-input, select, textarea, button, option,
+#gjs input, #gjs select, #gjs textarea, #gjs button, #gjs option,
 .gjs-radio-item-label,
 .gjs-badge,
 .gjs-layer-title,
@@ -798,8 +798,7 @@ input, select, textarea, button, option,
   color: rgb(14 23 42);
 }
 
-/* Inputs and selects */
-input, select, textarea, .gjs-fields {
+#gjs input, #gjs select, #gjs textarea, .gjs-fields {
   background-color: rgb(14 23 42) !important;
   color: #f8f8f2 !important;
   border-color: #44475a !important;

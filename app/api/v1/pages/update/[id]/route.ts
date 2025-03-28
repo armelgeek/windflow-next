@@ -13,7 +13,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   const id = (await params).id;
-  console.log('id----',id);
   const body = await request.json();
   await updatePageById(id, body);
 

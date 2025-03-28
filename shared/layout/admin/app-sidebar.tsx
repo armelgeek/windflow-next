@@ -33,6 +33,7 @@ import {
   ChevronRight,
   ChevronsUpDown,
   GalleryVerticalEnd,
+  ListIcon,
   LogOut,
   User2Icon
 } from 'lucide-react';
@@ -202,6 +203,14 @@ export default function AppSidebar({ session }: { session: Session }) {
                   </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <Link href="/projects" passHref>
+                    <DropdownMenuItem>
+                      <ListIcon /> My projects
+                    </DropdownMenuItem>
+                  </Link>
+                </DropdownMenuGroup>
+                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut />
                   Log out

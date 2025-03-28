@@ -130,8 +130,9 @@ const PageTransitionOverlay = ({ showPageTransition }: {
     framesContainer
   );
 };
-const EditorComponent = ({pageData }:  {
-  pageData: any
+const EditorComponent = ({pageData, projectId }:  {
+  pageData: any,
+  projectId: string
 }) => {
   const { editorRef } = useEditor();
 
@@ -151,8 +152,9 @@ const EditorComponent = ({pageData }:  {
     setNewPageName,
     setShowAddPageModal,
     showPageTransition,
-    isDragging
-  } = usePages(editorRef, pageData);
+    isDragging,
+    isPageLoading
+  } = usePages(editorRef, pageData, projectId);
   
   const { 
     templateDetails, 
@@ -185,7 +187,7 @@ const EditorComponent = ({pageData }:  {
         setIsOpen={setIsOpen}
       />
       
-      <Canvas editorRef={editorRef} showPageTransition={showPageTransition} />
+      <Canvas editorRef={editorRef} />
 
       {showModal && (
         <TemplateModal
@@ -204,7 +206,7 @@ const EditorComponent = ({pageData }:  {
           setShowAddPageModal={setShowAddPageModal}
         />
       )}
-        <PageTransitionOverlay showPageTransition={showPageTransition} />
+        <PageTransitionOverlay showPageTransition={showPageTransition || isPageLoading} />
         <DragDropLoadingOverlay isDragging={isDragging}/>
     </div>
   );
@@ -220,6 +222,9 @@ const Editor = ({project}: {
     });
 
   if(!pagesData) return;
-  return <EditorComponent  pageData={pagesData} />
+  return (<EditorComponent  
+              pageData={pagesData}  
+              projectId={project.id} 
+        />)
 }
 export default Editor;

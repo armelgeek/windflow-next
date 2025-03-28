@@ -1,13 +1,12 @@
 import { useState, useEffect, RefObject } from "react";
 import toast from "react-hot-toast";
-import { createPortal } from "react-dom";
 import { useSession } from '../../../shared/hooks/use-session-info';
 import { usePageMutations } from "@/features/pages/hooks/use-page-info";
 import { pageService } from "@/features/pages/domain/page.service";
 
 
 
-export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
+export const usePages = (editorRef: RefObject<any>, pagesData: any, projectId: string) => {
   const [pages, setPages] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -18,9 +17,11 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showPageTransition, setShowPageTransition] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  
   const { 
     updateByIdMutation, 
-    updatePage,
+    createPage,
     deletePage 
   } = usePageMutations();
   const { data: session } = useSession();
@@ -43,7 +44,13 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
           setCurrentPage(selected.id);
         }
       }
+      setIsPageLoading(false);
     };
+
+    const onLoadPages = () => {
+      setIsPageLoading(true);
+      updatePages();
+    }
 
     editor.on("page", updatePages);
     editor.on("page:select", updatePages);
@@ -56,7 +63,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
       editor.off("page:select", updatePages);
       editor.off("page:add", updatePages);
       editor.off("page:remove", updatePages);
-      editor.off("load", updatePages);
+      editor.off("load", onLoadPages);
     };
   }, [editorRef]);
 
@@ -100,6 +107,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
 
     const loadPagesFromAPI = async () => {
       setIsSyncing(true);
+      setIsPageLoading(true);
       try {
         pm.getAll().forEach(p => pm.remove(p.id));
         pagesData.forEach(page => {
@@ -123,12 +131,14 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
         toast.error("Failed to load pages from the server");
       } finally {
         setIsSyncing(false);
+        setIsPageLoading(false);
       }
     };
     const existingPages = pm.getAll();
     if (existingPages && existingPages.length > 1) {
       console.log('Pages already exist, skipping loadPagesFromAPI');
       setIsSyncing(false);
+      setIsPageLoading(false);
       return;
     }
     loadPagesFromAPI();
@@ -226,7 +236,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
     }
 
     setIsLoading(true);
-
+    setIsPageLoading(true);
     try {
       const pageId = pageName.toLowerCase().replace(/\s+/g, "-");
       const initialHtml = `<div class='p-4'>${pageName} Page</div>`;
@@ -240,12 +250,13 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
       if (session?.user) {
         try {
           setIsSyncing(true);
-          /**await pageApi.createPage(projectId, {
-            id: pageId,
+
+            await createPage({
             name: pageName,
             html: initialHtml,
-            css: ""
-          });**/
+            css: "",
+            projectId: projectId
+          });
           toast.success(`Page "${pageName}" created and saved to server`);
         } catch (error) {
           console.error("Failed to save new page to server", error);
@@ -262,6 +273,7 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any) => {
       toast.error("Failed to add page. Please try again.");
     } finally {
       setIsLoading(false);
+      setIsPageLoading(false);
     }
   };
 
@@ -272,7 +284,6 @@ const handleRenamePage = async(pageId: string, newName: string) => {
     return;
   }
  
-  console.log('newName',newName);
   const editor = editorRef.current;
   const pm = editor.Pages;
   const page = pm.get(pageId);
@@ -313,6 +324,7 @@ const handleRenamePage = async(pageId: string, newName: string) => {
   } finally {
     setIsLoading(false);
     setIsSyncing(false);
+    
   }
 }
 
@@ -328,6 +340,7 @@ const handleRenamePage = async(pageId: string, newName: string) => {
     }
 
     setIsLoading(true);
+    setIsPageLoading(true);
 
         try {
           setIsSyncing(true);
@@ -341,6 +354,7 @@ const handleRenamePage = async(pageId: string, newName: string) => {
           return; 
         } finally {
           setIsSyncing(false);
+          setIsPageLoading(false);
         }
 
       pm.remove(pageId);
@@ -450,6 +464,7 @@ const handleRenamePage = async(pageId: string, newName: string) => {
     isLoading,
     isSyncing,
     showPageTransition,
-    isDragging
+    isDragging,
+    isPageLoading
   };
 };

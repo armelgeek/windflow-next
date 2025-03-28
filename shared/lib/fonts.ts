@@ -159,38 +159,32 @@ export const setupFontManager = (editor, initialFonts = fontFamilies) => {
         return true;
     };
 
-    // Ajouter une police personnalisée avec fichiers
     const addCustomFont = (fontFamily, fontFiles, fontWeight = 400, fontStyle = 'normal') => {
-        // Vérifier si la police existe déjà
         if (fonts.custom.some(f => f.name === fontFamily)) {
             console.log(`La police personnalisée "${fontFamily}" existe déjà`);
             return false;
         }
 
-        // Générer le CSS @font-face pour cette police
         let fontFaceCSS = '';
 
         if (typeof fontFiles === 'string') {
-            // Si une seule URL est fournie
             fontFaceCSS = `
-  @font-face {
-    font-family: "${fontFamily}";
-    src: url("${fontFiles}") format("woff2");
-    font-weight: ${fontWeight};
-    font-style: ${fontStyle};
-  }`;
-        } else if (Array.isArray(fontFiles)) {
-            // Si un tableau de fichiers avec différents poids est fourni
-            fontFaceCSS = fontFiles.map(file => `
-  @font-face {
-    font-family: "${fontFamily}";
-    src: url("${file.url}") format("woff2");
-    font-weight: ${file.weight || fontWeight};
-    font-style: ${file.style || fontStyle};
-  }`).join('\n');
-        }
+                @font-face {
+                    font-family: "${fontFamily}";
+                    src: url("${fontFiles}") format("woff2");
+                    font-weight: ${fontWeight};
+                    font-style: ${fontStyle};
+                }`;
+                        } else if (Array.isArray(fontFiles)) {
+                            fontFaceCSS = fontFiles.map(file => `
+                @font-face {
+                    font-family: "${fontFamily}";
+                    src: url("${file.url}") format("woff2");
+                    font-weight: ${file.weight || fontWeight};
+                    font-style: ${file.style || fontStyle};
+                }`).join('\n');
+                        }
 
-        // Ajouter la police au tableau
         fonts.custom.push({
             name: fontFamily,
             value: `"${fontFamily}", sans-serif`,
@@ -198,7 +192,6 @@ export const setupFontManager = (editor, initialFonts = fontFamilies) => {
             files: fontFiles
         });
 
-        // Sauvegarder, injecter et mettre à jour
         saveFonts(fonts);
         injectFontsToCanvas();
         updateFontOptions();
@@ -206,9 +199,7 @@ export const setupFontManager = (editor, initialFonts = fontFamilies) => {
         return true;
     };
 
-    // Supprimer une police personnalisée
     const removeCustomFont = (fontFamily) => {
-        // Trouver l'index de la police à supprimer
         const index = fonts.custom.findIndex(f => f.name === fontFamily);
 
         if (index === -1) {
@@ -216,10 +207,8 @@ export const setupFontManager = (editor, initialFonts = fontFamilies) => {
             return false;
         }
 
-        // Supprimer la police du tableau
         fonts.custom.splice(index, 1);
 
-        // Sauvegarder, injecter et mettre à jour
         saveFonts(fonts);
         injectFontsToCanvas();
         updateFontOptions();
@@ -227,15 +216,11 @@ export const setupFontManager = (editor, initialFonts = fontFamilies) => {
         return true;
     };
 
-    // Initialisation lors du chargement de l'éditeur
     editor.on('load', () => {
-        // Injecter les polices dans le canvas
         injectFontsToCanvas();
 
-        // Mettre à jour les options de police
         updateFontOptions();
 
-        // Ajouter un menu de gestion des polices dans les paramètres
         editor.Panels.addButton('options', {
             id: 'open-fonts',
             className: 'fa fa-font',
@@ -243,55 +228,53 @@ export const setupFontManager = (editor, initialFonts = fontFamilies) => {
             attributes: { title: 'Gérer les polices' }
         });
 
-        // Commander pour ouvrir le gestionnaire de polices
         editor.Commands.add('open-fonts', {
             run(editor) {
                 editor.Modal.open({
                     title: 'Gestionnaire de polices',
                     content: `
-  <div style="padding: 20px; max-height: 70vh; overflow-y: auto;">
-    <div style="margin-bottom: 20px;">
-      <h3 style="margin-bottom: 10px; font-size: 16px; font-weight: bold;">Ajouter une police Google</h3>
-      <div style="display: flex; gap: 10px;">
-        <input type="text" id="google-font-input" placeholder="Nom de la police Google" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-        <button id="add-google-font" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Ajouter</button>
-      </div>
-      <p style="margin-top: 5px; font-size: 12px; color: #666;">Exemple: Roboto, Open Sans, Lato, etc.</p>
-    </div>
-    
-    <div style="margin-bottom: 20px;">
-      <h3 style="margin-bottom: 10px; font-size: 16px; font-weight: bold;">Ajouter une police personnalisée</h3>
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <input type="text" id="custom-font-name" placeholder="Nom de la police" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-        <input type="text" id="custom-font-url" placeholder="URL du fichier WOFF2" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-        <p style="margin: 0; font-size: 12px; color: #666;">OU</p>
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <input type="file" id="custom-font-file" accept=".woff,.woff2,.ttf,.otf" style="flex: 1;">
-          <span style="font-size: 12px; color: #666;">(WOFF2 recommandé)</span>
-        </div>
-        <button id="add-custom-font" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; align-self: flex-start;">Ajouter</button>
-      </div>
-    </div>
-    
-    <div>
-      <h3 style="margin-bottom: 10px; font-size: 16px; font-weight: bold;">Polices personnalisées</h3>
-      <div id="custom-fonts-list" style="display: flex; flex-direction: column; gap: 5px;">
-        ${fonts.custom.length === 0 ?
-                            '<p style="color: #666;">Aucune police personnalisée pour le moment.</p>' :
-                            fonts.custom.map(font => `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
-              <span style="font-family: ${font.value};">${font.name}</span>
-              <button class="delete-font" data-font="${font.name}" style="padding: 5px 10px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Supprimer</button>
-            </div>
-          `).join('')
-                        }
-      </div>
-    </div>
-  </div>
-            `
+                        <div style="padding: 20px; max-height: 70vh; overflow-y: auto;">
+                            <div style="margin-bottom: 20px;">
+                            <h3 style="margin-bottom: 10px; font-size: 16px; font-weight: bold;">Ajouter une police Google</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="google-font-input" placeholder="Nom de la police Google" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <button id="add-google-font" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Ajouter</button>
+                            </div>
+                            <p style="margin-top: 5px; font-size: 12px; color: #666;">Exemple: Roboto, Open Sans, Lato, etc.</p>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                            <h3 style="margin-bottom: 10px; font-size: 16px; font-weight: bold;">Ajouter une police personnalisée</h3>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <input type="text" id="custom-font-name" placeholder="Nom de la police" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" id="custom-font-url" placeholder="URL du fichier WOFF2" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <p style="margin: 0; font-size: 12px; color: #666;">OU</p>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="file" id="custom-font-file" accept=".woff,.woff2,.ttf,.otf" style="flex: 1;">
+                                <span style="font-size: 12px; color: #666;">(WOFF2 recommandé)</span>
+                                </div>
+                                <button id="add-custom-font" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; align-self: flex-start;">Ajouter</button>
+                            </div>
+                            </div>
+                            
+                            <div>
+                            <h3 style="margin-bottom: 10px; font-size: 16px; font-weight: bold;">Polices personnalisées</h3>
+                            <div id="custom-fonts-list" style="display: flex; flex-direction: column; gap: 5px;">
+                                ${fonts.custom.length === 0 ?
+                                                    '<p style="color: #666;">Aucune police personnalisée pour le moment.</p>' :
+                                                    fonts.custom.map(font => `
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
+                                    <span style="font-family: ${font.value};">${font.name}</span>
+                                    <button class="delete-font" data-font="${font.name}" style="padding: 5px 10px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Supprimer</button>
+                                    </div>
+                                `).join('')
+                                                }
+                            </div>
+                            </div>
+                        </div>
+                                    `
                 });
 
-                // Événements pour le formulaire Google Font
                 document.getElementById('add-google-font').addEventListener('click', () => {
                     const fontName = document.getElementById('google-font-input').value.trim();
                     if (fontName) {
@@ -307,7 +290,6 @@ export const setupFontManager = (editor, initialFonts = fontFamilies) => {
                     }
                 });
 
-                // Événements pour le formulaire de police personnalisée
                 document.getElementById('add-custom-font').addEventListener('click', () => {
                     const fontName = document.getElementById('custom-font-name').value.trim();
                     const fontUrl = document.getElementById('custom-font-url').value.trim();
@@ -346,7 +328,6 @@ export const setupFontManager = (editor, initialFonts = fontFamilies) => {
                     }
                 });
 
-                // Événements pour les boutons de suppression
                 document.querySelectorAll('.delete-font').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const fontName = e.target.getAttribute('data-font');
@@ -376,12 +357,10 @@ export const setupFontManager = (editor, initialFonts = fontFamilies) => {
     };
 };
 
-// 4. Ajouter des blocs Tailwind pour des textes avec polices personnalisées
 export const addFontBlocks = (editor, fonts) => {
     const blockManager = editor.BlockManager;
     const category = 'Typography';
 
-    // Ajouter un bloc pour chaque police Google
     fonts.google.forEach(font => {
         const fontName = font.name.toLowerCase().replace(/\s+/g, '-');
         blockManager.add(`heading-${fontName}`, {
@@ -394,7 +373,6 @@ export const addFontBlocks = (editor, fonts) => {
         });
     });
 
-    // Ajouter des blocs pour des combinaisons de polices courantes
     blockManager.add('typography-set', {
         label: 'Typography Set',
         category,
@@ -470,7 +448,7 @@ export const setupFontExport = (editor) => {
 export const initFontSystem = (editor) => {
     const fontManager = setupFontManager(editor);
 
-    addFontBlocks(editor, fontManager.getAllFonts());
+    //addFontBlocks(editor, fontManager.getAllFonts());
 
     setupFontExport(editor);
 
@@ -633,169 +611,169 @@ export const persistCustomFonts = (editor) => {
 
 export const fixWOFF2Persistence = (editor) => {
     const openFontsDatabase = () => {
-      return new Promise((resolve, reject) => {
-        const request = indexedDB.open('FontsDatabase', 1);
-        
-        request.onupgradeneeded = (event) => {
-          const db = event.target.result;
-          if (!db.objectStoreNames.contains('fonts')) {
-            const store = db.createObjectStore('fonts', { keyPath: 'id' });
-            store.createIndex('name', 'name', { unique: false });
-            store.createIndex('format', 'format', { unique: false });
-          }
-        };
-        
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open('FontsDatabase', 1);
+
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('fonts')) {
+                    const store = db.createObjectStore('fonts', { keyPath: 'id' });
+                    store.createIndex('name', 'name', { unique: false });
+                    store.createIndex('format', 'format', { unique: false });
+                }
+            };
+
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
     };
-    
+
     const storeFont = async (fontId, fontName, fontData, format = 'woff2') => {
-      try {
-        const db = await openFontsDatabase();
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(['fonts'], 'readwrite');
-          const store = transaction.objectStore('fonts');
-          
-          const fontRecord = {
-            id: fontId,
-            name: fontName,
-            data: fontData,
-            format: format,
-            timestamp: Date.now()
-          };
-          
-          const request = store.put(fontRecord);
-          request.onsuccess = () => resolve(true);
-          request.onerror = () => reject(request.error);
-        });
-      } catch (error) {
-        console.error('Erreur lors du stockage de la police:', error);
-        return false;
-      }
+        try {
+            const db = await openFontsDatabase();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['fonts'], 'readwrite');
+                const store = transaction.objectStore('fonts');
+
+                const fontRecord = {
+                    id: fontId,
+                    name: fontName,
+                    data: fontData,
+                    format: format,
+                    timestamp: Date.now()
+                };
+
+                const request = store.put(fontRecord);
+                request.onsuccess = () => resolve(true);
+                request.onerror = () => reject(request.error);
+            });
+        } catch (error) {
+            console.error('Erreur lors du stockage de la police:', error);
+            return false;
+        }
     };
-    
+
     const retrieveFont = async (fontId) => {
-      try {
-        const db = await openFontsDatabase();
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(['fonts'], 'readonly');
-          const store = transaction.objectStore('fonts');
-          
-          const request = store.get(fontId);
-          request.onsuccess = () => resolve(request.result);
-          request.onerror = () => reject(request.error);
-        });
-      } catch (error) {
-        console.error('Erreur lors de la récupération de la police:', error);
-        return null;
-      }
+        try {
+            const db = await openFontsDatabase();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['fonts'], 'readonly');
+                const store = transaction.objectStore('fonts');
+
+                const request = store.get(fontId);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        } catch (error) {
+            console.error('Erreur lors de la récupération de la police:', error);
+            return null;
+        }
     };
-    
+
     const getAllFonts = async () => {
-      try {
-        const db = await openFontsDatabase();
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(['fonts'], 'readonly');
-          const store = transaction.objectStore('fonts');
-          
-          const request = store.getAll();
-          request.onsuccess = () => resolve(request.result);
-          request.onerror = () => reject(request.error);
-        });
-      } catch (error) {
-        console.error('Erreur lors de la récupération des polices:', error);
-        return [];
-      }
+        try {
+            const db = await openFontsDatabase();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['fonts'], 'readonly');
+                const store = transaction.objectStore('fonts');
+
+                const request = store.getAll();
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        } catch (error) {
+            console.error('Erreur lors de la récupération des polices:', error);
+            return [];
+        }
     };
-    
+
     const setupFontManagerOverride = () => {
-      if (typeof window !== "undefined" && window.fontManager && window.fontManager.addCustomFont) {
-        const originalAddCustomFont = window.fontManager.addCustomFont;
-        
-        window.fontManager.addCustomFont = async (fontFamily, fontFiles, fontWeight = 400, fontStyle = 'normal') => {
- 
-          const result = originalAddCustomFont(fontFamily, fontFiles, fontWeight, fontStyle);
-          
-          if (result) {
-            try {
-              const fontId = `font-${fontFamily.replace(/\s+/g, '-').toLowerCase()}-${fontWeight}-${fontStyle}`;
-              
-              await storeFont(fontId, fontFamily, fontFiles, 
-                             typeof fontFiles === 'string' && fontFiles.includes('woff2') ? 'woff2' : 'other');
-              
-              console.log(`Police ${fontFamily} sauvegardée dans IndexedDB`);
-            } catch (error) {
-              console.error(`Erreur lors de la sauvegarde de la police ${fontFamily}:`, error);
-            }
-          }
-          
-          return result;
-        };
-      }
+        if (typeof window !== "undefined" && window.fontManager && window.fontManager.addCustomFont) {
+            const originalAddCustomFont = window.fontManager.addCustomFont;
+
+            window.fontManager.addCustomFont = async (fontFamily, fontFiles, fontWeight = 400, fontStyle = 'normal') => {
+
+                const result = originalAddCustomFont(fontFamily, fontFiles, fontWeight, fontStyle);
+
+                if (result) {
+                    try {
+                        const fontId = `font-${fontFamily.replace(/\s+/g, '-').toLowerCase()}-${fontWeight}-${fontStyle}`;
+
+                        await storeFont(fontId, fontFamily, fontFiles,
+                            typeof fontFiles === 'string' && fontFiles.includes('woff2') ? 'woff2' : 'other');
+
+                        console.log(`Police ${fontFamily} sauvegardée dans IndexedDB`);
+                    } catch (error) {
+                        console.error(`Erreur lors de la sauvegarde de la police ${fontFamily}:`, error);
+                    }
+                }
+
+                return result;
+            };
+        }
     };
-    
+
     const restoreFontsOnLoad = async () => {
-      try {
-        const storedFonts = await getAllFonts();
-        
-        if (storedFonts.length === 0) {
-          console.log('Aucune police persistante trouvée');
-          return;
-        }
-        
-        console.log(`Restauration de ${storedFonts.length} polices...`);
-        
-        const savedFonts = localStorage.getItem('gjs-fonts');
-        const fonts = savedFonts ? JSON.parse(savedFonts) : { system: [], google: [], custom: [] };
-        
-        const loadedFonts = new Set(fonts.custom.map(f => f.name));
-        
-        for (const storedFont of storedFonts) {
-          if (loadedFonts.has(storedFont.name)) {
-            continue;
-          }
-          
-          // Restaurer la police à l'aide du fontManager
-          if (typeof window !== "undefined" && window.fontManager && window.fontManager.addCustomFont) {
-            const added = window.fontManager.addCustomFont(
-              storedFont.name,
-              storedFont.data,
-              storedFont.weight || 400,
-              storedFont.style || 'normal'
-            );
-            
-            if (added) {
-              console.log(`Police ${storedFont.name} restaurée avec succès`);
+        try {
+            const storedFonts = await getAllFonts();
+
+            if (storedFonts.length === 0) {
+                console.log('Aucune police persistante trouvée');
+                return;
             }
-          }
+
+            console.log(`Restauration de ${storedFonts.length} polices...`);
+
+            const savedFonts = localStorage.getItem('gjs-fonts');
+            const fonts = savedFonts ? JSON.parse(savedFonts) : { system: [], google: [], custom: [] };
+
+            const loadedFonts = new Set(fonts.custom.map(f => f.name));
+
+            for (const storedFont of storedFonts) {
+                if (loadedFonts.has(storedFont.name)) {
+                    continue;
+                }
+
+                // Restaurer la police à l'aide du fontManager
+                if (typeof window !== "undefined" && window.fontManager && window.fontManager.addCustomFont) {
+                    const added = window.fontManager.addCustomFont(
+                        storedFont.name,
+                        storedFont.data,
+                        storedFont.weight || 400,
+                        storedFont.style || 'normal'
+                    );
+
+                    if (added) {
+                        console.log(`Police ${storedFont.name} restaurée avec succès`);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors de la restauration des polices:', error);
         }
-      } catch (error) {
-        console.error('Erreur lors de la restauration des polices:', error);
-      }
     };
-    
+
     const setupEventListeners = () => {
-      editor.on('load', () => {
-        setTimeout(() => {
-          restoreFontsOnLoad();
-        }, 300);
-      });
-      
-      editor.on('canvas:load', () => {
-        setTimeout(() => {
-          restoreFontsOnLoad();
-        }, 300);
-      });
+        editor.on('load', () => {
+            setTimeout(() => {
+                restoreFontsOnLoad();
+            }, 300);
+        });
+
+        editor.on('canvas:load', () => {
+            setTimeout(() => {
+                restoreFontsOnLoad();
+            }, 300);
+        });
     };
-    
+
     setupFontManagerOverride();
     setupEventListeners();
-    
+
     return {
-      storeFont,
-      retrieveFont,
-      getAllFonts,
-      restoreFonts: restoreFontsOnLoad
+        storeFont,
+        retrieveFont,
+        getAllFonts,
+        restoreFonts: restoreFontsOnLoad
     };
-  };
+};

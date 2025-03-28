@@ -2,6 +2,7 @@
 
 import {
   BadgeCheck,
+  ListIcon,
   LogOut,
   User2Icon,
   UserIcon,
@@ -106,7 +107,14 @@ export function UserAvatar({ isAnonymous, user }: Props) {
           </DropdownMenuGroup>
 
           <DropdownMenuSeparator />
-
+          <DropdownMenuGroup>
+            <Link href="/projects" passHref>
+              <DropdownMenuItem>
+                <ListIcon /> My projects
+              </DropdownMenuItem>
+            </Link>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
           {isAnonymous ? (
             <AlertDialogTrigger asChild key="__anonymous_user">
               <DropdownMenuItem>

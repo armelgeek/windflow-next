@@ -22,10 +22,8 @@ import 'grapesjs-rte-extensions/dist/grapesjs-rte-extensions.min.css';
 
 import { fixWOFF2Persistence, initFontSystem } from "@/shared/lib/fonts";
 import { 
-  addTailwindV3Blocks, 
-  configureTailwindExport, 
-  configureTailwindJIT, 
-  configureTailwindV3
+  configureTailwindExport,
+  setupBasicHTMLBlocks,
 } from "@/shared/lib/tailwind";
 import toast from "react-hot-toast";
 import { templateApi } from "@/features/editor/services/template.api";
@@ -86,10 +84,9 @@ export const useEditor = () => {
     editorRef.current = editor;
     if (typeof window !== "undefined") window.editor = editor;
 
-    configureTailwindV3(editor);
-    addTailwindV3Blocks(editor);
-    configureTailwindJIT(editor);
     configureTailwindExport(editor);
+    setupTailwindBlocks(editor);
+    setupBasicHTMLBlocks(editor);
     const fontManager = initFontSystem(editor);
     if (typeof window !== "undefined") window.fontManager = fontManager;
     
