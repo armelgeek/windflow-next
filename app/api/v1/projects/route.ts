@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const data = await createProject(body);
+  const data = await createProject({...body, userId: session.user.id});
 
   return NextResponse.json(data);
 }

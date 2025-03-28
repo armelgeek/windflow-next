@@ -1,11 +1,11 @@
 import 'server-only';
 import { eq } from 'drizzle-orm';
 import { db } from '@/drizzle/db';
-import { pages } from '@/drizzle/schema/pages';
+import { projects } from '@/drizzle/schema';
 
 export async function deleteProject(slug: string) {
-  const existingProject = await db.query.pages.findFirst({
-    where: eq(pages.slug, slug),
+  const existingProject = await db.query.projects.findFirst({
+    where: eq(projects.slug, slug),
   });
 
   if (!existingProject) {
@@ -13,8 +13,8 @@ export async function deleteProject(slug: string) {
   }
 
   await db
-    .delete(pages)
-    .where(eq(pages.slug, slug));
+    .delete(projects)
+    .where(eq(projects.slug, slug));
 
   return;
 }

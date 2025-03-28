@@ -7,10 +7,10 @@ import { db } from '@/drizzle/db';
 import { projects } from '@/drizzle/schema/projects';
 import { ProjectPayload } from '../../config/project.type';
 
-export async function createProject(payload: ProjectPayload) {
+export async function createProject(payload: ProjectPayload & {userId: string}) {
   const slug = slugify(payload.name, { lower: true });
 
-  const existingProject = await db.query.categories.findFirst({
+  const existingProject = await db.query.projects.findFirst({
     where: eq(projects.slug, slug),
   });
 
