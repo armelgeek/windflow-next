@@ -7,8 +7,6 @@ import {
   ShoppingCart,
   CreditCard,
   TrendingUp,
-  Clock,
-  CheckCircle,
   AlertCircle,
   Info
 } from 'lucide-react';
@@ -16,7 +14,6 @@ import { StatsCard } from '@/shared/components/molecules/dashboard/stats-card';
 import { ChartCard } from '@/shared/components/molecules/dashboard/chart-card';
 import { ActivityList, Activity } from '@/shared/components/molecules/dashboard/activity-list';
 
-// Exemple de données - À remplacer par de vraies données de votre API
 const salesData = [
   { name: 'Jan', value: 4000 },
   { name: 'Fév', value: 3000 },

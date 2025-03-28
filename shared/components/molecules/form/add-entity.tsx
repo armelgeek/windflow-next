@@ -78,11 +78,7 @@ export function EntityForm<T>({
             {buttonLabel || `${actionText} ${title}`}
           </Button>
         ) : (
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="flex items-center p-2 hover:bg-gray-100 rounded-md"
-          > 
+          <div className='flex flex-row gap-2 cursor-pointer'> 
             <Edit
               size={16}
               strokeWidth={2}
@@ -90,7 +86,7 @@ export function EntityForm<T>({
               aria-hidden="true"
             />
             {buttonLabel || actionText}
-          </Button>
+          </div>
         )}
       </DialogTrigger>
       <DialogContent className={className}>

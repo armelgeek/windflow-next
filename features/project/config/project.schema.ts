@@ -7,4 +7,5 @@ export const ProjectFormSchema = createInsertSchema(projects, {
   name: (s) => s.min(1, 'Name is required.').max(255, 'Name must be at most 255 characters.'),
 }).pick({
   name: true,
+  updatedAt: true
 });

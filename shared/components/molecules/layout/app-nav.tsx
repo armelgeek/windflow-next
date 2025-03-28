@@ -7,7 +7,7 @@ const AppNav = () => {
     const pathname = usePathname();
 
     return (
-        <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
+        <ul className="hidden sm:flex gap-5 text-sm text-gray-900">
             {[
                 { href: "/", label: "HOME" },
                 { href: "/about", label: "ABOUT" },

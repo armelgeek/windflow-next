@@ -2,6 +2,7 @@ import 'server-only';
 import { sql } from 'drizzle-orm';
 import { db } from '@/drizzle/db';
 import { projects } from '@/drizzle/schema/projects';
+import { pages } from '@/drizzle/schema/pages';
 import type { Filter } from '@/shared/lib/types/filter';
 import { calculatePagination } from '@/shared/lib/utils/calculate-pagination';
 import { createPagination } from '@/shared/lib/utils/create-pagination';
@@ -35,9 +36,18 @@ export async function getProjects(filter: Filter) {
       slug: projects.slug,
       created_at: projects.createdAt,
       updated_at: projects.updatedAt,
+      page_count: sql<number>`count(${pages.id})`.as('page_count') 
     })
     .from(projects)
+    .leftJoin(pages, sql`${pages.projectId} = ${projects.id}`)
     .where(conditions)
+    .groupBy(
+      projects.id,
+      projects.name,
+      projects.slug,
+      projects.createdAt,
+      projects.updatedAt
+    )
     .orderBy(sort)
     .limit(itemsPerPage)
     .offset(offset);

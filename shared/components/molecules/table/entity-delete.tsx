@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 interface EntityDeleteProps {
   entityId: string;
@@ -54,13 +55,14 @@ export function EntityDelete({
       onOpenChange={(open) => setIsOpen(open)}
     >
       <AlertDialogTrigger asChild>
-        <DropdownMenuItem
-          onSelect={(e) => e.preventDefault()}
-          className="text-destructive focus:text-destructive"
-        >
+      <Button
+            variant="ghost" 
+            size="sm" 
+            className="flex items-center p-2 hover:bg-transparent rounded-md"
+          > 
           <DeleteIcon size={16} className='mr-2' />
           Delete
-        </DropdownMenuItem>
+          </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
