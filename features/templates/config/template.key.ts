@@ -1,5 +1,5 @@
 import { createQueryKeys } from '@/shared/lib/utils/query-keys';
 
-export const categoryKeys = createQueryKeys({
+export const templateKeys = createQueryKeys({
   entity: 'template'
 });

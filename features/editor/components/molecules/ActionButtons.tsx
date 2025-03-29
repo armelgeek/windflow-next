@@ -1,7 +1,10 @@
-import React, { useState } from "react";
-import { Plus, Save, Eye, Download, MoreHorizontal, SaveAll } from 'lucide-react';
+import React, { useState, useEffect, RefObject } from "react";
+import { Plus, Save, Download, MoreHorizontal } from 'lucide-react';
+import { Page } from "@/features/pages/config/page.type";
+import { Add } from "@/features/templates/components/organisms/add";
 
 interface ActionButtonsProps {
+  pages: Page[];
   handleAddPage: () => void;
   handleSavePage: () => void;
   handleSaveTemplate: () => void;
@@ -10,6 +13,7 @@ interface ActionButtonsProps {
 }
 
 const CompactActionButtons: React.FC<ActionButtonsProps> = ({
+  pages,
   handleAddPage,
   handleSavePage,
   handleSaveTemplate,
@@ -18,13 +22,13 @@ const CompactActionButtons: React.FC<ActionButtonsProps> = ({
 }) => {
   const [showMore, setShowMore] = useState(false);
 
+
   const primaryActions = [
     { icon: <Plus size={16} />, label: "Add", onClick: handleAddPage, color: "bg-green-600 hover:bg-green-700" },
     { icon: <Save size={16} />, label: "Save", onClick: handleSavePage, color: "bg-blue-600 hover:bg-blue-700" },
-   ];
+  ];
 
   const secondaryActions = [
-    { icon: <SaveAll size={16} />, label: "Save Template", onClick: handleSaveTemplate, color: "hover:bg-slate-700" },
     { 
       icon: <Download size={16} />, 
       label: isExporting ? "Exporting..." : "Export ZIP", 
@@ -33,7 +37,7 @@ const CompactActionButtons: React.FC<ActionButtonsProps> = ({
       color: "hover:bg-slate-700 disabled:text-slate-500 disabled:hover:bg-transparent" 
     }
   ];
-
+  
   return (
     <div className="flex items-center justify-between border-t border-slate-700 pt-3">
       <div className="flex space-x-1">
@@ -60,6 +64,7 @@ const CompactActionButtons: React.FC<ActionButtonsProps> = ({
 
         {showMore && (
           <div className="absolute bottom-full right-0 mb-1 w-40 bg-slate-800 rounded-md shadow-lg py-1 z-10">
+          
             {secondaryActions.map((action, index) => (
               <button
                 key={index}
@@ -74,6 +79,7 @@ const CompactActionButtons: React.FC<ActionButtonsProps> = ({
                 <span className="text-xs">{action.label}</span>
               </button>
             ))}
+            <Add pages={pages} />
           </div>
         )}
       </div>

@@ -16,6 +16,7 @@ import {
 interface ModalFormProps<T> {
 
   title: string;
+  customTitle?: string;
   description?: string;
   initialData: T | null;
   onSubmit: (data: T) => Promise<void>;

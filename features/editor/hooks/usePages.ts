@@ -18,7 +18,6 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any, projectId: s
   const [isDragging, setIsDragging] = useState(false);
   const [showPageTransition, setShowPageTransition] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
-  
   const { 
     updateByIdMutation, 
     createPage,
@@ -34,9 +33,12 @@ export const usePages = (editorRef: RefObject<any>, pagesData: any, projectId: s
     const updatePages = () => {
       if (editor && editor.Pages) {
         const allPages = editor.Pages.getAll().map((p) => ({
-          id: p.id,
-          name: p.get("name")
+            id: p.id,
+            name: p.get("name") || "",
+            html: p.get("customHtml") || "",
+            css: p.get("customCss") || ""
         }));
+        
         setPages(allPages);
 
         const selected = editor.Pages.getSelected();

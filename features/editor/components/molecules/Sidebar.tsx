@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PagesList from "./PagesList";
 import ActionButtons from "./ActionButtons";
 import { Menu, X } from "lucide-react";
@@ -32,7 +32,7 @@ const SlideSidebar: React.FC<SidebarProps> = ({
   isOpen,
   setIsOpen
 }) => {
- 
+
   const pageCategories = pages.reduce((acc, page) => {
     const categoryMatch = page.name.match(/^([^:]+):/);
     const category = categoryMatch ? categoryMatch[1] : "Uncategorized";
@@ -44,7 +44,7 @@ const SlideSidebar: React.FC<SidebarProps> = ({
     acc[category].push(page);
     return acc;
   }, {} as Record<string, typeof pages>);
-
+ 
   return (
     <>
       <button
@@ -107,6 +107,7 @@ const SlideSidebar: React.FC<SidebarProps> = ({
 
           <div className="p-4 border-t border-slate-700 bg-slate-900">
             <ActionButtons
+              pages={pages}
               handleAddPage={handleAddPage}
               handleSavePage={handleSavePage}
               handleSaveTemplate={handleSaveTemplate}

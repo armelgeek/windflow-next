@@ -33,5 +33,9 @@ export const API_ENDPOINTS = {
     updateContent: (slug: string) => `/pages/content/${slug}`,
     
   },
+  templates: {
+    base: '/templates',
+    create: '/templates',
+  }
   
 } as const;

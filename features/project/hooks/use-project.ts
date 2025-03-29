@@ -64,7 +64,6 @@ export const useProjectMutations = () => {
     onSuccess: () => {
       toast.success('Project créée avec succès');
       handleSuccess();
-      router.push('/d/master/project');
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -77,7 +76,6 @@ export const useProjectMutations = () => {
     onSuccess: () => {
       toast.success('Project mise à jour avec succès');
       handleSuccess();
-      router.push('/d/master/project');
     },
     onError: (error: Error) => {
       toast.error(error.message);

@@ -10,8 +10,8 @@ import { templatePages, templates } from '@/drizzle/schema';
 
 export async function createTemplate(payload: TemplatePayload) {
     const slug = slugify(payload.title, { lower: true });
-    const { userId, title, description, category, image, pages: pageData, settings, isPublic = true } = payload;
-
+    const { title, description, category, image, pages: pageData, isPublic = true } = payload;
+    console.log('pageData',payload);
     const existingTemplate = await db.query.templates.findFirst({
         where: eq(projects.slug, slug),
     });
@@ -28,10 +28,8 @@ export async function createTemplate(payload: TemplatePayload) {
             slug,
             category,
             image,
-            userId: userId,
             isPublic,
         }).returning();
-
         for (const page of pageData) {
             await tx.insert(templatePages).values({
                 name: page.name,
@@ -40,12 +38,7 @@ export async function createTemplate(payload: TemplatePayload) {
                 templateId: template.id,
             });
         }
-        const completeTemplate = await tx.query.templates.findFirst({
-            where: eq(templates.id, template.id),
-            with: {
-                pages: true,
-            },
-        });
-        return completeTemplate;
+       
+        return template;
     });
 }

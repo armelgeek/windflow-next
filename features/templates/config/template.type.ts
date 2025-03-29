@@ -7,7 +7,7 @@ import { Page } from '@/features/pages/config/page.type';
 export type Template = z.infer<typeof TemplateSelectSchema>;
 
 export type TemplatePayload = {
-    userId: string;
+    userId?: string;
     title: string;
     description: string;
     category: string;
