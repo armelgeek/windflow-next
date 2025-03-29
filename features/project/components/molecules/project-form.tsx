@@ -61,7 +61,6 @@ export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: Project
       name: ''
     },
     onSubmit: async (data) => {
-      // Only include template for new projects
       const payload = initialData 
         ? data 
         : { ...data, templateId };
@@ -71,7 +70,6 @@ export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: Project
     onSuccess
   });
 
-  // Filter templates based on search
   const filteredTemplates = search 
     ? PROJECT_TEMPLATES.filter(t => 
         t.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -129,8 +127,8 @@ export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: Project
                 side="bottom"
                 sideOffset={4}
                 forceMount
-                container={document.body} // Force render at the body level
-                style={{ zIndex: 1000 }} // Ensure high z-index
+                container={document.body}
+                style={{ zIndex: 1000 }}
               >
                 <Command shouldFilter={false}>
                   <CommandInput 

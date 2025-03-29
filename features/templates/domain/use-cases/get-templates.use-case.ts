@@ -2,10 +2,8 @@ import { db } from "@/drizzle/db";
 import { templates } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 
-export async function removeTemplate(payload: {
-    templateId: string
-}) {
-    const { templateId } = payload;
+export async function getTemplates() {
+
     try {
         const allTemplates = await db.query.templates.findMany({
             where: eq(templates.isPublic, true),

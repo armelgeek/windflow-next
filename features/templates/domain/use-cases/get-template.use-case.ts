@@ -2,7 +2,7 @@ import { db } from "@/drizzle/db";
 import { templates } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 
-export async function removeTemplate(payload: {
+export async function getTemplate(payload: {
     templateId: string
 }) {
     const { templateId } = payload;
