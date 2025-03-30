@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { getTemplate } from "@/features/templates/domain/use-cases/get-template.use-case";
+import { getTemplate } from "@/features/templates/domain/use-cases";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 

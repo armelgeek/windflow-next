@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { createTemplateAsProject } from "@/features/templates/domain/use-cases/use-template-as-project.use-case";
+import { createTemplateAsProject } from "@/features/templates/domain/use-cases";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 

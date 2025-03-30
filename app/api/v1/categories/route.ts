@@ -2,9 +2,8 @@ import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
-import { createCategory } from '@/features/category/domain/use-cases/create-category.use-case';
-import { getCategories } from '@/features/category/domain/use-cases/get-categories.use-case';
 import { createSearchParams } from '@/shared/domain/base.search-param';
+import { createCategory, getCategories } from '@/features/category/domain/use-cases';
 
 export async function GET(request: NextRequest) {
    const searchParams = createSearchParams();

@@ -2,9 +2,8 @@ import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
-import { createProject } from '@/features/project/domain/use-cases/create-project.use-case';
-import { getProjects } from '@/features/project/domain/use-cases/get-projects.use-case';
 import { createSearchParams } from '@/shared/domain/base.search-param';
+import { createProject, getProjects } from '@/features/project/domain/use-cases';
 
 export async function GET(request: NextRequest) {
   const searchParams = createSearchParams();

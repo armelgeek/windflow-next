@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
-import { updateContentPage } from '@/features/pages/domain/use-cases/update-content-page.use-case';
+import { updateContentPage } from '@/features/pages/domain/use-cases';
 
 
 

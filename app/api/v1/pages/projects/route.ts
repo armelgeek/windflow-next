@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPagesByProject } from '@/features/pages/domain/use-cases/get-pages-by-project.use-case';
 import { createSearchParams } from '@/shared/domain/base.search-param';
+import { getPagesByProject } from '@/features/pages/domain/use-cases';
 
 export async function GET(request: NextRequest) {
   const searchParams = createSearchParams();

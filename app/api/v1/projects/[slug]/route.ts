@@ -2,9 +2,7 @@ import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
-import { deleteProject } from '@/features/project/domain/use-cases/delete-project.use-case';
-import { getProject } from '@/features/project/domain/use-cases/get-project.use-case';
-import { updateProject } from '@/features/project/domain/use-cases/update-project.use-case';
+import { deleteProject, getProject, updateProject } from '@/features/project/domain/use-cases';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;

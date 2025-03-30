@@ -1,11 +1,7 @@
 import { auth } from "@/auth";
-import { createTemplate } from "@/features/templates/domain/use-cases/create-template.use-case";
-import { updateTemplate } from "@/features/templates/domain/use-cases/update-template.use-case";
+import { createTemplate, deleteTemplate, getTemplates, updateTemplate } from "@/features/templates/domain/use-cases";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { deleteTemplate } from "@/features/templates/domain/use-cases/delete-template.use-case";
-import { getTemplates } from "@/features/templates/domain/use-cases/get-templates.use-case";
-
 export async function POST(request: NextRequest) {
     const session = await auth.api.getSession({
         headers: await headers(),

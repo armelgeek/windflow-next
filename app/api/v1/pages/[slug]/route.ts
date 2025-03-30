@@ -2,9 +2,7 @@ import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
-import { deletePage } from '@/features/pages/domain/use-cases/delete-page.use-case';
-import { getPage } from '@/features/pages/domain/use-cases/get-page.use-case';
-import { updatePage } from '@/features/pages/domain/use-cases/update-page.use-case';
+import { deletePage, getPage, updatePage } from '@/features/pages/domain/use-cases';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;

@@ -1,7 +1,6 @@
 import 'server-only';
 import { eq, sql } from 'drizzle-orm';
 import slugify from 'slugify';
-import { z } from 'zod';
 import { db } from '@/drizzle/db';
 import { categories } from '@/drizzle/schema/categories';
 import { Filter } from '@/shared/lib/types/filter';
@@ -101,23 +100,3 @@ export const categoryUseCase = new UseCase<Category, CategoryPayload, unknown>({
     }
   }
 });
-
-export async function createCategory(payload: CategoryPayload) {
-  return categoryUseCase.create(payload);
-}
-
-export async function getCategory(slug: string) {
-  return categoryUseCase.getById(slug);
-}
-
-export async function updateCategory(slug: string, payload: CategoryPayload) {
-  return categoryUseCase.update(slug, payload);
-}
-
-export async function deleteCategory(slug: string) {
-  return categoryUseCase.delete(slug);
-}
-
-export async function getCategories(filter: Filter) {
-  return categoryUseCase.list(filter);
-}

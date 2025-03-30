@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { updatePageById } from "@/features/pages/domain/use-cases/update-page-by-id.use-case";
+import { updatePageById } from "@/features/pages/domain/use-cases";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 

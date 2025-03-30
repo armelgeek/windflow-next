@@ -2,9 +2,8 @@ import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
-import { createPage } from '@/features/pages/domain/use-cases/create-page.use-case';
-import { getPages } from '@/features/pages/domain/use-cases/get-pages.use-case';
 import { createSearchParams } from '@/shared/domain/base.search-param';
+import { createPage, getPages } from '@/features/pages/domain/use-cases';
 
 export async function GET(request: NextRequest) {
   const searchParams = createSearchParams();
