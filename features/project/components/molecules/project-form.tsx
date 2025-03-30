@@ -4,7 +4,7 @@ import { Form } from '@/components/ui/form';
 import { ControlledTextInput } from '@/shared/components/molecules/form/ControlledTextInput';
 import { useFormHandler } from '@/shared/hooks/use-form-handler';
 import { useState } from 'react';
-import { 
+import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -22,6 +22,9 @@ import { Badge } from '@/components/ui/badge';
 
 import { Project, ProjectPayload } from '../../config/project.type';
 import { ProjectFormSchema } from '../../config/project.schema';
+import { useUserTemplates } from '@/features/templates/hooks/use-template-info';
+import { Template } from '@/features/templates/config/template.type';
+import { useSession } from '@/shared/hooks/use-session-info';
 
 interface ProjectTemplate {
   id: string;
@@ -30,61 +33,65 @@ interface ProjectTemplate {
   category: string;
 }
 
-const PROJECT_TEMPLATES: ProjectTemplate[] = [
-  { id: 'empty', name: 'Empty Project', description: 'Start from scratch', category: 'Basic' },
-  { id: 'basic-web', name: 'Basic Web', description: 'Simple web project', category: 'Web' },
-  { id: 'react-app', name: 'React Application', description: 'React.js starter', category: 'Web' },
-  { id: 'vue-app', name: 'Vue Application', description: 'Vue.js starter', category: 'Web' },
-  { id: 'api-node', name: 'Node.js API', description: 'REST API with Node', category: 'Backend' },
-  { id: 'api-python', name: 'Python API', description: 'REST API with Python', category: 'Backend' },
-  { id: 'mobile-react', name: 'React Native', description: 'Mobile app with React Native', category: 'Mobile' },
-  { id: 'mobile-flutter', name: 'Flutter App', description: 'Mobile app with Flutter', category: 'Mobile' },
-];
-
 
 interface ProjectFormProps {
   initialData: Pick<Project, 'name'> | null;
   onSubmit: (input: ProjectPayload & { templateId?: string }) => Promise<void>;
   onSuccess?: () => void;
 }
-
+type TemplatePayload = {
+  userId: string;
+  search: string;
+  setTemplate: (t: Template) => void;
+  setOpen: (o: boolean) => void;
+}
+const UserTemplate = ({ userId, search, setTemplate, setOpen }: TemplatePayload) => {
+  const { templates, isLoading } = useUserTemplates(userId);
+  if (isLoading) {
+    return <div>Loading ...</div>
+  }
+  return (
+    <CommandGroup key={'category'} heading={'category'}>
+      {templates.map(template => (
+        <CommandItem
+          key={template.id}
+          value={template.id}
+          onSelect={() => {
+            setTemplate(template);
+            setOpen(false);
+          }}
+        >
+          <div className="flex flex-col">
+            <span>{template.title}</span>
+            <span className="text-xs text-muted-foreground">
+              {template.description}
+            </span>
+          </div>
+        </CommandItem>
+      ))}
+    </CommandGroup>
+  )
+}
 export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: ProjectFormProps) => {
-  const [templateId, setTemplateId] = useState('empty');
+  const [template, setTemplate] = useState({} as Template);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
-  
-  const selectedTemplate = PROJECT_TEMPLATES.find(t => t.id === templateId);
-  
+  const { data: session } = useSession();
   const { form, handleSubmit, isSubmitting } = useFormHandler<ProjectPayload>({
     schema: ProjectFormSchema,
     initialValues: initialData || {
       name: ''
     },
     onSubmit: async (data) => {
-      const payload = initialData 
-        ? data 
-        : { ...data, templateId };
-      
+      const payload = initialData
+        ? data
+        : { ...data, templateId: template.id };
+
       await onSubmit(payload);
     },
     onSuccess
   });
 
-  const filteredTemplates = search 
-    ? PROJECT_TEMPLATES.filter(t => 
-        t.name.toLowerCase().includes(search.toLowerCase()) || 
-        t.description.toLowerCase().includes(search.toLowerCase())
-      )
-    : PROJECT_TEMPLATES;
-
-  // Group templates by category
-  const groupedTemplates: Record<string, ProjectTemplate[]> = {};
-  filteredTemplates.forEach(template => {
-    if (!groupedTemplates[template.category]) {
-      groupedTemplates[template.category] = [];
-    }
-    groupedTemplates[template.category].push(template);
-  });
 
   return (
     <Form {...form}>
@@ -95,24 +102,24 @@ export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: Project
           placeholder="Project Name"
           control={form.control}
         />
-        
+
         {!initialData && (
           <div className="space-y-2">
             <p className="text-sm font-medium">Project Template</p>
-            
+
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  role="combobox" 
+                <Button
+                  variant="outline"
+                  role="combobox"
                   aria-expanded={open}
                   className="w-full justify-between text-left font-normal"
                 >
-                  {selectedTemplate ? (
+                  {template ? (
                     <span className="flex items-center">
-                      <span>{selectedTemplate.name}</span>
+                      <span>{template.title}</span>
                       <Badge variant="outline" className="ml-2 text-xs">
-                        {selectedTemplate.category}
+                        {template.category}
                       </Badge>
                     </span>
                   ) : (
@@ -121,9 +128,9 @@ export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: Project
                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent 
-                className="w-[300px] p-0" 
-                align="start" 
+              <PopoverContent
+                className="w-[300px] p-0"
+                align="start"
                 side="bottom"
                 sideOffset={4}
                 forceMount
@@ -131,8 +138,8 @@ export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: Project
                 style={{ zIndex: 1000 }}
               >
                 <Command shouldFilter={false}>
-                  <CommandInput 
-                    placeholder="Search templates..." 
+                  <CommandInput
+                    placeholder="Search templates..."
                     value={search}
                     onValueChange={setSearch}
                     className="h-9"
@@ -140,36 +147,21 @@ export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: Project
                   <CommandList>
                     <CommandEmpty>No template found.</CommandEmpty>
                     <ScrollArea className="h-[300px]">
-                      {Object.keys(groupedTemplates).map(category => (
-                        <CommandGroup key={category} heading={category}>
-                          {groupedTemplates[category].map(template => (
-                            <CommandItem
-                              key={template.id}
-                              value={template.id}
-                              onSelect={() => {
-                                setTemplateId(template.id);
-                                setOpen(false);
-                              }}
-                            >
-                              <div className="flex flex-col">
-                                <span>{template.name}</span>
-                                <span className="text-xs text-muted-foreground">
-                                  {template.description}
-                                </span>
-                              </div>
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      ))}
+                      {session && <UserTemplate
+                        userId={session.user.id}
+                        search={search}
+                        setTemplate={setTemplate}
+                        setOpen={setOpen}
+                      />}
                     </ScrollArea>
                   </CommandList>
                 </Command>
               </PopoverContent>
             </Popover>
-            
-            {selectedTemplate && (
+
+            {template && (
               <p className="text-xs text-muted-foreground">
-                {selectedTemplate.description}
+                {template.description}
               </p>
             )}
           </div>

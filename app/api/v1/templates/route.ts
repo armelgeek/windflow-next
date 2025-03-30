@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { createTemplate, deleteTemplate, getTemplates, updateTemplate } from "@/features/templates/domain/use-cases";
+import { createSearchParams } from "@/shared/domain/base.search-param";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
@@ -40,8 +41,10 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(data);
 }
 
-export async function GET() {
-    const data = await getTemplates();
+export async function GET(request: Request) {
+    const searchParams = createSearchParams();
+    const filter = searchParams.load(request);
+    const data = await getTemplates(filter);
     return NextResponse.json(data);
 }
 

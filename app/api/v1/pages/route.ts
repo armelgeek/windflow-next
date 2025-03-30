@@ -4,10 +4,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { createSearchParams } from '@/shared/domain/base.search-param';
 import { createPage, getPages } from '@/features/pages/domain/use-cases';
+import { parseAsString } from 'nuqs/server';
 
 export async function GET(request: NextRequest) {
-  const searchParams = createSearchParams();
+  const searchParams = createSearchParams({
+    projectId: parseAsString.withDefault('')
+  });
   const filter = searchParams.load(request);
+
   const data = await getPages(filter);
 
   return NextResponse.json(data);

@@ -32,7 +32,6 @@ export function filterWhereClause(columns: string[], filter: Filter) {
   if (filter.projectId) {
     conditions.push(sql`project_id=${filter.projectId}`);
   }
-
   Object.entries(filter).forEach(([key, value]) => {
     if (key === 'search' || key == 'projectId') return;
     if (Array.isArray(value)) {

@@ -1,3 +1,4 @@
+import { Filter } from "@/features/auth/config/user.type";
 import { TemplatePayload } from "../../config/template.type";
 import { templateUseCase } from "./template.use-case";
 
@@ -17,8 +18,8 @@ export async function createTemplate(payload: TemplatePayload) {
     return templateUseCase.execute('delete', payload);
   }
   
-  export async function getTemplates() {
-    return templateUseCase.list();
+  export async function getTemplates(filter: Filter) {
+    return templateUseCase.list(filter);
   }
   
   export async function getUserTemplate(payload: { userId: string, templateId: string }) {

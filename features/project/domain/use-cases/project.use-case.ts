@@ -27,12 +27,24 @@ export const projectUseCase = new UseCase<Project, ProjectPayload, unknown>({
             if (existingProject) {
                 throw new Error('Project with this name already exists');
             }
-            const [project] = await db
-                .insert(projects)
-                .values({ ...data, slug })
-                .returning();
+            return await db.transaction(async (tx) => {
+                const [project] = await tx
+                    .insert(projects)
+                    .values({ ...data, slug })
+                    .returning();
 
-            return project;
+                await tx
+                    .insert(pages)
+                    .values({
+                        name: "Home",
+                        slug: `${slug}-home`,
+                        html: "",
+                        css: "",
+                        content: "",
+                        projectId: project.id
+                    })
+                return project;
+            })
         },
 
         async getById(slug: string) {

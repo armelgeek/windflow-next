@@ -79,7 +79,8 @@ export const pageUseCase = new UseCase<Page, PagePayload, unknown>({
       const sortColumns = ['name'];
       
       const whereClause = {
-        search: filter.search
+        search: filter.search,
+        projectId: filter.projectId
       };
       
       const conditions = filterWhereClause(searchColumns, whereClause);
