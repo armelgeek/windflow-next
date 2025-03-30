@@ -49,7 +49,10 @@ export async function createTemplateAsProject(payload: {
 
             return completeProject;
         });
-    } catch (error) {
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        }
         return;
     }
 };

@@ -4,38 +4,28 @@ if (!API_URL) {
   throw new Error('NEXT_PUBLIC_API_URL environment variable is not set');
 }
 
+const createResourceEndpoints = (resource: string) => ({
+  base: `/${resource}`,
+  list: (qs: string) => `/${resource}${qs}`,
+  create: `/${resource}`,
+  detail: (slug: string) => `/${resource}/${slug}`,
+  update: (slug: string) => `/${resource}/${slug}`,
+  delete: (slug: string) => `/${resource}/${slug}`,
+});
+
 export const API_ENDPOINTS = {
-  categories: {
-    base: '/categories',
-    list: (qs: string) => `/categories${qs}`,
-    create: '/categories',
-    detail: (slug: string) => `/categories/${slug}`,
-    update: (slug: string) => `/categories/${slug}`,
-    delete: (slug: string) => `/categories/${slug}`,
-  },
-  projects: {
-    base: '/projects',
-    list: (qs: string) => `/projects${qs}`,
-    create: '/projects',
-    detail: (slug: string) => `/projects/${slug}`,
-    update: (slug: string) => `/projects/${slug}`,
-    delete: (slug: string) => `/projects/${slug}`,
-  },
+  categories: createResourceEndpoints('categories'),
+  projects: createResourceEndpoints('projects'),
   pages: {
-    base: '/pages',
-    list: (qs: string) => `/pages${qs}`,
-    create: '/pages',
-    detail: (slug: string) => `/pages/${slug}`,
+    ...createResourceEndpoints('pages'),
     pagesByProject: (qs: string) => `/pages/projects/${qs}`,
-    update: (slug: string) => `/pages/${slug}`,
-    delete: (slug: string) => `/pages/${slug}`,
     updateById: (id: string) => `/pages/update/${id}`,
     updateContent: (slug: string) => `/pages/content/${slug}`,
-    
   },
   templates: {
-    base: '/templates',
-    create: '/templates',
+    ...createResourceEndpoints('templates'),
+    byUsers: (userId: string) => `/templates/user/${userId}`,
+    removeFromUser: (userId: string, templateId: string) => `/templates/user/${userId}/${templateId}`,
+    use: '/templates/use'
   }
-  
 } as const;

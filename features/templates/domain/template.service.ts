@@ -21,5 +21,12 @@ export class TemplateServiceImpl implements TemplateService {
       body: JSON.stringify(payload),
     });
   }
+  async create(payload: TemplatePayload): Promise<Template> {
+    return this.fetchData<Template>(`${API_URL}${API_ENDPOINTS.templates.create}`, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
 }
 export const templateService = new TemplateServiceImpl();

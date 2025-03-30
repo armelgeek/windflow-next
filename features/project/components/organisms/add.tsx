@@ -20,6 +20,7 @@ export function Add() {
       Form={ProjectForm}
       queryKey={projectKeys.all}
       mode="add"
+        className = "max-w-md"
     />
   );
 }
