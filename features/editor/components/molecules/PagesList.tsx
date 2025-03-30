@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, Edit, Save, X, FolderOpen, Folder, Plus, Check } from "lucide-react";
-import { log } from "console";
+import { Trash2, Edit, Save, X, FolderOpen, Folder, Plus } from "lucide-react";
 
 interface PagesListProps {
   pages: Array<{ id: string; name: string }>;

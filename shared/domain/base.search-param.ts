@@ -17,7 +17,6 @@ import {
 
   export function createSearchParams(additionalParams = {}) {
     const mergedParams = { ...baseSearchParams, ...additionalParams };
-
     const parserMap = mergedParams as unknown as ParserMap;
     
     return {

@@ -1,28 +1,37 @@
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 import { pageService } from '../domain/page.service';
-import { PagePayload } from '../config/page.type';
+import { Page, PagePayload, PaginatedPage } from '../config/page.type';
+import { Filter } from '@/shared/lib/types/filter';
+import { useCustomQuery, useDetail, useList, useMutations } from '@/shared/lib/react-query/query-hooks';
+import { keepPreviousData } from '@tanstack/react-query';
 
 export const PAGE_KEYS = {
   all: ['pages'] as const,
   lists: () => [...PAGE_KEYS.all, 'list'] as const,
-  getPagesByProject: (filters: any) => [...PAGE_KEYS.lists(), { filters }] as const,
-  
-  list: (filters: any) => [...PAGE_KEYS.lists(), { filters }] as const,
+  list: (filters: Filter) => [...PAGE_KEYS.lists(), { filters }] as const,
   details: () => [...PAGE_KEYS.all, 'detail'] as const,
   detail: (slug: string) => [...PAGE_KEYS.details(), slug] as const,
+  byProject: (filters: Filter) => [...PAGE_KEYS.all, 'byProject', { filters }] as const,
 };
 
-export const usePageLists = (filters: any) => {
-  const { data, isLoading } = useQuery({
-    queryKey: PAGE_KEYS.getPagesByProject(filters),
-    queryFn: () => pageService.pagesByProject(filters),
-    placeholderData: keepPreviousData,
-  });
+
+export const usePages = (filters: Filter) => {
+  return useList<Page>(
+    PAGE_KEYS,
+    pageService,
+    filters
+  );
+};
+
+export const usePagesByProject = (filters: Filter) => {
+  const { data, isLoading } = useCustomQuery<PaginatedPage, Filter>(
+    PAGE_KEYS.byProject(filters),
+    (filterParams) => pageService.pagesByProject(filterParams),
+    filters,
+    { placeholderData: keepPreviousData }
+  );
 
   const pageSize = filters.pageSize || 10;
-  const total = data?.total ?? 0;
+  const total = data?.meta?.pagination?.total ?? 0;
   const totalPages = Math.ceil(total / pageSize);
 
   return {
@@ -38,11 +47,11 @@ export const usePageLists = (filters: any) => {
 };
 
 export const usePage = (slug: string) => {
-  const { data, isLoading } = useQuery({
-    queryKey: PAGE_KEYS.detail(slug),
-    queryFn: () => pageService.detail(slug),
-    enabled: !!slug,
-  });
+  const { data, isLoading } = useDetail<Page>(
+    PAGE_KEYS as unknown as { detail: (slug: string) => readonly unknown[] },
+    pageService,
+    slug
+  );
 
   return {
     page: data,
@@ -50,84 +59,55 @@ export const usePage = (slug: string) => {
   };
 };
 
-export const usePageMutations = () => {
-  const queryClient = useQueryClient();
 
-  const handleSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: PAGE_KEYS.lists() });
+export const usePageMutations = () => {
+
+  const config = {
+    service: pageService,
+    queryKeys: PAGE_KEYS
   };
 
-  const createMutation = useMutation({
-    mutationFn: (data: PagePayload & {projectId: string}) => pageService.create(data),
-    onSuccess: () => {
-      toast.success('Page créée avec succès');
-      handleSuccess();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
+  const {
+    create, update, remove,
+    isCreating, isUpdating, isDeleting,
+    useCustomMutation, invalidate
+  } = useMutations<Page, PagePayload & { projectId: string }>(config);
 
-  const updateMutation = useMutation({
-    mutationFn: ({ slug, data }: { slug: string; data: PagePayload & {projectId: string}}) =>
-      pageService.update(slug, data),
-    onSuccess: () => {
-      toast.success('Page mise à jour avec succès');
-      handleSuccess();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
+  const updateByIdMutation = useCustomMutation(
+    ({ id, data }: { id: string; data: PagePayload }) => pageService.updateById(id, data),
+    {
+      onSuccessMessage: 'Page mise à jour avec succès',
+      invalidateQueries: [
+        PAGE_KEYS.lists()
+      ]
+    }
+  );
 
-  const updateByIdMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: PagePayload }) =>{
-      return pageService.updateById(id, data);
-    },
-    onSuccess: () => {
-      toast.success('Page mise à jour avec succès');
-      handleSuccess();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (slug: string) => pageService.remove(slug),
-    onSuccess: () => {
-      toast.success('Page supprimée avec succès');
-      handleSuccess();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
-
-
-  
-  const updateContentMutation = useMutation({
-    mutationFn: ({ slug, content }: { slug: string; content: any }) =>
-      pageService.updateContent(slug, content),
-    onSuccess: () => {
-      toast.success('Page mise à jour avec succès');
-      handleSuccess();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
+  const updateContentMutation = useCustomMutation(
+    ({ slug, content }: {
+      slug: string;
+      content: Record<string, unknown>
+    }) => pageService.updateContent(slug, content),
+    {
+      onSuccessMessage: 'Contenu mis à jour avec succès',
+      invalidateQueries: [
+        PAGE_KEYS.lists(),
+        PAGE_KEYS.details()
+      ]
+    }
+  );
 
   return {
-    createPage: createMutation.mutate,
-    updatePage: updateMutation.mutate,
-    deletePage: deleteMutation.mutate,
-    updateContent: updateContentMutation.mutate,
+    createPage: create,
+    updatePage: update,
+    deletePage: remove,
+    isCreating,
+    isUpdating,
+    isDeleting,
     updateByIdMutation: updateByIdMutation.mutate,
-    isCreating: createMutation.isPending,
-    isUpdating: updateMutation.isPending,
-    isDeleting: deleteMutation.isPending,
+    updateContent: updateContentMutation.mutate,
+    isUpdatingById: updateByIdMutation.isPending,
     isUpdatingContent: updateContentMutation.isPending,
-    isUpdatingById: updateByIdMutation.isPending
+    invalidatePageQueries: () => invalidate(PAGE_KEYS.all)
   };
 };

@@ -34,65 +34,67 @@ export abstract class BaseServiceImpl<T, TPayload> implements BaseService<T, TPa
         ...options.headers,
       },
     });
-    
+
     if (!response.ok) {
       try {
         const errorData = await response.json();
         throw new Error(
-          errorData.message || 
+          errorData.message ||
           `Request failed with status ${response.status}: ${response.statusText}`
         );
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
       }
     }
-    
+
     return response.json();
+  }
+
+  protected get<R>(endpoint: string): Promise<R> {
+    return this.fetchData<R>(endpoint, { method: 'GET' });
+  }
+
+  protected post<R>(endpoint: string, data: unknown): Promise<R> {
+    return this.fetchData<R>(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+
+  protected put<R>(endpoint: string, data: unknown): Promise<R> {
+    return this.fetchData<R>(endpoint, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  protected delete<R>(endpoint: string): Promise<R> {
+    return this.fetchData<R>(endpoint, { method: 'DELETE' });
   }
 
   async list(filter: Filter): Promise<PaginatedResponse<T>> {
     const queryString = this.serializeParams(filter);
-    return this.fetchData<PaginatedResponse<T>>(
-      this.endpoints.list(queryString),
-      { method: 'GET' }
-    );
+    return this.get<PaginatedResponse<T>>(this.endpoints.list(queryString));
   }
 
   async detail(slug: string): Promise<T> {
-    return this.fetchData<T>(
-      this.endpoints.detail(slug),
-      { method: 'GET' }
-    );
+    return this.get<T>(this.endpoints.detail(slug));
   }
 
   async create(payload: TPayload): Promise<ApiResponse<T>> {
-    return this.fetchData<ApiResponse<T>>(
-      this.endpoints.create,
-      {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      }
-    );
+    return this.post<ApiResponse<T>>(this.endpoints.create, payload);
   }
 
   async update(slug: string, payload: TPayload): Promise<ApiResponse<T>> {
-    return this.fetchData<ApiResponse<T>>(
-      this.endpoints.update(slug),
-      {
-        method: 'PUT',
-        body: JSON.stringify(payload),
-      }
-    );
+    return this.put<ApiResponse<T>>(this.endpoints.update(slug), payload);
   }
 
   async remove(slug: string): Promise<ApiResponse> {
-    return this.fetchData<ApiResponse>(
-      this.endpoints.delete(slug),
-      { method: 'DELETE' }
-    );
+    return this.delete<ApiResponse>(this.endpoints.delete(slug));
   }
-  
+
   protected handleApiError(error: unknown): never {
     if (error instanceof Error) {
       throw error;

@@ -4,10 +4,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { createProject } from '@/features/project/domain/use-cases/create-project.use-case';
 import { getProjects } from '@/features/project/domain/use-cases/get-projects.use-case';
-import { loadSearchParams } from '@/features/project/config/project.param';
+import { createSearchParams } from '@/shared/domain/base.search-param';
 
 export async function GET(request: NextRequest) {
-  const filter = loadSearchParams(request);
+  const searchParams = createSearchParams();
+  const filter = searchParams.load(request);
   const data = await getProjects(filter);
 
   return NextResponse.json(data);

@@ -1,89 +1,40 @@
-import { serializeSearchParams } from '@/features/pages/config/page.param';
 import type { Page, PagePayload, PaginatedPage } from '@/features/pages/config/page.type';
-import { API_ENDPOINTS, API_URL } from '@/shared/lib/config/api';
+import { createSearchParams } from '@/shared/domain/base.search-param';
+import { BaseService, BaseServiceImpl } from '@/shared/domain/base.service';
+import { API_ENDPOINTS } from '@/shared/lib/config/api';
 import type { Filter } from '@/shared/lib/types/filter';
+import { parseAsString } from 'nuqs';
+import { ApiResponse } from '@/shared/lib/types/http';
 
-export interface PageService {
-  list(filter: Filter): Promise<PaginatedPage>;
-  detail(slug: string): Promise<Page>;
-  create(payload: PagePayload): Promise<Page>;
-  update(slug: string, payload: PagePayload): Promise<{ message: string }>;
-  remove(slug: string): Promise<{ message: string }>;
-  updateContent: (slug: string, content: Record<string, unknown>) => Promise<{ message: string }>;
+const pagesSearch = createSearchParams({
+  projectId: parseAsString.withDefault(''),
+});
+
+export interface PageService extends BaseService<Page, PagePayload> {
+  pagesByProject: (filter: Filter) => Promise<PaginatedPage>;
+  updateById: (id: string, payload: PagePayload) => Promise<ApiResponse<Page>>;
+  updateContent: (slug: string, content: Record<string, unknown>) => Promise<ApiResponse<Page>>;
 }
 
-export class PageServiceImpl implements PageService {
-  private async fetchData<T>(url: string, options: RequestInit): Promise<T> {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch: ${response.statusText}`);
-    }
-    return response.json();
+export class PageServiceImpl extends BaseServiceImpl<Page, PagePayload> implements PageService {
+  protected endpoints = API_ENDPOINTS.pages;
+  
+  protected serializeParams(filter: Filter): string {
+    return pagesSearch.serialize(filter);
   }
-
-  async list(filter: Filter): Promise<PaginatedPage> {
-    const serialize = serializeSearchParams(filter);
-    const endpoint = API_ENDPOINTS.pages.list(serialize);
-    return this.fetchData<PaginatedPage>(`${API_URL}${endpoint}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'GET',
-    });
-  }
+  
   async pagesByProject(filter: Filter): Promise<PaginatedPage> {
-    const serialize = serializeSearchParams(filter);
-    const endpoint = API_ENDPOINTS.pages.pagesByProject(serialize);
-    return this.fetchData<PaginatedPage>(`${API_URL}${endpoint}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'GET',
-    });
+    const queryString = this.serializeParams(filter);
+    return this.get<PaginatedPage>(this.endpoints.pagesByProject(queryString));
   }
   
-
-  async detail(slug: string): Promise<Page> {
-    return this.fetchData<Page>(`${API_URL}${API_ENDPOINTS.pages.detail(slug)}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'GET',
-    });
-  }
-
-  async create(payload: PagePayload): Promise<Page> {
-    return this.fetchData<Page>(`${API_URL}${API_ENDPOINTS.pages.create}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-  }
-
-  async update(slug: string, payload: PagePayload): Promise<{ message: string }> {
-    return this.fetchData<{ message: string }>(`${API_URL}${API_ENDPOINTS.pages.update(slug)}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    });
-  }
-  async updateById(id: string, payload: PagePayload): Promise<{ message: string }> {
-    return this.fetchData<{ message: string }>(`${API_URL}${API_ENDPOINTS.pages.updateById(id)}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    });
+  async updateById(id: string, payload: PagePayload): Promise<ApiResponse<Page>> {
+    return this.put<ApiResponse<Page>>(this.endpoints.updateById(id), payload);
   }
   
-
-  async remove(slug: string): Promise<{ message: string }> {
-    return this.fetchData<{ message: string }>(`${API_URL}${API_ENDPOINTS.pages.delete(slug)}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'DELETE',
-    });
-  }
-  async updateContent(slug: string, content: Record<string, unknown>): Promise<{ message: string }> {
-    return this.fetchData<{ message: string }>(`${API_URL}${API_ENDPOINTS.pages.updateContent(slug)}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'PUT',
-      body: JSON.stringify({
-        content
-      }),
-    });
+  async updateContent(slug: string, content: Record<string, unknown>): Promise<ApiResponse<Page>> {
+    return this.put<ApiResponse<Page>>(this.endpoints.updateContent(slug), { content });
   }
 }
+
 export const pageService = new PageServiceImpl();

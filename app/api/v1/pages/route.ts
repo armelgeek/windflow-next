@@ -4,10 +4,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { createPage } from '@/features/pages/domain/use-cases/create-page.use-case';
 import { getPages } from '@/features/pages/domain/use-cases/get-pages.use-case';
-import { loadSearchParams } from '@/features/pages/config/page.param';
+import { createSearchParams } from '@/shared/domain/base.search-param';
 
 export async function GET(request: NextRequest) {
-  const filter = loadSearchParams(request);
+  const searchParams = createSearchParams();
+  const filter = searchParams.load(request);
   const data = await getPages(filter);
 
   return NextResponse.json(data);

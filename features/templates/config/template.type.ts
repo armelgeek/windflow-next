@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { TemplateSelectSchema } from './template.schema';
-import type { Pagination } from '@/shared/lib/types/pagination';
+import type { PaginatedResponse, } from '@/shared/lib/types/pagination';
 import { Page } from '@/features/pages/config/page.type';
 
 export type Template = z.infer<typeof TemplateSelectSchema>;
@@ -15,11 +15,8 @@ export type TemplatePayload = {
     pages: Page[];
     settings: Record<string, unknown>;
     isPublic: boolean;
+    templateId?: string
 };
 
-export interface PaginatedTemplate {
-  data: Template[];
-  meta: {
-    pagination?: Pagination;
-  };
-}
+
+export type PaginatedTemplate = PaginatedResponse<Template>;

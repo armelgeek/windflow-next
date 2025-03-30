@@ -6,10 +6,7 @@ export async function getTemplates() {
 
     try {
         const allTemplates = await db.query.templates.findMany({
-            where: eq(templates.isPublic, true),
-            with: {
-                pages: true,
-            },
+            where: eq(templates.isPublic, true)
         });
 
         return allTemplates;

@@ -1,7 +1,6 @@
 import { useState, RefObject } from "react";
 import toast from "react-hot-toast";
 import { useSession } from '../../../shared/hooks/use-session-info';
-import { templateApi } from "../services/template.api";
 export const useTemplate = (editorRef: RefObject<any>) => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -95,7 +94,7 @@ export const useTemplate = (editorRef: RefObject<any>) => {
       
       if (templateId) {
         try {
-          savedTemplate = await templateApi.updateTemplate(templateId, projectData);
+         // savedTemplate = await templateApi.updateTemplate(templateId, projectData);
           toast.success("Template updated successfully!");
         } catch (error) {
           console.error("Failed to update template:", error);
@@ -105,7 +104,7 @@ export const useTemplate = (editorRef: RefObject<any>) => {
         }
       } else {
         try {
-          savedTemplate = await templateApi.createTemplate(projectData);
+          //savedTemplate = await templateApi.createTemplate(projectData);
           toast.success("Template saved successfully!");
           
           if (savedTemplate.id) {

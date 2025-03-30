@@ -1,32 +1,36 @@
+import { Filter } from '@/features/auth/config/user.type';
 import type { Template, TemplatePayload } from '@/features/templates/config/template.type';
-import { API_ENDPOINTS, API_URL } from '@/shared/lib/config/api';
+import { createSearchParams } from '@/shared/domain/base.search-param';
+import { BaseService, BaseServiceImpl } from '@/shared/domain/base.service';
+import { API_ENDPOINTS } from '@/shared/lib/config/api';
+import { ApiResponse } from '@/shared/lib/types/http';
 
-export interface TemplateService {
-  create(payload: TemplatePayload): Promise<Template>;
+export interface TemplateService extends BaseService<Template, TemplatePayload> {
+  byUsers(userId: string): Promise<Template[]>;
+  removeFromUser(userId: string, templateId: string): Promise<ApiResponse>;
+  use(templateId: string, targetId: string): Promise<ApiResponse>;
 }
 
-export class TemplateServiceImpl implements TemplateService {
-  private async fetchData<T>(url: string, options: RequestInit): Promise<T> {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch: ${response.statusText}`);
-    }
-    return response.json();
+const templateSearch = createSearchParams();
+
+export class TemplateServiceImpl extends BaseServiceImpl<Template, TemplatePayload> implements TemplateService {
+  protected endpoints = API_ENDPOINTS.templates;
+
+  protected serializeParams(filter: Filter): string {
+    return templateSearch.serialize(filter);
   }
 
-  async create(payload: TemplatePayload): Promise<Template> {
-    return this.fetchData<Template>(`${API_URL}${API_ENDPOINTS.templates.create}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
+  async byUsers(userId: string): Promise<Template[]> {
+    return this.get<Template[]>(this.endpoints.byUsers(userId));
   }
-  async create(payload: TemplatePayload): Promise<Template> {
-    return this.fetchData<Template>(`${API_URL}${API_ENDPOINTS.templates.create}`, {
-      headers: { 'Content-Type': 'application/json' },
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
+
+  async removeFromUser(userId: string, templateId: string): Promise<ApiResponse> {
+    return this.delete<ApiResponse>(this.endpoints.removeFromUser(userId, templateId));
+  }
+
+  async use(templateId: string, targetId: string): Promise<ApiResponse> {
+    return this.post<ApiResponse>(this.endpoints.use, { templateId, targetId });
   }
 }
+
 export const templateService = new TemplateServiceImpl();

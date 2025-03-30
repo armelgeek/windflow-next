@@ -26,7 +26,6 @@ import {
   setupBasicHTMLBlocks,
 } from "@/shared/lib/tailwind";
 import toast from "react-hot-toast";
-import { templateApi } from "@/features/editor/services/template.api";
 import { useSession } from '../../../shared/hooks/use-session-info';
 
 export const useEditor = () => {
@@ -184,7 +183,7 @@ export const useEditor = () => {
         let templateData;
         
         try {
-          templateData = await templateApi.getTemplate(id);
+      //    templateData = await templateApi.getTemplate(id);
           toast.success("Template loaded successfully!");
         } catch (apiError) {
           console.log("Failed to load template from API", apiError);

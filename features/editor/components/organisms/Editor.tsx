@@ -8,9 +8,8 @@ import { useExport } from "../../hooks/useExport";
 
 import Sidebar from "../molecules/Sidebar";
 import Canvas from "../molecules/Canvas";
-import TemplateModal from "../molecules/TemplateModal";
 import AddPageModal from "../molecules/AddPageModal";
-import { usePageLists } from "@/features/pages/hooks/use-page-info";
+import { usePages as usePageLists } from "@/features/pages/hooks/use-page-info";
 import { useTableParams } from "@/shared/hooks/use-table-params";
 import { createPortal } from "react-dom";
 import { Page } from "@/features/pages/config/page.type";

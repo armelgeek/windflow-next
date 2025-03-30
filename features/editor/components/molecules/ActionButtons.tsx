@@ -1,4 +1,4 @@
-import React, { useState, useEffect, RefObject } from "react";
+import React, { useState } from "react";
 import { Plus, Save, Download, MoreHorizontal } from 'lucide-react';
 import { Page } from "@/features/pages/config/page.type";
 import { Add } from "@/features/templates/components/organisms/add";
