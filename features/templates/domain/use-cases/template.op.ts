@@ -7,7 +7,7 @@ import { Template, TemplatePayload } from '../../config/template.type';
 export class TemplateOperations {
   async create(payload: TemplatePayload): Promise<Template> {
     const slug = slugify(payload.title, { lower: true });
-    const { title, description, category, image, pages: pageData, isPublic = true } = payload;
+    const { userId, title, description, category, image, pages: pageData, isPublic = true } = payload;
 
     const existingTemplate = await db.query.templates.findFirst({
       where: eq(templates.slug, slug),
@@ -25,10 +25,11 @@ export class TemplateOperations {
         category,
         image,
         isPublic,
+        userId:  userId
       }).returning();
 
       for (const page of pageData) {
-        if (!page.name || !page.html || !page.css) {
+        if (!page.name) {
           throw new Error('Page data is incomplete');
         }
         await tx.insert(templatePages).values({
@@ -220,30 +221,31 @@ export class TemplateOperations {
     }
   }
 
-  async createAsProject(payload: { name: string, slug: string, userId: string, templateId: string }): Promise<unknown> {
+  async createAsProject(payload: { name: string, userId: string, templateId: string }): Promise<unknown> {
     const { name, userId, templateId } = payload;
     const slug = slugify(payload.name, { lower: true });
-
+  
     try {
       const template = await db.query.templates.findFirst({
-        where: eq(templates.id, templateId),
-        with: {
-          pages: true,
-        },
-      }) as { pages: Array<{ name: string; html: string; css: string }> } | null;
-
+        where: eq(templates.id, templateId)
+      });
+  
       if (!template) {
         throw new Error('Template not found');
       }
-
+  
+      const tps = await db.query.templatePages.findMany({
+        where: eq(templatePages.templateId, templateId)
+      });
+  
       return await db.transaction(async (tx) => {
         const [newProject] = await tx.insert(projects).values({
           name,
           slug,
           userId
         }).returning();
-
-        for await (const templatePage of template.pages) {
+  
+        for (const templatePage of tps) {
           await tx.insert(pages).values({
             name: templatePage.name,
             slug: slug,
@@ -253,14 +255,7 @@ export class TemplateOperations {
           });
         }
 
-        const completeProject = await tx.query.projects.findFirst({
-          where: eq(projects.id, newProject.id),
-          with: {
-            pages: true,
-          },
-        });
-
-        return completeProject;
+        return true;
       });
     } catch (error) {
       console.error('Error creating project from template:', error);

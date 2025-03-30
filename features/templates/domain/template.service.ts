@@ -8,7 +8,7 @@ import { ApiResponse } from '@/shared/lib/types/http';
 export interface TemplateService extends BaseService<Template, TemplatePayload> {
   byUsers(userId: string): Promise<Template[]>;
   removeFromUser(userId: string, templateId: string): Promise<ApiResponse>;
-  use(templateId: string, targetId: string): Promise<ApiResponse>;
+  use(name: string, templateId: string, userId: string): Promise<ApiResponse>;
 }
 
 const templateSearch = createSearchParams();
@@ -28,8 +28,8 @@ export class TemplateServiceImpl extends BaseServiceImpl<Template, TemplatePaylo
     return this.delete<ApiResponse>(this.endpoints.removeFromUser(userId, templateId));
   }
 
-  async use(templateId: string, targetId: string): Promise<ApiResponse> {
-    return this.post<ApiResponse>(this.endpoints.use, { templateId, targetId });
+  async use(name: string, templateId: string, userId: string): Promise<ApiResponse> {
+    return this.post<ApiResponse>(this.endpoints.use, {  name, templateId, userId });
   }
 }
 

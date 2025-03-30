@@ -21,6 +21,9 @@ export async function createTemplate(payload: TemplatePayload) {
   export async function getTemplates(filter: Filter) {
     return templateUseCase.list(filter);
   }
+  export async function getUserTemplates(filter: Filter){
+    return templateUseCase.list(filter);
+  }
   
   export async function getUserTemplate(payload: { userId: string, templateId: string }) {
     return templateUseCase.execute('getUserTemplates', payload.userId);
@@ -33,3 +36,4 @@ export async function createTemplate(payload: TemplatePayload) {
   export async function createTemplateAsProject(payload: { name: string, slug: string, userId: string, templateId: string }) {
     return templateUseCase.execute('createAsProject', payload);
   }
+  

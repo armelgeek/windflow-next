@@ -2,6 +2,7 @@ import { templateService } from '../domain/template.service';
 import { Template, TemplatePayload } from '../config/template.type';
 import { Filter } from '@/shared/lib/types/filter';
 import { useList, useDetail, useCustomQuery, useMutations, useCustomMutation } from '@/shared/lib/react-query/query-hooks';
+import { PROJECT_KEYS } from '@/features/project/hooks/use-project';
 
 export const TEMPLATE_KEYS = {
   all: ['templates'] as const,
@@ -42,7 +43,7 @@ export const useUserTemplates = (userId: string) => {
   );
 
   return {
-    templates: data || [],
+    templates: data?.data ?? [],
     isLoading,
   };
 };
@@ -65,11 +66,11 @@ export const useTemplateMutations = () => {
   });
 
   const useTemplateMutation = useCustomMutation(
-    ({ templateId, targetId }: { templateId: string, targetId: string }) => 
-      templateService.use(templateId, targetId),
+    ({ name, templateId, userId }: { name:string, templateId: string, userId: string }) => 
+      templateService.use(name, templateId, userId),
     {
       onSuccessMessage: 'Template appliqué avec succès',
-      invalidateQueries: [TEMPLATE_KEYS.all]
+      invalidateQueries: [PROJECT_KEYS.lists()]
     }
   );
 
@@ -89,7 +90,7 @@ export const useTemplateMutations = () => {
     isCreating: mutations.isCreating,
     isUpdating: mutations.isUpdating,
     isDeleting: mutations.isDeleting,
-    useTemplate: useTemplateMutation.mutate,
+    createAsProject: useTemplateMutation.mutate,
     removeTemplateFromUser: removeFromUserMutation.mutate,
     isApplyingTemplate: useTemplateMutation.isPending,
     isRemovingFromUser: removeFromUserMutation.isPending,

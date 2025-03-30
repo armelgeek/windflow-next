@@ -30,9 +30,30 @@ export class UseCase<T, P, R> {
   }
 
 
+  
   private validate(data: P): P {
     if (this.schema) {
-      return this.schema.parse(data);
+      try {
+        const schemaShape = this.schema instanceof z.ZodObject ? this.schema.shape : {};
+        const schemaFields = Object.keys(schemaShape);
+        const fieldsToValidate: Record<string, unknown> = {};
+        const additionalFields: Record<string, unknown> = {};
+        
+        Object.entries(data as Record<string, unknown>).forEach(([key, value]) => {
+          if (schemaFields.includes(key)) {
+            fieldsToValidate[key] = value;
+          } else {
+            additionalFields[key] = value;
+          }
+        });
+        const validatedData = this.schema.parse(fieldsToValidate);
+        return { ...validatedData, ...additionalFields } as P;
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          throw error;
+        }
+        return data;
+      }
     }
     return data;
   }

@@ -2,17 +2,24 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { templates } from '@/drizzle/schema';
 import { z } from 'zod';
 export const TemplateSelectSchema = createSelectSchema(templates);
-
+const TemplatePageSchema = z.object({
+  name: z.string().min(1, 'Page name is required'),
+  html: z.string().optional().nullable(),
+  css: z.string().optional().nullable(),
+});
 export const TemplateFormSchema = createInsertSchema(templates, {
     title: (s) => s.min(1, 'Name is required.').max(255, 'Title must be at most 255 characters.')
 }).pick({
   title: true,
-  description:true,
+  description: true,
   category: true,
   image: true,
-  isPublic: true
+  isPublic: true,
+})
+.extend({
+  pages: z.array(TemplatePageSchema).optional(),
+  userId: z.string().optional()
 });
-
 
 
 

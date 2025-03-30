@@ -1,5 +1,6 @@
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { projects } from '@/drizzle/schema/projects';
+import { z } from 'zod';
 
 export const ProjectSelectSchema = createSelectSchema(projects);
 
@@ -8,4 +9,6 @@ export const ProjectFormSchema = createInsertSchema(projects, {
 }).pick({
   name: true,
   updatedAt: true
+}).extend({
+  templateId: z.string().optional()
 });

@@ -22,17 +22,9 @@ import { Badge } from '@/components/ui/badge';
 
 import { Project, ProjectPayload } from '../../config/project.type';
 import { ProjectFormSchema } from '../../config/project.schema';
-import { useUserTemplates } from '@/features/templates/hooks/use-template-info';
+import { useTemplateMutations, useUserTemplates } from '@/features/templates/hooks/use-template-info';
 import { Template } from '@/features/templates/config/template.type';
-import { useSession } from '@/shared/hooks/use-session-info';
-
-interface ProjectTemplate {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-}
-
+import { authClient } from '@/auth-client';
 
 interface ProjectFormProps {
   initialData: Pick<Project, 'name'> | null;
@@ -51,32 +43,42 @@ const UserTemplate = ({ userId, search, setTemplate, setOpen }: TemplatePayload)
     return <div>Loading ...</div>
   }
   return (
-    <CommandGroup key={'category'} heading={'category'}>
-      {templates.map(template => (
-        <CommandItem
-          key={template.id}
-          value={template.id}
-          onSelect={() => {
-            setTemplate(template);
-            setOpen(false);
-          }}
-        >
-          <div className="flex flex-col">
-            <span>{template.title}</span>
-            <span className="text-xs text-muted-foreground">
-              {template.description}
-            </span>
-          </div>
-        </CommandItem>
-      ))}
-    </CommandGroup>
+    <CommandGroup key={'category'} heading={'Templates'}>
+      {templates.length == 0 ? (
+        <>
+          <p>No data</p>
+        </>
+      ) : (
+        <>
+          {templates.map(template => (
+            <CommandItem
+              key={template.id}
+              value={template.id}
+              onSelect={() => {
+                setTemplate(template);
+                setOpen(false);
+              }}
+            >
+              <div className="flex flex-col">
+                <span>{template.title}</span>
+                <span className="text-xs text-muted-foreground">
+                  {template.description}
+                </span>
+              </div>
+            </CommandItem>
+          ))}
+        </>
+      )
+      }
+
+    </CommandGroup >
   )
 }
 export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: ProjectFormProps) => {
   const [template, setTemplate] = useState({} as Template);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const { form, handleSubmit, isSubmitting } = useFormHandler<ProjectPayload>({
     schema: ProjectFormSchema,
     initialValues: initialData || {
@@ -86,7 +88,6 @@ export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: Project
       const payload = initialData
         ? data
         : { ...data, templateId: template.id };
-
       await onSubmit(payload);
     },
     onSuccess
@@ -138,12 +139,12 @@ export const ProjectForm = ({ initialData = null, onSubmit, onSuccess }: Project
                 style={{ zIndex: 1000 }}
               >
                 <Command shouldFilter={false}>
-                  <CommandInput
+                  {/** <CommandInput
                     placeholder="Search templates..."
                     value={search}
                     onValueChange={setSearch}
                     className="h-9"
-                  />
+                  /> */}
                   <CommandList>
                     <CommandEmpty>No template found.</CommandEmpty>
                     <ScrollArea className="h-[300px]">

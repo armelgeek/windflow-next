@@ -1,13 +1,13 @@
 import 'server-only';
 import { Template, TemplatePayload } from '../../config/template.type';
 import { UseCase } from '@/shared/lib/use-cases';
-import { templateSchema } from '../../config/template.schema';
 import {  TemplateOperations } from './template.op';
+import { TemplateFormSchema } from '../../config/template.schema';
 const op = new TemplateOperations();
 
 export const templateUseCase = new UseCase<Template, TemplatePayload, unknown>({
     name: 'Template',
-    schema: templateSchema,
+    schema: TemplateFormSchema,
     operations: {
         create: op.create.bind(op),
         getById: op.getById.bind(op),
