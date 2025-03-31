@@ -72,13 +72,6 @@ export const projectUseCase = new UseCase<Project, ProjectPayload, unknown>({
                 throw new Error('Project not found');
             }
 
-            const relatedPages = await db.query.pages.findMany({
-                where: eq(pages.projectId, projectData.id)
-            });
-
-            if (relatedPages.length > 0) {
-                throw new Error('Cannot delete project with associated pages');
-            }
 
             await db
                 .delete(projects)

@@ -10,7 +10,8 @@ export const pages = pgTable(
         html: text('html'),
         css: text('css'),
         content: text('content'),
-        projectId: uuid('project_id').references(() => projects.id),
+        projectId: uuid('project_id')
+        .references(() => projects.id, { onDelete: 'cascade' }),
         createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
         updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),
     }
