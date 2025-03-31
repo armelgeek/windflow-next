@@ -31,6 +31,9 @@ export class TemplateServiceImpl extends BaseServiceImpl<Template, TemplatePaylo
   async use(name: string, templateId: string, userId: string): Promise<ApiResponse> {
     return this.post<ApiResponse>(this.endpoints.use, {  name, templateId, userId });
   }
+  async getOverview(): Promise<Template[]> {
+    return this.get<Template[]>(this.endpoints.overview);
+  }
 }
 
 export const templateService = new TemplateServiceImpl();

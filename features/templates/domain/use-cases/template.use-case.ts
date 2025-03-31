@@ -17,5 +17,6 @@ export const templateUseCase = new UseCase<Template, TemplatePayload, unknown>({
         getUserTemplates: op.getUserTemplates.bind(op),
         removeFromUser: op.removeFromUser.bind(op),
         createAsProject: op.createAsProject.bind(op),
+        getOverview: op.getOverview.bind(op)
       }
 });

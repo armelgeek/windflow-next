@@ -10,9 +10,8 @@ const AppNav = () => {
         <ul className="hidden sm:flex gap-5 text-sm text-gray-900">
             {[
                 { href: "/", label: "Home" },
-                { href: "#features", label: "Features" },
-                { href: "#templates", label: "Templates" },
-                { href: "#pricing", label: "Pricing" }
+                { href: "/templates", label: "Templates" },
+                { href: "/pricing", label: "Pricing" }
             ].map((item) => (
                 <li key={item.href}>
                     <Link href={item.href} className={`flex flex-col items-center gap-1 group`}>

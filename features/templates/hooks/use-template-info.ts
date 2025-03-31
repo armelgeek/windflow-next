@@ -3,6 +3,7 @@ import { Template, TemplatePayload } from '../config/template.type';
 import { Filter } from '@/shared/lib/types/filter';
 import { useList, useDetail, useCustomQuery, useMutations, useCustomMutation } from '@/shared/lib/react-query/query-hooks';
 import { PROJECT_KEYS } from '@/features/project/hooks/use-project';
+import { Page } from '@/features/pages/config/page.type';
 
 export const TEMPLATE_KEYS = {
   all: ['templates'] as const,
@@ -11,6 +12,7 @@ export const TEMPLATE_KEYS = {
   details: () => [...TEMPLATE_KEYS.all, 'detail'] as const,
   detail: (slug: string) => [...TEMPLATE_KEYS.details(), slug] as const,
   byUser: (userId: string) => [...TEMPLATE_KEYS.all, 'byUser', userId] as const,
+  overview: () => [...TEMPLATE_KEYS.all,  'overview'] as const,
 };
 
 export const useTemplates = (filters: Filter) => {
@@ -20,6 +22,9 @@ export const useTemplates = (filters: Filter) => {
     filters
   );
 };
+
+
+
 
 export const useTemplate = (slug: string) => {
   const { data, isLoading } = useDetail<Template>(
@@ -47,6 +52,21 @@ export const useUserTemplates = (userId: string) => {
     isLoading,
   };
 };
+
+export const useGetTemplateOverview = () => {
+  const { data, isLoading } = useCustomQuery<Template[], string>(
+    TEMPLATE_KEYS.overview(),
+    () => templateService.getOverview(),
+    '',
+    { enabled: true }
+  );
+
+  return {
+    templates: data ?? [],
+    isLoading,
+  };
+};
+
 
 export const useTemplateMutations = () => {
   

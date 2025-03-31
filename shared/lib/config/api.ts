@@ -26,6 +26,7 @@ export const API_ENDPOINTS = {
     ...createResourceEndpoints('templates'),
     byUsers: (userId: string) => `/templates/user/${userId}`,
     removeFromUser: (userId: string, templateId: string) => `/templates/user/${userId}/${templateId}`,
-    use: '/templates/use'
+    use: '/templates/use',
+    overview: '/templates/overview'
   }
 } as const;

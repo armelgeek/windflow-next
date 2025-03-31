@@ -17,7 +17,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             placeholder="Search ..."
             value={table.getState().globalFilter ?? ''}
             onChange={(value) => table.setGlobalFilter(value)}
-            className="h-8 w-[150px] ps-9 lg:w-[250px]"
+            className="w-[150px] lg:w-[250px]"
           />
 
         </div>

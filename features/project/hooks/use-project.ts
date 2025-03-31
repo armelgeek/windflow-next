@@ -1,7 +1,7 @@
+'use client';
 import { projectService } from '../domain/project.service';
 import { Project, ProjectPayload } from '../config/project.type';
 import { Filter } from '@/shared/lib/types/filter';
-import { useRouter } from 'next/navigation';
 import { useCustomQuery, useDetail, useList, useMutations } from '@/shared/lib/react-query/query-hooks';
 
 export const PROJECT_KEYS = {
@@ -37,8 +37,6 @@ export const useProject = (slug: string) => {
 };
 
 export const useProjectMutations = () => {
-  const router = useRouter();
-  
   const mutations = useMutations<Project, ProjectPayload>({
     service: projectService,
     queryKeys: PROJECT_KEYS,
@@ -49,7 +47,7 @@ export const useProjectMutations = () => {
     },
     callbacks: {
       onCreateSuccess: () => {
-        router.push('/projects');
+
       }
     }
   });

@@ -6,8 +6,8 @@ export async function createTemplate(payload: TemplatePayload) {
     return templateUseCase.create(payload);
   }
   
-  export async function getTemplate(payload: { templateId: string }) {
-    return templateUseCase.getById(payload.templateId);
+  export async function getTemplate(payload: { slug: string }) {
+    return templateUseCase.getById(payload.slug);
   }
   
   export async function updateTemplate(payload: TemplatePayload & { templateId: string, userId: string }) {
@@ -31,6 +31,9 @@ export async function createTemplate(payload: TemplatePayload) {
   
   export async function removeFromUserTemplate(payload: { userId: string, templateId: string }) {
     return templateUseCase.execute('removeFromUser', payload);
+  }
+  export async function getOverview() {
+    return templateUseCase.execute('getOverview');
   }
   
   export async function createTemplateAsProject(payload: { name: string, slug: string, userId: string, templateId: string }) {
