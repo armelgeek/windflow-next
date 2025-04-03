@@ -10,7 +10,7 @@ const AppClientMenu = async () => {
     const session = await auth.api.getSession({ headers: await headers() });
 
     return (
-        <header className="flex items-center justify-between py-3 font-medium">
+        <header className="flex items-center justify-between py-4 font-medium">
             <div className="flex gap-1 sm:gap-2 md:gap-3 items-center">
                 <AppLogo />
             </div>

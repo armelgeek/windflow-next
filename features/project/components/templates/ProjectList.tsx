@@ -35,7 +35,7 @@ export default function ProjetList() {
         renderCard={(data, row) => (
           <ProjectCard data={data} row={row}/>
         )}
-        className="grid grid-cols-1 md:grid-cols-4 gap-6"
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
       />
     </div>
   );

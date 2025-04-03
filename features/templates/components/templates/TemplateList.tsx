@@ -30,7 +30,7 @@ export default function TemplateList() {
         {...tableProps}
 
         renderCard={(data, row) => (
-          <TemplateCard template={data} index={Number(data.id)}/>
+          <TemplateCard template={data}  row={row} index={Number(data.id)}/>
         )}
         className="grid grid-cols-1 md:grid-cols-4 gap-6"
       />

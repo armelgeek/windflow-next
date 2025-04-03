@@ -10,12 +10,12 @@ export async function createTemplate(payload: TemplatePayload) {
     return templateUseCase.getById(payload.slug);
   }
   
-  export async function updateTemplate(payload: TemplatePayload & { templateId: string, userId: string }) {
-    return templateUseCase.update('', payload);
+  export async function updateTemplate(payload: TemplatePayload) {
+    return templateUseCase.update(payload.slug || '', payload);
   }
   
-  export async function deleteTemplate(payload: { userId: string, templateId: string }) {
-    return templateUseCase.execute('delete', payload);
+  export async function deleteTemplate(slug: string) {
+    return templateUseCase.execute('delete', slug);
   }
   
   export async function getTemplates(filter: Filter) {

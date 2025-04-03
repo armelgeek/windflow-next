@@ -77,7 +77,7 @@ export function EntityDelete({
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={() => handleDelete(entityId)}
-            className="bg-destructive hover:bg-destructive/90"
+            className="bg-destructive hover:bg-destructive/90 text-white"
           >
             {isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -9,6 +9,7 @@ export type Template = z.infer<typeof TemplateSelectSchema>;
 export type TemplatePayload = {
     userId?: string;
     title: string;
+    slug?: string;
     description: string;
     category: string;
     image: string;

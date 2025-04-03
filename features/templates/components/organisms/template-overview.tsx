@@ -12,7 +12,9 @@ const TemplateOverview = () => {
     return (
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {templates && templates.map((template, index) => (
-                <TemplateCard key={index} template={template} index={index} />
+                <TemplateCard key={index}  row={{
+                    original: template
+                }} template={template} index={index} />
             ))}
         </div>
     )

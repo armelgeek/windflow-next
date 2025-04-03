@@ -59,15 +59,6 @@ export function UserNav({ session }: { session: Session }) {
             </Link>
 
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <Link href="/projects" passHref>
-                <DropdownMenuItem>
-                 <ListIcon size={20} />My projects
-                </DropdownMenuItem>
-            </Link>
-            
-          </DropdownMenuGroup>
            <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut}>
             Log out

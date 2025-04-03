@@ -2,6 +2,10 @@ import { useRef, useEffect } from "react";
 import grapesjs from 'grapesjs';
 import "grapesjs/dist/css/grapes.min.css";
 
+import grapesjsIcons from 'grapesjs-icons';
+import grapeJsUiSuggestClasses from '@silexlabs/grapesjs-ui-suggest-classes';
+import gjsForms from 'grapesjs-plugin-forms';
+
 import gjsPresetWebpage from "grapesjs-preset-webpage";
 import gjsBlocksBasic from "grapesjs-blocks-basic";
 import grapesjsTailwind from "grapesjs-tailwind";
@@ -9,15 +13,9 @@ import gjsCustomCode from "grapesjs-custom-code";
 import gjsComponentCodeEditor from "grapesjs-component-code-editor";
 import gjsParserPostcss from "grapesjs-parser-postcss";
 import gjsTooltip from "grapesjs-tooltip";
-import grapesjsIcons from 'grapesjs-icons';
-import grapeJsUiSuggestClasses from '@silexlabs/grapesjs-ui-suggest-classes';
 import gjsTuiImageEditor from "grapesjs-tui-image-editor";
-import gjsForms from 'grapesjs-plugin-forms';
-import gjsRulers from 'grapesjs-rulers';
-import gjsBlocksTable from 'grapesjs-blocks-table';
-import grapesjsTabs from 'grapesjs-tabs';
-import grapesjsStyleBg from 'grapesjs-style-bg';
-import grapesjsStyleGradient from 'grapesjs-style-gradient';
+
+
 import 'grapesjs-rte-extensions/dist/grapesjs-rte-extensions.min.css';
 
 import { fixWOFF2Persistence, initFontSystem } from "@/shared/lib/fonts";
@@ -52,12 +50,7 @@ export const useEditor = () => {
         gjsComponentCodeEditor,
         grapesjsIcons,
         grapeJsUiSuggestClasses,
-        gjsForms,
-        gjsBlocksTable,
-        grapesjsStyleBg,
-        grapesjsStyleGradient,
-        gjsRulers,
-        grapesjsTabs,
+        gjsForms
       ],
       pluginsOpts: {
         [grapesjsTailwind]: {
@@ -73,9 +66,7 @@ export const useEditor = () => {
           category: 'Form',
           block: (blockId) => ({})
         },
-        [gjsBlocksTable]: {
-          'containerId': '#gjs' 
-        },
+  
         
       }
     });
