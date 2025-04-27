@@ -371,10 +371,6 @@ const handleRenamePage = async(pageId: string, newName: string) => {
   };
 
   const handleSavePage = async () => {
-    if (!editorRef.current || !session?.user) {
-      toast("You must be logged in to save pages");
-      return;
-    }
 
     const editor = editorRef.current;
     const page = editor.Pages.getSelected();
