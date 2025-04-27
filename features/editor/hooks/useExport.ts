@@ -239,6 +239,8 @@ export const useExport = (editorRef, templateDetails) => {
         ${fonts.google && fonts.google.filter(font => font && font.url).map(font => `<link href="${font.url}" rel="stylesheet">`).join('\n  ')}
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'></script>
         ${fonts.custom && fonts.custom.length > 0 ? '<link rel="stylesheet" href="css/fonts.css">' : ''}
         <link rel="stylesheet" href="css/main.css">
       </head>
@@ -270,6 +272,8 @@ export const useExport = (editorRef, templateDetails) => {
                   ${fonts.google && fonts.google.filter(font => font && font.url).map(font => `<link href="${font.url}" rel="stylesheet">`).join('\n  ')}
                   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
                   <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+                  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+                  <script src='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'></script>
                   ${fonts.custom && fonts.custom.length > 0 ? '<link rel="stylesheet" href="../css/fonts.css">' : ''}
                   <link rel="stylesheet" href="../css/main.css">
                   <link rel="stylesheet" href="../css/${pageId}.css">
