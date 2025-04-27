@@ -29,6 +29,8 @@ export const setupFontManager = (editor: { Canvas: { getFrameEl: () => any; }; S
     window.loadFonts = loadFonts;
 
     const injectFontsToCanvas = () => {
+        const canvas = editor.Canvas;
+        if(!canvas) return;
         const frame = editor.Canvas.getFrameEl();
         if (!frame || !frame.contentDocument) {
             setTimeout(injectFontsToCanvas, 100);

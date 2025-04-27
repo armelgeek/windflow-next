@@ -184,7 +184,7 @@ const EditorComponent = ({ pageData, projectId }: {
         setIsOpen={setIsOpen}
       />
 
-      <Canvas editorRef={editorRef} />
+      <Canvas />
 
       {showAddPageModal && (
         <AddPageModal

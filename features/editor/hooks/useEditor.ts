@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import grapesjs from 'grapesjs';
 import "grapesjs/dist/css/grapes.min.css";
 
@@ -34,10 +34,51 @@ import gjsTyped from 'grapesjs-typed';
 import gjsStyleFilter from 'grapesjs-style-filter';
 import gjsPresetNewsletter from 'grapesjs-preset-newsletter';
 import { setupBlocks } from "@/shared/lib/blocks";
+interface CssCodeViewer {
+  set: (options: {
+    codeName: string;
+    readOnly: boolean;
+    theme: string;
+    autoBeautify: boolean;
+    autoCloseTags: boolean;
+    autoCloseBrackets: boolean;
+    lineWrapping: boolean;
+    styleActiveLine: boolean;
+    smartIndent: boolean;
+    indentWithTabs: boolean;
+  }) => void;
+  setContent: (content: string) => void;
+  getContent: () => string;
+  editor: HTMLElement;
+}
 
+interface Modal {
+  setTitle: (title: string) => void;
+  setContent: (content: HTMLElement) => void;
+  open: () => void;
+  onceClose: (callback: () => void) => void;
+}
+
+interface Editor {
+  Commands: {
+    add: (id: string, command: { run: (editor: Editor, sender?: Sender) => void }) => void;
+  };
+  CodeManager: {
+    getViewer: (type: string) => { clone: () => CssCodeViewer };
+  };
+  Modal: Modal;
+  getCss: () => string;
+  setCss: (css: string) => void;
+  refresh: () => void;
+}
+
+interface Sender {
+  set: (key: string, value: number) => void;
+}
 export const useEditor = () => {
   const editorRef = useRef(null);
   const { data: session } = useSession();
+  const [isLoading, setIsLoading] = useState(true); 
   const loadFonts = () => {
     const savedFonts = localStorage.getItem('gjs-fonts');
     return savedFonts ? JSON.parse(savedFonts) : fontFamilies;
@@ -185,7 +226,6 @@ export const useEditor = () => {
       `
         });
 
-        // Function to update the fonts list in the modal
         const updateFontsList = () => {
           const currentFonts = loadFonts();
           const listContainer = document.getElementById('google-fonts-list');
@@ -200,7 +240,6 @@ export const useEditor = () => {
             </div>
           `).join('');
 
-            // Reattach event listeners to new buttons
             const removeButtons = document.querySelectorAll('.remove-font');
             removeButtons.forEach(button => {
               button.addEventListener('click', handleRemoveFont);
@@ -208,7 +247,6 @@ export const useEditor = () => {
           }
         };
 
-        // Handler for font removal
         const handleRemoveFont = (e) => {
           const fontName = e.currentTarget.getAttribute('data-font');
           if (fontName) {
@@ -270,47 +308,7 @@ export const useEditor = () => {
         });
       }
     });**/
-    interface CssCodeViewer {
-      set: (options: {
-        codeName: string;
-        readOnly: boolean;
-        theme: string;
-        autoBeautify: boolean;
-        autoCloseTags: boolean;
-        autoCloseBrackets: boolean;
-        lineWrapping: boolean;
-        styleActiveLine: boolean;
-        smartIndent: boolean;
-        indentWithTabs: boolean;
-      }) => void;
-      setContent: (content: string) => void;
-      getContent: () => string;
-      editor: HTMLElement;
-    }
-
-    interface Modal {
-      setTitle: (title: string) => void;
-      setContent: (content: HTMLElement) => void;
-      open: () => void;
-      onceClose: (callback: () => void) => void;
-    }
-
-    interface Editor {
-      Commands: {
-        add: (id: string, command: { run: (editor: Editor, sender?: Sender) => void }) => void;
-      };
-      CodeManager: {
-        getViewer: (type: string) => { clone: () => CssCodeViewer };
-      };
-      Modal: Modal;
-      getCss: () => string;
-      setCss: (css: string) => void;
-      refresh: () => void;
-    }
-
-    interface Sender {
-      set: (key: string, value: number) => void;
-    }
+    
 
 
     editor.on("component:selected", (model) => {
@@ -326,24 +324,58 @@ export const useEditor = () => {
 
 
 
+    
     editor.on('load', () => {
       console.log('Editor loaded, initializing fonts...');
+      const canvas = editor.Canvas || editor.get('Canvas');
+      if (canvas) {
+        setTimeout(() => {
+          injectFontsToCanvas();
+          updateFontOptions();
+        }, 300);
+       
+     }
+     setIsLoading(false); 
+    });
 
-      setTimeout(() => {
-        injectFontsToCanvas();
-        updateFontOptions();
-      }, 300);
+    editor.on('project:load', () => {
+      console.log('Editor loaded, initializing fonts...');
+      const canvas = editor.Canvas || editor.get('Canvas');
+      if (canvas) {
+        setTimeout(() => {
+          injectFontsToCanvas();
+          updateFontOptions();
+        }, 300);
+       
+     }
+     setIsLoading(false); 
     });
 
     editor.on('canvas:rendered', () => {
       console.log('Canvas rendered, injecting fonts...');
-      injectFontsToCanvas();
-      updateFontOptions();
+      const canvas = editor.Canvas || editor.get('Canvas');
+      if (canvas) {
+        injectFontsToCanvas();
+        updateFontOptions();
+       
+      } else {
+        console.error('Canvas is undefined, skipping font injection');
+      }
+      setIsLoading(false);
     });
-
+    editor.on('component:mount', () => {
+      const canvas = editor.Canvas || editor.get('Canvas');
+      if (canvas) {
+        injectFontsToCanvas();
+        updateFontOptions();
+      }
+    });
     editor.on('component:selected', () => {
-      injectFontsToCanvas();
-      updateFontOptions();
+      const canvas = editor.Canvas || editor.get('Canvas');
+      if (canvas) {
+        injectFontsToCanvas();
+        updateFontOptions();
+      }
     });
 
     return () => editor.destroy();
@@ -351,7 +383,7 @@ export const useEditor = () => {
 
 
 
-  const loadTemplate = async () => {
+  /**const loadTemplate = async () => {
     const editor = editorRef.current;
     const id = localStorage.getItem('currentTemplateId');
 
@@ -382,7 +414,7 @@ export const useEditor = () => {
     }
   };
 
-  /**const handleTemplateData = (editor, data) => {
+  const handleTemplateData = (editor, data) => {
     const pm = editor.Pages;
     pm.getAll().forEach((p) => pm.remove(p.id));
 
@@ -413,5 +445,5 @@ export const useEditor = () => {
     pm.select("home");
   };**/
 
-  return { editorRef };
+  return { editorRef,isLoading };
 };
