@@ -144,14 +144,13 @@ export const useEditor = () => {
       }
     });
 
-    // Update the open-fonts command to dynamically render the fonts list
-editor.Commands.add('open-fonts', {
-  run(editor) {
-    const fonts = loadFonts();
-    
-    editor.Modal.open({
-      title: 'Gestionnaire de polices Google',
-      content: `
+    editor.Commands.add('open-fonts', {
+      run(editor) {
+        const fonts = loadFonts();
+
+        editor.Modal.open({
+          title: 'Gestionnaire de polices Google',
+          content: `
         <div style="padding: 15px; max-height: 70vh; overflow-y: auto; font-family: sans-serif;">
           <!-- Add font section -->
           <div style="margin-bottom: 15px;">
@@ -172,85 +171,85 @@ editor.Commands.add('open-fonts', {
             <h3 style="margin-bottom: 10px; font-size: 16px;">Polices Google disponibles</h3>
             <div id="google-fonts-list" style="display: flex; flex-wrap: wrap; gap: 8px;">
               ${fonts.google.length === 0 ?
-                '<p style="color: #777;">Aucune police Google ajoutée.</p>' :
-                fonts.google.map((font) => `
+              '<p style="color: #777;">Aucune police Google ajoutée.</p>' :
+              fonts.google.map((font) => `
                   <div style="display: inline-flex; align-items: center; padding: 5px 10px; background-color: #000; border: 1px solid #ddd; border-radius: 3px;">
                     <span style="font-family: ${font.value}; margin-right: 5px;">${font.name}</span>
                     <button class="remove-font" data-font="${font.name}" style="background: none; border: none; cursor: pointer; color: #d33; font-size: 14px; line-height: 1; padding: 0 3px;">×</button>
                   </div>
                 `).join('')
-              }
+            }
             </div>
           </div>
         </div>
       `
-    });
+        });
 
-    // Function to update the fonts list in the modal
-    const updateFontsList = () => {
-      const currentFonts = loadFonts();
-      const listContainer = document.getElementById('google-fonts-list');
-      
-      if (listContainer) {
-        listContainer.innerHTML = currentFonts.google.length === 0 ?
-          '<p style="color: #777;">Aucune police Google ajoutée.</p>' :
-          currentFonts.google.map((font) => `
+        // Function to update the fonts list in the modal
+        const updateFontsList = () => {
+          const currentFonts = loadFonts();
+          const listContainer = document.getElementById('google-fonts-list');
+
+          if (listContainer) {
+            listContainer.innerHTML = currentFonts.google.length === 0 ?
+              '<p style="color: #777;">Aucune police Google ajoutée.</p>' :
+              currentFonts.google.map((font) => `
             <div style="display: inline-flex; align-items: center; padding: 5px 10px; background-color: #000; border: 1px solid #ddd; border-radius: 3px;">
               <span style="font-family: ${font.value}; margin-right: 5px;">${font.name}</span>
               <button class="remove-font" data-font="${font.name}" style="background: none; border: none; cursor: pointer; color: #d33; font-size: 14px; line-height: 1; padding: 0 3px;">×</button>
             </div>
           `).join('');
-          
-        // Reattach event listeners to new buttons
+
+            // Reattach event listeners to new buttons
+            const removeButtons = document.querySelectorAll('.remove-font');
+            removeButtons.forEach(button => {
+              button.addEventListener('click', handleRemoveFont);
+            });
+          }
+        };
+
+        // Handler for font removal
+        const handleRemoveFont = (e) => {
+          const fontName = e.currentTarget.getAttribute('data-font');
+          if (fontName) {
+            if (confirm(`Êtes-vous sûr de vouloir supprimer la police "${fontName}" ?`)) {
+              const removed = removeGoogleFont(fontName);
+              if (removed) {
+                toast.success(`Police "${fontName}" supprimée avec succès!`);
+                updateFontsList(); // Update the list immediately
+              } else {
+                toast.error(`Erreur lors de la suppression de la police "${fontName}".`);
+              }
+            }
+          }
+        };
+
+        // Add font button handler
+        document.getElementById('add-google-font').addEventListener('click', () => {
+          const fontInput = document.getElementById('google-font-input');
+          const fontName = fontInput.value.trim();
+
+          if (fontName) {
+            const added = addGoogleFont(fontName);
+            if (added) {
+              toast.success(`Police Google "${fontName}" ajoutée avec succès!`);
+              fontInput.value = ''; // Clear the input
+              updateFontsList(); // Update the list immediately
+            } else {
+              toast.error(`La police "${fontName}" existe déjà.`);
+            }
+          } else {
+            toast.error('Veuillez entrer un nom de police.');
+          }
+        });
+
+        // Initial setup of event listeners for remove buttons
         const removeButtons = document.querySelectorAll('.remove-font');
         removeButtons.forEach(button => {
           button.addEventListener('click', handleRemoveFont);
         });
       }
-    };
-
-    // Handler for font removal
-    const handleRemoveFont = (e) => {
-      const fontName = e.currentTarget.getAttribute('data-font');
-      if (fontName) {
-        if (confirm(`Êtes-vous sûr de vouloir supprimer la police "${fontName}" ?`)) {
-          const removed = removeGoogleFont(fontName);
-          if (removed) {
-            toast.success(`Police "${fontName}" supprimée avec succès!`);
-            updateFontsList(); // Update the list immediately
-          } else {
-            toast.error(`Erreur lors de la suppression de la police "${fontName}".`);
-          }
-        }
-      }
-    };
-
-    // Add font button handler
-    document.getElementById('add-google-font').addEventListener('click', () => {
-      const fontInput = document.getElementById('google-font-input');
-      const fontName = fontInput.value.trim();
-      
-      if (fontName) {
-        const added = addGoogleFont(fontName);
-        if (added) {
-          toast.success(`Police Google "${fontName}" ajoutée avec succès!`);
-          fontInput.value = ''; // Clear the input
-          updateFontsList(); // Update the list immediately
-        } else {
-          toast.error(`La police "${fontName}" existe déjà.`);
-        }
-      } else {
-        toast.error('Veuillez entrer un nom de police.');
-      }
     });
-
-    // Initial setup of event listeners for remove buttons
-    const removeButtons = document.querySelectorAll('.remove-font');
-    removeButtons.forEach(button => {
-      button.addEventListener('click', handleRemoveFont);
-    });
-  }
-});
 
     /**editor.Panels.addButton('options', {
       id: 'save-project',

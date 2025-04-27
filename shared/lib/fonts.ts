@@ -1,20 +1,6 @@
 export const fontFamilies = {
-    system: [
-        { name: 'Sans Serif', value: 'sans-serif' },
-        { name: 'Serif', value: 'serif' },
-        { name: 'Monospace', value: 'monospace' },
-        { name: 'Cursive', value: 'cursive' },
-        { name: 'Fantasy', value: 'fantasy' },
-    ],
-    google: [
-        { name: 'Roboto', value: '"Roboto", sans-serif', url: 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap' },
-        { name: 'Open Sans', value: '"Open Sans", sans-serif', url: 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap' },
-        { name: 'Lato', value: '"Lato", sans-serif', url: 'https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap' },
-        { name: 'Poppins', value: '"Poppins", sans-serif', url: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap' },
-        { name: 'Montserrat', value: '"Montserrat", sans-serif', url: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap' },
-        { name: 'Raleway', value: '"Raleway", sans-serif', url: 'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap' },
-        { name: 'Playfair Display', value: '"Playfair Display", serif', url: 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap' },
-    ],
+    system: [],
+    google: [],
     custom: []
 };
 
@@ -113,16 +99,7 @@ export const setupFontManager = (editor: { Canvas: { getFrameEl: () => any; }; S
             select: true,
             render: ({ model }) => {
                 model.trigger('active');
-                setTimeout(() => {
-                    const styleManager = editor.StyleManager;
-                    styleManager.setTarget(model);
-                    styleManager.getProperties('typography').forEach((prop: { get: (arg0: string) => string; }) => {
-                        if (prop.get('property') === 'font-family') {
-                            styleManager.select('typography');
-                            return false;
-                        }
-                    });
-                }, 100);
+                
             }
         });
 

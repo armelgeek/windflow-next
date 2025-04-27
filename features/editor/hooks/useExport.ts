@@ -12,7 +12,7 @@ export const useExport = (editorRef, templateDetails) => {
       setIsExporting(true);
       const editor = editorRef.current;
       if (!editor) return;
-      
+
       const pm = editor.Pages;
       const zip = new JSZip();
 
@@ -23,7 +23,7 @@ export const useExport = (editorRef, templateDetails) => {
 
       const savedFonts = localStorage.getItem('gjs-fonts');
       const fonts = savedFonts ? JSON.parse(savedFonts) : { system: [], google: [], custom: [] };
-
+   
       if (fonts.custom && fonts.custom.length > 0) {
         let fontCssContent = '';
 
@@ -52,7 +52,7 @@ export const useExport = (editorRef, templateDetails) => {
 
                   const fontFileName = `${fontName}.${extension}`;
 
-                  if(fontsFolder) fontsFolder.file(fontFileName, base64Data, { base64: true });
+                  if (fontsFolder) fontsFolder.file(fontFileName, base64Data, { base64: true });
 
                   fontCssContent += `
                   @font-face {
@@ -90,7 +90,7 @@ export const useExport = (editorRef, templateDetails) => {
                       const style = file.style || 'normal';
                       const fontFileName = `${fontName}-${weight}-${style}.${extension}`;
 
-                      if(fontsFolder) fontsFolder.file(fontFileName, base64Data, { base64: true });
+                      if (fontsFolder) fontsFolder.file(fontFileName, base64Data, { base64: true });
 
                       fontCssContent += `
                         @font-face {
@@ -130,7 +130,7 @@ export const useExport = (editorRef, templateDetails) => {
                     }
 
                     const fontFileName = `${fontName}.${extension}`;
-                    if(fontsFolder) fontsFolder.file(fontFileName, base64Data, { base64: true });
+                    if (fontsFolder) fontsFolder.file(fontFileName, base64Data, { base64: true });
 
                     const weightMatch = font.fontFaceData.match(/font-weight\s*:\s*([^;]+);/);
                     const styleMatch = font.fontFaceData.match(/font-style\s*:\s*([^;]+);/);
@@ -194,7 +194,7 @@ export const useExport = (editorRef, templateDetails) => {
 
           try {
             const base64Content = base64Data.split(',')[1];
-            if(assetsFolder) assetsFolder.file(fileName, base64Content, { base64: true });
+            if (assetsFolder) assetsFolder.file(fileName, base64Content, { base64: true });
 
             processedImages[base64Data] = imagePath;
             processedHtml = processedHtml.replace(base64Data, imagePath);
@@ -220,7 +220,7 @@ export const useExport = (editorRef, templateDetails) => {
 
           try {
             const base64Content = base64Data.split(',')[1];
-            if(assetsFolder) assetsFolder.file(fileName, base64Content, { base64: true });
+            if (assetsFolder) assetsFolder.file(fileName, base64Content, { base64: true });
 
             processedImages[base64Data] = imagePath;
             processedHtml = processedHtml.replace(base64Data, imagePath);
@@ -241,7 +241,6 @@ export const useExport = (editorRef, templateDetails) => {
         <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
         <script src='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'></script>
-        ${fonts.custom && fonts.custom.length > 0 ? '<link rel="stylesheet" href="css/fonts.css">' : ''}
         <link rel="stylesheet" href="css/main.css">
       </head>
       <body>
@@ -274,8 +273,7 @@ export const useExport = (editorRef, templateDetails) => {
                   <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
                   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
                   <script src='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'></script>
-                  ${fonts.custom && fonts.custom.length > 0 ? '<link rel="stylesheet" href="../css/fonts.css">' : ''}
-                  <link rel="stylesheet" href="../css/main.css">
+                 <link rel="stylesheet" href="../css/main.css">
                   <link rel="stylesheet" href="../css/${pageId}.css">
                 </head>
                 <body>
@@ -285,13 +283,13 @@ export const useExport = (editorRef, templateDetails) => {
                 </div>
                 </body>
                 </html>`;
-                
+
                   if (pagesFolder) pagesFolder.file(`${pageId}.html`, processedHtml);
                   indexContent += `
-                      <li><a href="pages/${pageId}.html" class="text-blue-600 hover:underline">${pageName}</a></li>`;
+                                <li><a href="pages/${pageId}.html" class="text-blue-600 hover:underline">${pageName}</a></li>`;
                 }
-      
-                  indexContent += `
+
+                indexContent += `
                 </ul>
               </div>
             </body>
@@ -309,7 +307,6 @@ export const useExport = (editorRef, templateDetails) => {
 
       ## Custom Fonts
       This template uses ${fonts.google && fonts.custom ? (fonts.google.length + fonts.custom.length) : 0} custom fonts:
-      ${fonts.google ? fonts.google.filter(f => f && f.name).map(font => `- ${font.name} (Google Fonts)`).join('\n') : ''}
       ${fonts.custom ? fonts.custom.filter(f => f && f.name).map(font => `- ${font.name} (Custom Font)`).join('\n') : ''}
 
       ## Project Structure
